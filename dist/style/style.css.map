@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./vue-components/C:/_Irina/_clients/_Alpheios Project/git/inflections-games/src/vue-components/welcome-panel.vue"],"names":[],"mappings":";AAWA;EACC,aAAY;EACZ,cAAa;EACb,WAAU;CACV","file":"style/style.css","sourcesContent":["\n\n\n\n\n\n\n\n\n\n\n.alpheios-welcome-panel {\n\twidth: 200px;\n\theight: 200px;\n\tcolor: red;\n}\n"],"sourceRoot":""}
