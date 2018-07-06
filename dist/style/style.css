@@ -1,8 +1,35 @@
-
-.alpheios-welcome-panel {
-  width: 200px;
-  height: 200px;
-  color: red;
+/***************** panel settings **********************/
+#alpheios-welcome-panel {
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: normal;
+  min-width: 200px;
+  min-height: 200px;
+  color: #0E2233;
+  background: #fff;
+  position: fixed;
+  left: 50px;
+  top: 50px;
+  border: 1px solid #d3d3d3;
+  padding: 10px;
+  -webkit-box-shadow: 4px 4px 10px 1px rgba(211, 211, 211, 0.5);
+  -moz-box-shadow: 4px 4px 10px 1px rgba(211, 211, 211, 0.5);
+  box-shadow: 4px 4px 10px 1px rgba(211, 211, 211, 0.5);
+}
+.alpheios-welcome-panel__close-btn {
+  display: block;
+  position: absolute;
+  width: 20px;
+  right: 5px;
+  top: 2px;
+  cursor: pointer;
+  fill: #D1D1D0;
+  stroke: #D1D1D0;
+}
+.alpheios-welcome-panel__close-btn:hover,
+.alpheios-welcome-panel__close-btn:focus {
+  fill: #5BC8DC;
+  stroke: #5BC8DC;
 }
 
 
