@@ -1,6 +1,6 @@
 <template>
 	<div class="alpheios-features-panel">
-		<div class="alpheios-features-panel__lexemes" v-for="(lex, indexLex) in homonym.lexemes" :key="indexLex">
+		<div class="alpheios-features-panel__lexemes" v-for="(lex, indexLex) in lexemes" :key="indexLex">
 			<p class="alpheios-features-panel__lemma_word">
         {{lex.lemma.word}}<span> ({{ getPartOfSpeachFromLemma(lex.lemma) }})</span>
       </p>
@@ -21,8 +21,8 @@
       definitionsPanel: DefinitionsPanel
     },
     props: {
-      homonym: {
-        type: Object,
+      lexemes: {
+        type: Array,
         required: true
       },
       definitions: {
@@ -51,7 +51,7 @@
   .alpheios-features-panel__lemma_word {
     display: inline-block;
     font-weight: bold;
-    margin: 10px 10px 10px 0;
+    margin: 0 10px 0 0;
     vertical-align: top;
   }
 </style>

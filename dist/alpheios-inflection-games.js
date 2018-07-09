@@ -24516,6 +24516,17 @@ win.init = init;
 
 /***/ }),
 
+/***/ "../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader/index.js?!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=style&index=0&lang=scss":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader??ref--5-1!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js??ref--5-2!../node_modules/vue-loader/lib??vue-loader-options!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=style&index=0&lang=scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader/index.js?!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/inflection-games-panels/inflection-table-panel.vue?vue&type=style&index=0&id=44352247&lang=scss&scoped=true":
 /*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader??ref--5-1!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js??ref--5-2!../node_modules/vue-loader/lib??vue-loader-options!./vue-components/inflection-games-panels/inflection-table-panel.vue?vue&type=style&index=0&id=44352247&lang=scss&scoped=true ***!
@@ -25186,7 +25197,6 @@ __webpack_require__.r(__webpack_exports__);
       this.selectedGameVariant = {}
       this.selectedGameVariantReady = false
       this.changedGame = 0
-      console.log('*************************clearData')
     }
   },
   mounted () {
@@ -25196,6 +25206,144 @@ __webpack_require__.r(__webpack_exports__);
     }
   }
 });	
+
+
+/***/ }),
+
+/***/ "../node_modules/vue-loader/lib/index.js?!../node_modules/source-map-loader/index.js!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=script&lang=js":
+/*!**************************************************************************************************************************************************************************************!*\
+  !*** ../node_modules/vue-loader/lib??vue-loader-options!../node_modules/source-map-loader!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=script&lang=js ***!
+  \**************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'FeatureSelectPanel',
+  data () {
+    return {
+    	gameFeaturesList: null,
+    	gameCheckTable: null
+    }
+  },
+  props: {
+    featuresList: {
+    	type: Object,
+    	required: true
+    },
+    featuresListChanged: {
+    	type: Number,
+    	required: true
+    },
+    gameTable: {
+    	type: Object,
+    	required: true
+    },
+    inflectionData: {
+    	type: Object,
+    	required: true
+    }
+  },
+  computed: {
+    featuresKeys: function () {
+    	return Object.keys(this.gameFeaturesList).filter(key => this.gameFeaturesList[key].length > 1)
+    }
+  },
+  watch: {
+    featuresListChanged: function () {
+    	this.createGameFeaturesList()
+    }
+  },
+  methods: {
+    featureItemClass: function (featureName, featureValue) {
+    	return {
+    	  'alpheios-features_select__features_select__list__values_list_item': true,
+    	  'alpheios-features_select__features_select__list__values_list_item__success': featureValue.status === 'success',
+    	  'alpheios-features_select__features_select__list__values_list_item__failed': featureValue.status === 'failed'
+    	}
+    },
+
+    selectFeature: function (featureName, featureValue) {
+    	let hasFullMatch = this.gameCheckTable.rows.some(row => row.cells.some(cell => cell.fullMatch && cell[featureName] === featureValue.value))
+    	featureValue.status = hasFullMatch ? 'success' : 'failed'
+    	this.$emit('selectFeature', featureName, featureValue.status, featureValue.value)
+    },
+
+    getFeatures: function (cell) {
+      let ignoreProps = ['role', 'value', 'hidden', 'fullMatch']
+      return Object.keys(cell).filter(prop => (ignoreProps.indexOf(prop) === -1))
+    },
+
+    compareLexemesToCell: function (cell) {
+      let cellFeatures = this.getFeatures(cell)
+
+      return this.inflectionData.homonym.lexemes.some(lexeme => 
+        lexeme.inflections.some(inflection => 
+          cellFeatures.every(feature => {
+            return inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature]
+          })
+        )
+      )
+    },
+
+    createGameCheckTable: function () {
+      this.gameCheckTable = null
+      let table = { rows: [] }
+
+      this.gameTable.rows.forEach(row => {
+        let cells = []
+        row.cells.forEach(cell => {
+          cell.fullMatch = cell.role === 'data' ? this.compareLexemesToCell(cell) : null
+          cell.hidden = cell.role === 'data' ? true : false
+          cells.push(Object.assign({}, cell))
+        })
+        table.rows.push({ cells: cells })
+      })
+
+      this.gameCheckTable = table
+    },
+
+    createGameFeaturesList: function () {
+    	let gameFeaturesList = {}
+
+    	Object.keys(this.featuresList).forEach(key => {
+    	  gameFeaturesList[key] = []
+    	  this.featuresList[key].forEach(value => { gameFeaturesList[key].push(
+    	  	{ value: value, status: null }
+    	  ) })
+    	})
+    	this.gameFeaturesList = gameFeaturesList
+
+    	this.createGameCheckTable()
+    }
+  },
+  mounted () {
+    this.createGameFeaturesList()
+  }
+});
 
 
 /***/ }),
@@ -25248,6 +25396,14 @@ __webpack_require__.r(__webpack_exports__);
     finishGameFlag: {
       type: Boolean,
       required: true
+    },
+    selectedFeature: {
+      type: [Object, Boolean],
+      required: true
+    }, 
+    selectedFeatureChange: {
+      type: Number,
+      required: true
     }
   },
   watch: {
@@ -25260,6 +25416,15 @@ __webpack_require__.r(__webpack_exports__);
       if (flag) {
         this.finishGame()
       }
+    },
+    'selectedFeatureChange': function () {
+      if (this.selectedFeature.status === 'success') {
+        this.checkSuccessFeature()
+      } 
+      if (this.selectedFeature.status === 'failed') {
+        this.checkFailedFeature()
+      }
+      this.checkIfLastUnCovered()
     }
   },
   mounted () {
@@ -25290,8 +25455,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     compareLexemesToCell: function (cell) {
       let cellFeatures = this.getFeatures(cell)
-      if (cell.value === 'πλεῖ') {
-      }
+
       return this.inflectionData.homonym.lexemes.some(lexeme => 
         lexeme.inflections.some(inflection => 
           cellFeatures.every(feature => {
@@ -25333,6 +25497,31 @@ __webpack_require__.r(__webpack_exports__);
           this.$emit('incrementSuccessGames')
           this.finishGame()
         }
+      }
+    },
+
+    checkSuccessFeature: function () {
+      this.gameTable.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          if (cell.role === 'data' && cell[this.selectedFeature.name] !== this.selectedFeature.value) { cell.hidden = false }
+        })
+      })
+    },
+
+    checkFailedFeature: function () {
+      this.gameTable.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          if (cell.role === 'data' && cell[this.selectedFeature.name] === this.selectedFeature.value) { cell.hidden = false }
+        })
+      })
+    },
+
+    checkIfLastUnCovered: function () {
+      let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
+        row.cells.filter(cell => cell.role === 'data' && !cell.fullMatch).every(cell => !cell.hidden)
+      )
+      if (onlyFullMatchUncovered) {
+        this.finishGame()
       }
     }
   }
@@ -25486,8 +25675,8 @@ __webpack_require__.r(__webpack_exports__);
     definitionsPanel: _vue_components_lexeme_data_panels_definitions_panel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   props: {
-    homonym: {
-      type: Object,
+    lexemes: {
+      type: Array,
       required: true
     },
     definitions: {
@@ -25682,6 +25871,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _vue_components_inflection_games_panels_inflection_table_panel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/vue-components/inflection-games-panels/inflection-table-panel.vue */ "./vue-components/inflection-games-panels/inflection-table-panel.vue");
 /* harmony import */ var _vue_components_inflection_games_panels_stat_panel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/vue-components/inflection-games-panels/stat-panel.vue */ "./vue-components/inflection-games-panels/stat-panel.vue");
+/* harmony import */ var _vue_components_inflection_games_panels_feature_select_panel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/vue-components/inflection-games-panels/feature-select-panel.vue */ "./vue-components/inflection-games-panels/feature-select-panel.vue");
 //
 //
 //
@@ -25711,6 +25901,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -25719,7 +25928,8 @@ __webpack_require__.r(__webpack_exports__);
   name: 'SelectedGamePanel',
   components: {
     inflectionTablePanel: _vue_components_inflection_games_panels_inflection_table_panel_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    statPanel: _vue_components_inflection_games_panels_stat_panel_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    statPanel: _vue_components_inflection_games_panels_stat_panel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    featureSelectPanel: _vue_components_inflection_games_panels_feature_select_panel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data () {
     return {
@@ -25727,7 +25937,10 @@ __webpack_require__.r(__webpack_exports__);
       maxClicks: 6,
       finishGameFlag: false,
       failedGames: 0,
-      successGames: 0
+      successGames: 0,
+      featuresListChanged: 0,
+      selectedFeature: false,
+      selectedFeatureChange: 0
     }
   },
   props: {
@@ -25758,6 +25971,27 @@ __webpack_require__.r(__webpack_exports__);
     },
     selectedView: function () {
     	return this.selectedGameVariantReady ? this.selectedGameVariant.view : null
+    },
+    featuresList: function () {
+      let featuresListC = {}
+
+      this.selectedGameVariant.view.wideTable.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          if (cell.role === 'data') {
+            let cellFeatures = this.getFeatures(cell)
+            cellFeatures.forEach(feature => {
+              if (featuresListC[feature] === undefined) {
+                featuresListC[feature] = []
+              }
+              if (featuresListC[feature].indexOf(cell[feature]) === -1) {
+                featuresListC[feature].push(cell[feature])
+              }
+            })
+          }
+        })
+      })
+      this.featuresListChanged = this.featuresListChanged + 1
+      return featuresListC
     }
   },
   methods: {
@@ -25776,12 +26010,26 @@ __webpack_require__.r(__webpack_exports__);
     },
     incrementFailedGames: function () {
       this.failedGames = this.failedGames + 1
+    },
+    getFeatures: function (cell) {
+      let ignoreProps = ['role', 'value', 'hidden', 'fullMatch']
+      return Object.keys(cell).filter(prop => (ignoreProps.indexOf(prop) === -1))
+    },
+    selectFeature: function (featureName, featureStatus, featureValue) {
+      this.selectedFeature = {
+        name: featureName,
+        status: featureStatus,
+        value: featureValue
+      }
+      this.selectedFeatureChange = this.selectedFeatureChange + 1
     }
   },
   watch: {
     changedGame: function () {
       this.clicks = 0
       this.finishGameFlag = false
+      this.selectedFeatureChange = 0,
+      this.selectedFeature = false
     }
   }
 });
@@ -25860,7 +26108,7 @@ var render = function() {
       _vm.showFeaturesPanel
         ? _c("features-panel", {
             attrs: {
-              homonym: _vm.homonym,
+              lexemes: _vm.homonym.lexemes,
               definitionsDataReady: _vm.data.definitionsDataReady,
               definitions: _vm.definitionsFinal
             }
@@ -25889,6 +26137,78 @@ var render = function() {
     ],
     1
   )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "../node_modules/vue-loader/lib/loaders/templateLoader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=template&id=8af3a1c8":
+/*!***************************************************************************************************************************************************************************************************************************************!*\
+  !*** ../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../node_modules/vue-loader/lib??vue-loader-options!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=template&id=8af3a1c8 ***!
+  \***************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.gameFeaturesList
+    ? _c("div", { staticClass: "alpheios-features_select" }, [
+        _c("p", { staticClass: "alpheios-features_select__title" }, [
+          _vm._v("Features list")
+        ]),
+        _vm._v(" "),
+        _c(
+          "ul",
+          { staticClass: "alpheios-features_select__features_select__list" },
+          _vm._l(_vm.featuresKeys, function(featureName, indexF) {
+            return _c("li", { key: indexF }, [
+              _c(
+                "p",
+                {
+                  staticClass: "alpheios-features_select__list__feature_title"
+                },
+                [_vm._v(_vm._s(featureName))]
+              ),
+              _vm._v(" "),
+              _c(
+                "ul",
+                {
+                  staticClass:
+                    "alpheios-features_select__features_select__list__values_list"
+                },
+                _vm._l(_vm.gameFeaturesList[featureName], function(
+                  featureValue,
+                  indexFL
+                ) {
+                  return _c(
+                    "li",
+                    {
+                      key: indexFL,
+                      class: _vm.featureItemClass(featureName, featureValue),
+                      on: {
+                        click: function($event) {
+                          _vm.selectFeature(featureName, featureValue)
+                        }
+                      }
+                    },
+                    [_vm._v(_vm._s(featureValue.value))]
+                  )
+                })
+              )
+            ])
+          })
+        )
+      ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -26127,7 +26447,7 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "alpheios-features-panel" },
-    _vm._l(_vm.homonym.lexemes, function(lex, indexLex) {
+    _vm._l(_vm.lexemes, function(lex, indexLex) {
       return _c(
         "div",
         { key: indexLex, staticClass: "alpheios-features-panel__lexemes" },
@@ -26269,19 +26589,45 @@ var render = function() {
               }
             }),
             _vm._v(" "),
-            _c("inflection-table-panel", {
-              attrs: {
-                data: _vm.selectedView.wideTable,
-                "inflection-data": _vm.selectedView.inflectionData,
-                changedGame: _vm.changedGame,
-                finishGameFlag: _vm.finishGameFlag,
-                clicks: _vm.clicks
+            _c(
+              "div",
+              {
+                class: {
+                  "alpheios-selected_game_panel__has_featureblock":
+                    _vm.featuresList
+                }
               },
-              on: {
-                incrementClicks: _vm.incrementClicks,
-                incrementSuccessGames: _vm.incrementSuccessGames
-              }
-            })
+              [
+                _vm.featuresList
+                  ? _c("feature-select-panel", {
+                      attrs: {
+                        featuresList: _vm.featuresList,
+                        featuresListChanged: _vm.featuresListChanged,
+                        gameTable: _vm.selectedView.wideTable,
+                        "inflection-data": _vm.selectedView.inflectionData
+                      },
+                      on: { selectFeature: _vm.selectFeature }
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("inflection-table-panel", {
+                  attrs: {
+                    data: _vm.selectedView.wideTable,
+                    "inflection-data": _vm.selectedView.inflectionData,
+                    changedGame: _vm.changedGame,
+                    finishGameFlag: _vm.finishGameFlag,
+                    clicks: _vm.clicks,
+                    selectedFeature: _vm.selectedFeature,
+                    selectedFeatureChange: _vm.selectedFeatureChange
+                  },
+                  on: {
+                    incrementClicks: _vm.incrementClicks,
+                    incrementSuccessGames: _vm.incrementSuccessGames
+                  }
+                })
+              ],
+              1
+            )
           ],
           1
         )
@@ -37734,6 +38080,93 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_games_panel_vue_vue_type_template_id_e0803832__WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_games_panel_vue_vue_type_template_id_e0803832__WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./vue-components/inflection-games-panels/feature-select-panel.vue":
+/*!*************************************************************************!*\
+  !*** ./vue-components/inflection-games-panels/feature-select-panel.vue ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _feature_select_panel_vue_vue_type_template_id_8af3a1c8__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./feature-select-panel.vue?vue&type=template&id=8af3a1c8 */ "./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=template&id=8af3a1c8");
+/* harmony import */ var _feature_select_panel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./feature-select-panel.vue?vue&type=script&lang=js */ "./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=script&lang=js");
+/* empty/unused harmony star reexport *//* harmony import */ var _feature_select_panel_vue_vue_type_style_index_0_lang_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./feature-select-panel.vue?vue&type=style&index=0&lang=scss */ "./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=style&index=0&lang=scss");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "../node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _feature_select_panel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+  _feature_select_panel_vue_vue_type_template_id_8af3a1c8__WEBPACK_IMPORTED_MODULE_0__["render"],
+  _feature_select_panel_vue_vue_type_template_id_8af3a1c8__WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "vue-components\\inflection-games-panels\\feature-select-panel.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=script&lang=js":
+/*!*************************************************************************************************!*\
+  !*** ./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=script&lang=js ***!
+  \*************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_index_js_vue_loader_options_node_modules_source_map_loader_index_js_feature_select_panel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib??vue-loader-options!../../../node_modules/source-map-loader!./feature-select-panel.vue?vue&type=script&lang=js */ "../node_modules/vue-loader/lib/index.js?!../node_modules/source-map-loader/index.js!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=script&lang=js");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_vue_loader_lib_index_js_vue_loader_options_node_modules_source_map_loader_index_js_feature_select_panel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=style&index=0&lang=scss":
+/*!**********************************************************************************************************!*\
+  !*** ./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=style&index=0&lang=scss ***!
+  \**********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_style_index_0_lang_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/mini-css-extract-plugin/dist/loader.js!../../../node_modules/css-loader??ref--5-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/sass-loader/lib/loader.js??ref--5-2!../../../node_modules/vue-loader/lib??vue-loader-options!./feature-select-panel.vue?vue&type=style&index=0&lang=scss */ "../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader/index.js?!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=style&index=0&lang=scss");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_style_index_0_lang_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_style_index_0_lang_scss__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_style_index_0_lang_scss__WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_style_index_0_lang_scss__WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_style_index_0_lang_scss__WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=template&id=8af3a1c8":
+/*!*******************************************************************************************************!*\
+  !*** ./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=template&id=8af3a1c8 ***!
+  \*******************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_template_id_8af3a1c8__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./feature-select-panel.vue?vue&type=template&id=8af3a1c8 */ "../node_modules/vue-loader/lib/loaders/templateLoader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/inflection-games-panels/feature-select-panel.vue?vue&type=template&id=8af3a1c8");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_template_id_8af3a1c8__WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_feature_select_panel_vue_vue_type_template_id_8af3a1c8__WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

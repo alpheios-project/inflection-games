@@ -94,4 +94,8 @@
   .alpheios-selected_game_panel__stat_list_clicks__bigColor {
   	color: #e42f0d;
   }
+
+  .alpheios-selected_game_panel__stat {
+    text-align: center;
+  }
 </style>

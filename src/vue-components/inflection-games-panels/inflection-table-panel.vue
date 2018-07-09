@@ -37,6 +37,14 @@
       finishGameFlag: {
         type: Boolean,
         required: true
+      },
+      selectedFeature: {
+        type: [Object, Boolean],
+        required: true
+      }, 
+      selectedFeatureChange: {
+        type: Number,
+        required: true
       }
     },
     watch: {
@@ -49,6 +57,15 @@
         if (flag) {
           this.finishGame()
         }
+      },
+      'selectedFeatureChange': function () {
+        if (this.selectedFeature.status === 'success') {
+          this.checkSuccessFeature()
+        } 
+        if (this.selectedFeature.status === 'failed') {
+          this.checkFailedFeature()
+        }
+        this.checkIfLastUnCovered()
       }
     },
     mounted () {
@@ -79,8 +96,7 @@
       },
       compareLexemesToCell: function (cell) {
         let cellFeatures = this.getFeatures(cell)
-        if (cell.value === 'πλεῖ') {
-        }
+
         return this.inflectionData.homonym.lexemes.some(lexeme => 
           lexeme.inflections.some(inflection => 
             cellFeatures.every(feature => {
@@ -122,6 +138,31 @@
             this.$emit('incrementSuccessGames')
             this.finishGame()
           }
+        }
+      },
+
+      checkSuccessFeature: function () {
+        this.gameTable.rows.forEach(row => {
+          row.cells.forEach(cell => {
+            if (cell.role === 'data' && cell[this.selectedFeature.name] !== this.selectedFeature.value) { cell.hidden = false }
+          })
+        })
+      },
+
+      checkFailedFeature: function () {
+        this.gameTable.rows.forEach(row => {
+          row.cells.forEach(cell => {
+            if (cell.role === 'data' && cell[this.selectedFeature.name] === this.selectedFeature.value) { cell.hidden = false }
+          })
+        })
+      },
+
+      checkIfLastUnCovered: function () {
+        let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
+          row.cells.filter(cell => cell.role === 'data' && !cell.fullMatch).every(cell => !cell.hidden)
+        )
+        if (onlyFullMatchUncovered) {
+          this.finishGame()
         }
       }
     }

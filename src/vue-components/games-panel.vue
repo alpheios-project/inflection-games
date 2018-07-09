@@ -7,7 +7,7 @@
 		<welcome-panel></welcome-panel>
 		<features-panel 
 			v-if = "showFeaturesPanel"
-			:homonym = "homonym" 
+			:lexemes = "homonym.lexemes" 
 			:definitionsDataReady = "data.definitionsDataReady"
 			:definitions = "definitionsFinal"
 		></features-panel>
@@ -105,7 +105,6 @@
         this.selectedGameVariant = {}
         this.selectedGameVariantReady = false
         this.changedGame = 0
-        console.log('*************************clearData')
       }
     },
     mounted () {

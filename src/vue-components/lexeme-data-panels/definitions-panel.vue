@@ -37,7 +37,7 @@
 	}
 
 	.alpheios-definitions-panel__item {
-	  margin: 10px 0;
+	  margin: 0;
 	}
 	.alpheios-definitions-panel__definitions_list {
 	  margin: 0;
