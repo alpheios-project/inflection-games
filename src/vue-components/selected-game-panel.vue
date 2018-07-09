@@ -6,16 +6,23 @@
 			v-if = "selectedGameVariantReady"
 			class = "alpheios-selected_game_panel__selected_game"
 		>
-      <stat-panel :clicks="clicks" :maxClicks="maxClicks"></stat-panel>
+      <stat-panel 
+        :clicks = "clicks"
+        :maxClicks = "maxClicks"
+        :failedGames = "failedGames"
+        :successGames = "successGames"
+      ></stat-panel>
+      
 			<inflection-table-panel 
-        :data="selectedView.wideTable" 
-        :inflection-data="selectedView.inflectionData"
+        :data = "selectedView.wideTable" 
+        :inflection-data = "selectedView.inflectionData"
 
         :changedGame = "changedGame"
         :finishGameFlag = "finishGameFlag"
 
         :clicks = "clicks"
-        @incrementClick = "incrementClick"
+        @incrementClicks = "incrementClicks"
+        @incrementSuccessGames = "incrementSuccessGames"
       ></inflection-table-panel>
 		</div>
 	</div>
@@ -34,7 +41,9 @@
       return {
         clicks: 0,
         maxClicks: 6,
-        finishGameFlag: false
+        finishGameFlag: false,
+        failedGames: 0,
+        successGames: 0
       }
     },
     props: {
@@ -68,14 +77,21 @@
       }
     },
     methods: {
-      incrementClick: function () {
+      incrementClicks: function () {
         this.clicks = this.clicks + 1
         if (this.clicks > this.maxClicks) {
+          this.incrementFailedGames()
           this.finishGame()
         }
       },
       finishGame: function () {
         this.finishGameFlag = true
+      },
+      incrementSuccessGames: function () {
+        this.successGames = this.successGames + 1
+      },
+      incrementFailedGames: function () {
+        this.failedGames = this.failedGames + 1
       }
     },
     watch: {

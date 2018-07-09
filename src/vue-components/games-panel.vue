@@ -93,12 +93,19 @@
     },
     methods: {
       closePanel () {
+      	this.clearData()
         this.$emit('close')
       },
       selectedGame (gameVariant) {
       	this.selectedGameVariant = gameVariant
       	this.selectedGameVariantReady = true
       	this.changedGame = this.changedGame + 1
+      },
+      clearData () {
+        this.selectedGameVariant = {}
+        this.selectedGameVariantReady = false
+        this.changedGame = 0
+        console.log('*************************clearData')
       }
     },
     mounted () {

@@ -116,9 +116,10 @@
 
       checkCell: function (cell) {
         if (cell.role === 'data' && cell.hidden) {
-          this.$emit('incrementClick')
+          this.$emit('incrementClicks')
           cell.hidden = false
           if (cell.fullMatch) {
+            this.$emit('incrementSuccessGames')
             this.finishGame()
           }
         }

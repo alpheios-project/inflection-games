@@ -25174,12 +25174,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     closePanel () {
+    	this.clearData()
       this.$emit('close')
     },
     selectedGame (gameVariant) {
     	this.selectedGameVariant = gameVariant
     	this.selectedGameVariantReady = true
     	this.changedGame = this.changedGame + 1
+    },
+    clearData () {
+      this.selectedGameVariant = {}
+      this.selectedGameVariantReady = false
+      this.changedGame = 0
+      console.log('*************************clearData')
     }
   },
   mounted () {
@@ -25320,9 +25327,10 @@ __webpack_require__.r(__webpack_exports__);
 
     checkCell: function (cell) {
       if (cell.role === 'data' && cell.hidden) {
-        this.$emit('incrementClick')
+        this.$emit('incrementClicks')
         cell.hidden = false
         if (cell.fullMatch) {
+          this.$emit('incrementSuccessGames')
           this.finishGame()
         }
       }
@@ -25347,6 +25355,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'StatPanel',
@@ -25358,6 +25383,23 @@ __webpack_require__.r(__webpack_exports__);
     maxClicks: {
       type: Number,
       required: true
+    },
+    failedGames: {
+      type: Number,
+      required: true
+    },
+    successGames: {
+      type: Number,
+      required: true
+    }
+  },
+  computed: {
+    clicksClass: function () {
+    	return {
+    	  'alpheios-selected_game_panel__stat_list_clicks__smallColor': (this.clicks / this.maxClicks) <= 0.33,
+    	  'alpheios-selected_game_panel__stat_list_clicks__mediumColor': (this.clicks / this.maxClicks) > 0.33 && (this.clicks / this.maxClicks) <= 0.66,
+    	  'alpheios-selected_game_panel__stat_list_clicks__bigColor': (this.clicks / this.maxClicks) > 0.66
+    	}
     }
   }
 });
@@ -25662,6 +25704,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -25676,7 +25725,9 @@ __webpack_require__.r(__webpack_exports__);
     return {
       clicks: 0,
       maxClicks: 6,
-      finishGameFlag: false
+      finishGameFlag: false,
+      failedGames: 0,
+      successGames: 0
     }
   },
   props: {
@@ -25710,14 +25761,21 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    incrementClick: function () {
+    incrementClicks: function () {
       this.clicks = this.clicks + 1
       if (this.clicks > this.maxClicks) {
+        this.incrementFailedGames()
         this.finishGame()
       }
     },
     finishGame: function () {
       this.finishGameFlag = true
+    },
+    incrementSuccessGames: function () {
+      this.successGames = this.successGames + 1
+    },
+    incrementFailedGames: function () {
+      this.failedGames = this.failedGames + 1
     }
   },
   watch: {
@@ -25922,13 +25980,80 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "alpheios-selected_game_panel__stat" }, [
-    _c("p", [
-      _vm._v(
-        "Made clicks - " +
-          _vm._s(_vm.clicks) +
-          " (max - " +
-          _vm._s(_vm.maxClicks) +
-          ")"
+    _c("ul", { staticClass: "alpheios-selected_game_panel__stat_list" }, [
+      _c(
+        "li",
+        { staticClass: "alpheios-selected_game_panel__stat_list_clicks" },
+        [
+          _c(
+            "p",
+            { staticClass: "alpheios-selected_game_panel__stat_list_title" },
+            [_vm._v("Made clicks")]
+          ),
+          _vm._v(" "),
+          _c(
+            "p",
+            {
+              staticClass: "alpheios-selected_game_panel__stat_list_value",
+              class: _vm.clicksClass
+            },
+            [_vm._v(_vm._s(_vm.clicks))]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "li",
+        { staticClass: "alpheios-selected_game_panel__stat_list_max_clicks" },
+        [
+          _c(
+            "p",
+            { staticClass: "alpheios-selected_game_panel__stat_list_title" },
+            [_vm._v("Max clicks")]
+          ),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "alpheios-selected_game_panel__stat_list_value" },
+            [_vm._v(_vm._s(_vm.maxClicks))]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "li",
+        { staticClass: "alpheios-selected_game_panel__stat_list_failed" },
+        [
+          _c(
+            "p",
+            { staticClass: "alpheios-selected_game_panel__stat_list_title" },
+            [_vm._v("Failed")]
+          ),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "alpheios-selected_game_panel__stat_list_value" },
+            [_vm._v(_vm._s(_vm.failedGames))]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "li",
+        { staticClass: "alpheios-selected_game_panel__stat_list_success" },
+        [
+          _c(
+            "p",
+            { staticClass: "alpheios-selected_game_panel__stat_list_title" },
+            [_vm._v("Success")]
+          ),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "alpheios-selected_game_panel__stat_list_value" },
+            [_vm._v(_vm._s(_vm.successGames))]
+          )
+        ]
       )
     ])
   ])
@@ -26136,7 +26261,12 @@ var render = function() {
           { staticClass: "alpheios-selected_game_panel__selected_game" },
           [
             _c("stat-panel", {
-              attrs: { clicks: _vm.clicks, maxClicks: _vm.maxClicks }
+              attrs: {
+                clicks: _vm.clicks,
+                maxClicks: _vm.maxClicks,
+                failedGames: _vm.failedGames,
+                successGames: _vm.successGames
+              }
             }),
             _vm._v(" "),
             _c("inflection-table-panel", {
@@ -26147,7 +26277,10 @@ var render = function() {
                 finishGameFlag: _vm.finishGameFlag,
                 clicks: _vm.clicks
               },
-              on: { incrementClick: _vm.incrementClick }
+              on: {
+                incrementClicks: _vm.incrementClicks,
+                incrementSuccessGames: _vm.incrementSuccessGames
+              }
             })
           ],
           1

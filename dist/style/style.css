@@ -86,6 +86,43 @@ div.infl-prdgm-tbl-cell--full-match[data-v-44352247] {
 }
 
 
+.alpheios-selected_game_panel__stat_list {
+  padding: 0;
+  margin: 0 0 10px;
+  list-style: none;
+}
+.alpheios-selected_game_panel__stat_list li {
+  display: inline-block;
+  vertical-align: bold;
+  text-align: center;
+  margin: 0 5px;
+  font-weight: bold;
+}
+.alpheios-selected_game_panel__stat_list_title {
+  margin: 0 0 5px;
+}
+.alpheios-selected_game_panel__stat_list_value {
+  margin: 0;
+}
+.alpheios-selected_game_panel__stat_list_max_clicks {
+  color: #3E8D9C;
+}
+.alpheios-selected_game_panel__stat_list_failed {
+  color: #881c07;
+}
+.alpheios-selected_game_panel__stat_list_success {
+  color: #099f20;
+}
+.alpheios-selected_game_panel__stat_list_clicks__smallColor {
+  color: #099f20;
+}
+.alpheios-selected_game_panel__stat_list_clicks__mediumColor {
+  color: #E49A0D;
+}
+.alpheios-selected_game_panel__stat_list_clicks__bigColor {
+  color: #e42f0d;
+}
+
 
 .alpheios-selected_game_panel__selected_game__heading {
   font-weight: bold;
