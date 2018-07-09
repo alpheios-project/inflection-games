@@ -1,10 +1,7 @@
 /* global Node */
 export default class WindowServices {
   static getZIndexMax (zIndexDefualt = 2000) {
-    let startTime = new Date().getTime()
     let zIndex = WindowServices.zIndexRecursion(document.querySelector('body'), Number.NEGATIVE_INFINITY)
-    let timeDiff = new Date().getTime() - startTime
-    console.log(`Z-index max value is ${zIndex}, calculation time is ${timeDiff} ms`)
 
     if (zIndex >= zIndexDefualt) {
       if (zIndex < Number.POSITIVE_INFINITY) { zIndex++ } // To be one level higher that the highest element on a page
@@ -18,8 +15,8 @@ export default class WindowServices {
   static zIndexRecursion (element, zIndexMax) {
     if (element) {
       let zIndexValues = [
-        window.getComputedStyle(element).getPropertyValue('z-index'), // If z-index defined in CSS rules
-        element.style.getPropertyValue('z-index') // If z-index is defined in an inline style
+        window.getComputedStyle(element).getPropertyValue('z-index'),
+        element.style.getPropertyValue('z-index')
       ]
       for (const zIndex of zIndexValues) {
         if (zIndex && zIndex !== 'auto') {

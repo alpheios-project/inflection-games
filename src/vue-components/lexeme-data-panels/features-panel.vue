@@ -1,7 +1,9 @@
 <template>
 	<div class="alpheios-features-panel">
 		<div class="alpheios-features-panel__lexemes" v-for="(lex, indexLex) in homonym.lexemes" :key="indexLex">
-			<p class="alpheios-features-panel__lemma_word">{{lex.lemma.word}}</p>
+			<p class="alpheios-features-panel__lemma_word">
+        {{lex.lemma.word}}<span> ({{ getPartOfSpeachFromLemma(lex.lemma) }})</span>
+      </p>
       <definitions-panel
         v-if="definitionsDataReady"
         :definitions = "getDefinitions(lex.lemma.ID)"
@@ -11,6 +13,7 @@
 </template>
 <script>
   import DefinitionsPanel from '@/vue-components/lexeme-data-panels/definitions-panel.vue'
+  import { Feature } from 'alpheios-data-models'
 
   export default {
     name: 'FeaturesPanel',
@@ -33,19 +36,13 @@
     },
     methods: {
       extractFeatures (inflection) {
-      	let features = []
-      	Object.keys(inflection).forEach(function(key,index) {
-      	  if (inflection[key] && inflection[key].constructor && inflection[key].constructor.name === 'Feature') {
-      	  	features.push(inflection[key])
-      	  }
-      	})
-      	return features
+        return Object.values(inflection).filter(value => value && value.constructor && value.constructor.name === 'Feature')
       },
       getDefinitions (lemmaID) {
-      	if (this.definitionsDataReady) {
-      	  return this.definitions[lemmaID]
-      	}
-      	return []
+      	return this.definitionsDataReady ? this.definitions[lemmaID] : []
+      },
+      getPartOfSpeachFromLemma (lemma) {
+        return lemma.features && lemma.features[Feature.types.part] ? lemma.features[Feature.types.part].value : ''
       }
     }
   }

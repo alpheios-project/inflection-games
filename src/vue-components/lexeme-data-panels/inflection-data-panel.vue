@@ -4,6 +4,7 @@
       class = "alpheios-inflection-data__no_views"
       v-if = "gamesVariants.length === 0"
       >There are no game variants for selected homonym</p>
+
     <p 
       class = "alpheios-inflection-data__has_views"
       v-if = "gamesVariants.length > 0"
@@ -14,6 +15,7 @@
     >{{ showHideVariantsLabel }}
     </span>
     </p>
+
 		<ul :class = "{ 'alpheios-inflection-data__showOnlySelected': showOnlySelected }">
       <li 
         class="alpheios-inflection-data__game_variant"
@@ -22,9 +24,11 @@
         @click = "selectGame(gameVariant)"
         :class="selectedGameVariantClass(gameVariant)"
       >
+
         <span >
           <b>{{ gameVariant.partOfSpeach }}</b> - {{ gameVariant.view.name }}
         </span>
+        
       </li>
     </ul>
 
@@ -62,9 +66,11 @@
       }
     },
     computed: {
+      /* filter parts of speach (from viewSet) that has new vue Component tables */
       filteredPartsOfSpeach: function () {
         return this.partsOfSpeech.filter(partOfSpeach => this.viewSet.getViews(partOfSpeach).filter(view => view.hasComponentData).length > 0)
       },
+      /* create game variants with parts of speacn and views that has new vue Component tables */
       gamesVariants: function () {
         let variants = []
         this.filteredPartsOfSpeach.forEach(partOfSpeach => 
@@ -74,13 +80,39 @@
         )
         return variants
       },
+      /* label for show/hide label */
       showHideVariantsLabel: function () {
         return this.showOnlySelected ? 'show all' : 'hide unselected'
       }
     },
     methods: {
+      /* return an array only with features from the cell */
+      getFeatures: function (cell) {
+        return Object.keys(cell).filter(prop => (prop !== 'role' && prop !== 'value'))
+      },
+      /* return true if even one inflection has fullMatch with the cell */
+      compareLexemesToCell: function (cell) {
+        let cellFeatures = this.getFeatures(cell)
+
+        return this.inflectionData.homonym.lexemes.some(lexeme => 
+          lexeme.inflections.some(inflection => 
+            cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
+          )
+        )
+      },
+      /* return true if even on cell has fullMatch */
+      findFullMatchInView: function (view) {
+        return view.wideTable.rows.some(row =>
+          row.cells.some(cell => (cell.role === 'data') && this.compareLexemesToCell(cell))
+        )
+      },
+      /* filter array of views that has full match */
+      filterViewsWithFullMatch: function (viewsArray) {
+        return viewsArray.filter(view => this.findFullMatchInView(view))
+      },
+      /* returns only those vies from viewsArray that has even one fullMatch */
       getViewsByPartOfSpeach: function (partOfSpeach) {
-        return this.viewSet.getViews(partOfSpeach)
+        return this.filterViewsWithFullMatch(this.viewSet.getViews(partOfSpeach))
       },
       initViewSet: function () {
         this.viewSet = new ViewSet(this.inflectionData, this.locale)

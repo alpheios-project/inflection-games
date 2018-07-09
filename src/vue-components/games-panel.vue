@@ -25,6 +25,7 @@
 		<selected-game-panel
 			:selectedGameVariantReady = "selectedGameVariantReady"
 			:selectedGameVariant = "selectedGameVariant"
+			:changedGame = "changedGame"
 		></selected-game-panel>
 	</div>
 </template>
@@ -48,12 +49,13 @@
       inflectionDataPanel: InflectionDataPanel,
       selectedGamePanel: SelectedGamePanel
     },
-    data: function () {
+    data () {
       return {
         draggable: true,
         interactInstance: undefined,
         selectedGameVariant: {},
-        selectedGameVariantReady: false
+        selectedGameVariantReady: false,
+        changedGame: 0
       }
     },
     props: {
@@ -77,16 +79,10 @@
       	}
       },
       inflectionDataFinal: function () {
-      	if (this.data.inflectionDataReady) {
-      	  return this.data.inflectionData
-      	}
-      	return {}
+      	return this.data.inflectionDataReady ? this.data.inflectionData : {}
       },
       definitionsFinal: function () {
-      	if (this.data.definitionsDataReady) {
-      	  return this.data.definitions
-      	}
-      	return {}
+      	return this.data.definitionsDataReady ? this.data.definitions : {}
       },
       showFeaturesPanel: function () {
       	return this.homonym.lexemes && this.homonym.lexemes.length > 0
@@ -102,6 +98,7 @@
       selectedGame (gameVariant) {
       	this.selectedGameVariant = gameVariant
       	this.selectedGameVariantReady = true
+      	this.changedGame = this.changedGame + 1
       }
     },
     mounted () {
