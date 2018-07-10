@@ -1,5 +1,5 @@
 <template>
-    <div class="alpheios-games-panel__wide_table" v-if="gameTable">
+    <div class="alpheios-inflection-game-table" v-if="gameTable">
         <div class="infl-prdgm-tbl">
             <div class="infl-prdgm-tbl__row" v-for="row in gameTable.rows">
                 <div 
@@ -15,23 +15,10 @@
 </template>
 <script>
   export default {
-    name: 'InflectionTablePanel',
-    data () {
-      return {
-        gameTable: null
-      }
-    },
+    name: 'InflectionGameTable',
     props: {
-      data: {
-        type: [Object, Boolean],
-        required: true
-      },
-      inflectionData: {
-        type: [Object],
-        required: true
-      },
-      changedGame: {
-        type: Number,
+      selectedGame: {
+        type: Object,
         required: true
       },
       finishGameFlag: {
@@ -47,12 +34,12 @@
         required: true
       }
     },
+    computed: {
+      gameTable: function () {
+        return this.selectedGame.gameTable
+      }
+    },
     watch: {
-      'changedGame': function (val) {
-        if (this.data && this.data.rows) {
-          this.createGameTable()
-        }
-      },
       'finishGameFlag': function (flag) {
         if (flag) {
           this.finishGame()
@@ -68,43 +55,7 @@
         this.checkIfLastUnCovered()
       }
     },
-    mounted () {
-      if (this.data && this.data.rows) {
-        this.createGameTable()
-      }
-    },
     methods: {
-      createGameTable: function () {
-        this.gameTable = null
-        let table = { rows: [] }
-
-        this.data.rows.forEach(row => {
-          let cells = []
-          row.cells.forEach(cell => {
-            cell.fullMatch = cell.role === 'data' ? this.compareLexemesToCell(cell) : null
-            cell.hidden = cell.role === 'data' ? true : false
-            cells.push(Object.assign({}, cell))
-          })
-          table.rows.push({ cells: cells })
-        })
-
-        this.gameTable = table
-      },
-      getFeatures: function (cell) {
-        let ignoreProps = ['role', 'value', 'hidden', 'fullMatch']
-        return Object.keys(cell).filter(prop => (ignoreProps.indexOf(prop) === -1))
-      },
-      compareLexemesToCell: function (cell) {
-        let cellFeatures = this.getFeatures(cell)
-
-        return this.inflectionData.homonym.lexemes.some(lexeme => 
-          lexeme.inflections.some(inflection => 
-            cellFeatures.every(feature => {
-              return inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature]
-            })
-          )
-        )
-      },
       cellClassesLabel: function (cell) {
         return 'infl-prdgm-tbl-cell--label'
       },

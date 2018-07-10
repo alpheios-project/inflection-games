@@ -1,45 +1,48 @@
 <template>
-	<div class="alpheios-definitions-panel">
+	<div class="alpheios-definitions-block">
 		<p 	
 			v-if = "definitions.length === 1"
-			class = "alpheios-definitions-panel__item"
-		>{{ definitions[0] }}</p>
+			class = "alpheios-definitions-block__single"
+		>{{ singleDefinition }}</p>
 
 		<ul 
 			v-if = "definitions.length > 1"
-			class = "alpheios-definitions-panel__definitions_list"
+			class = "alpheios-definitions-block__multiple"
 		>
 			<li 
 				v-for = "(definition, indexD) in definitions" 
 				:key = "indexD"
-				class = "alpheios-definitions-panel__item"
+				class = ""alpheios-definitions-block__multiple__item"
 			>{{ definition }}</li>
 		</ul>
 	</div>
 </template>
 <script>
   export default {
-    name: 'DefinitionsPanel',
+    name: 'DefinitionsBlock',
     props: {
       definitions: {
       	type: Array,
         required: true
       }
     },
-    methods: {
+    computed: {
+      singleDefinition: function () {
+      	return this.definitions[0]
+      }
     }
   }
 </script>
-<style  lang="scss">
-	.alpheios-definitions-panel {
+<style  lang="scss" scoped>
+	.alpheios-definitions-block {
 	  display: inline-block;
 	  vertical-align: top;
 	}
 
-	.alpheios-definitions-panel__item {
+	.alpheios-definitions-block__single {
 	  margin: 0;
 	}
-	.alpheios-definitions-panel__definitions_list {
+	.alpheios-definitions-block__multiple {
 	  margin: 0;
       padding-left: 20px;
 	}

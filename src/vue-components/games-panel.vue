@@ -1,60 +1,77 @@
 <template>
-	<div id="alpheios-games-panel" v-show="visible" :style="mainstyles">
-		<span class="alpheios-games-panel__close-btn" @click="closePanel">
-              <close-icon></close-icon>
-        </span>
+	<div 
+		id = "alpheios-games-panel"
+		class = "auk"
+		v-show = "visible" 
+		:style = "mainstyles">
 
-		<welcome-panel></welcome-panel>
-		<features-panel 
+        <icon-button 
+        	@iconClickEvent = 'closePanel'
+        	tooltipText = "Close"
+        	tooltipDirection = "left"
+        	:additionalStyles = "stylesForTooltipCloseIcon"
+        ><close-icon></close-icon></icon-button>
+
+		<title-block
+			v-if = "homonym.targetWord"
+			:word = "homonym.targetWord"
+		></title-block>
+		<lexemes-data-block 
 			v-if = "showFeaturesPanel"
 			:lexemes = "homonym.lexemes" 
 			:definitionsDataReady = "data.definitionsDataReady"
 			:definitions = "definitionsFinal"
-		></features-panel>
+		></lexemes-data-block>
 
-		<inflection-data-panel 
+		<inflection-views-games 
 			v-if = "showInflectionsPanel"
-			:inflectionData = "inflectionDataFinal"
+			:gamesList = "gamesSet.gamesList"
 			:locale = "data.locale"
-			@selectedGame = "selectedGame"
+			@selectedGameEvent = "selectedGameEvent"
 
-			:selectedGameVariantReady = "selectedGameVariantReady"
-			:selectedGameVariant = "selectedGameVariant"
-		></inflection-data-panel>
+			:selectedGameReady = "selectedGameReady"
+			:selectedGame = "selectedGame"
+		></inflection-views-games>
 
-		<selected-game-panel
-			:selectedGameVariantReady = "selectedGameVariantReady"
-			:selectedGameVariant = "selectedGameVariant"
+		<selected-game-block
+			:selectedGameReady = "selectedGameReady"
+			:selectedGame = "selectedGame"
 			:changedGame = "changedGame"
-		></selected-game-panel>
+		></selected-game-block>
 	</div>
 </template>
 <script>
   import CloseIcon from '@/images/inline-icons/close.svg'
+  import IconButton from '@/vue-components/common-components/icon-button.vue'
+
   import interact from 'interactjs'
   
-  import WelcomePanel from '@/vue-components/welcome-panel.vue'
-  import FeaturesPanel from '@/vue-components/lexeme-data-panels/features-panel.vue'
-  import InflectionDataPanel from '@/vue-components/lexeme-data-panels/inflection-data-panel.vue'
-  import SelectedGamePanel from '@/vue-components/selected-game-panel.vue'
+  import TitleBlock from '@/vue-components/header-components/title-block.vue'
+  import LexemesDataBlock from '@/vue-components/header-components/lexemes-data-block.vue'
+  import InflectionViewsGames from '@/vue-components/header-components/inflection-views-games.vue'
+  import SelectedGameBlock from '@/vue-components/selected-game-block.vue'
 
-  import WindowServices from '@/services/window-services.js'
+  import WindowServices from '@/lib/window-services.js'
+  import GamesSet from '@/lib/games-set.js'
 
   export default {
     name: 'GamePanel',
     components: {
       closeIcon: CloseIcon,
-      welcomePanel: WelcomePanel,
-      featuresPanel: FeaturesPanel,
-      inflectionDataPanel: InflectionDataPanel,
-      selectedGamePanel: SelectedGamePanel
+      iconButton: IconButton,
+
+      titleBlock: TitleBlock,
+      lexemesDataBlock: LexemesDataBlock,
+      InflectionViewsGames: InflectionViewsGames,
+
+      selectedGameBlock: SelectedGameBlock
     },
     data () {
       return {
         draggable: true,
         interactInstance: undefined,
-        selectedGameVariant: {},
-        selectedGameVariantReady: false,
+        selectedGame: {},
+        selectedGameReady: false,
         changedGame: 0
       }
     },
@@ -78,6 +95,16 @@
       	  'z-index': this.data.zIndex
       	}
       },
+      stylesForTooltipCloseIcon: function () {
+      	return {
+      	  'position': 'absolute',
+      	  'right': '5px',
+      	  'width': '30px'
+      	}
+      },
+      gamesSet: function () {
+      	return this.data.inflectionDataReady && this.data.locale ? new GamesSet(this.data.inflectionData, this.data.locale) : {}
+      },
       inflectionDataFinal: function () {
       	return this.data.inflectionDataReady ? this.data.inflectionData : {}
       },
@@ -96,14 +123,14 @@
       	this.clearData()
         this.$emit('close')
       },
-      selectedGame (gameVariant) {
-      	this.selectedGameVariant = gameVariant
-      	this.selectedGameVariantReady = true
+      selectedGameEvent (gameVariant) {
+      	this.selectedGame = this.gamesSet.getViewByGameListItem(gameVariant)
+      	this.selectedGameReady = true
       	this.changedGame = this.changedGame + 1
       },
       clearData () {
-        this.selectedGameVariant = {}
-        this.selectedGameVariantReady = false
+        this.selectedGame = {}
+        this.selectedGameReady = false
         this.changedGame = 0
       }
     },

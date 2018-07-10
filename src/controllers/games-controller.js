@@ -1,6 +1,6 @@
 import Vue from 'vue/dist/vue' // Vue in a runtime + compiler configuration
 import GamesPanel from '@/vue-components/games-panel.vue'
-import WindowServices from '@/services/window-services.js'
+import WindowServices from '@/lib/window-services.js'
 import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
 
 export default class GamesController {

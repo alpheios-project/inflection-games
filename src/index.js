@@ -1,5 +1,5 @@
-import WelcomePanel from '@/vue-components/welcome-panel.vue'
-import GamesController from '@/controllers/games-controller.js'
-import WindowServices from '@/services/window-services.js'
+import Style from './styles/style.scss'
 
-export { WelcomePanel, GamesController, WindowServices }
+import GamesController from '@/controllers/games-controller.js'
+
+export { Style, GamesController }

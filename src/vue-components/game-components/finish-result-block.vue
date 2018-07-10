@@ -1,14 +1,11 @@
 <template>
-	<div
-		
-		:class = "resultClasses"
-	>
+	<div :class = "resultClasses">
 		{{ resultLabel }}
 	</div>
 </template>
 <script>
   export default {
-    name: 'FinishResultPanel',
+    name: 'FinishResultBlock',
     props: {
       result: {
         type: [Boolean, String],
@@ -18,9 +15,9 @@
     computed: {
       resultClasses: function () {
       	return {
-      		'alpheios-selected_game_panel__result': true,
-			'alpheios-selected_game_panel__result_success': this.successResult,
-			'alpheios-selected_game_panel__result_failed': this.failedResult
+      		'alpheios-finish-result-block': true,
+			    'alpheios-finish-result-block__success': this.successResult,
+			    'alpheios-finish-result-block__failed': this.failedResult
 		}
       },
       resultLabel: function () {
@@ -39,7 +36,8 @@
   }
 </script>
 <style  lang="scss">
-  .alpheios-selected_game_panel__result {
+  @import "../../styles/stat";
+  .alpheios-finish-result-block {
     
     text-align: center;
 
@@ -69,13 +67,13 @@
 
     visibility: hidden;
 
-	background: #fff;
+	  background: #fff;
     box-shadow: 5px 5px 25px #fff;
     border-radius: 10px;
   }
 
-  .alpheios-selected_game_panel__result_success {
-  	color: #099f20;
+  .alpheios-finish-result-block__success {
+  	color: $alpheios-stat-block-success;
 
   	-webkit-transform: translateY(-150px);
     -moz-transform: translateY(-150px);
@@ -89,8 +87,8 @@
     opacity: 0.8;
   }
 
-  .alpheios-selected_game_panel__result_failed {
-  	color: #881c07;
+  .alpheios-finish-result-block__failed {
+  	color: $alpheios-stat-block-failed;
 
   	-webkit-transform: translateY(-150px);
     -moz-transform: translateY(-150px);
