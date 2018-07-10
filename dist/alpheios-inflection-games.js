@@ -25541,11 +25541,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     clicksClass: function () {
-    	return {
-    	  'alpheios-stat-block__smallColor': (this.clicks / this.maxClicks) <= 0.33,
-    	  'alpheios-stat-block__mediumColor': (this.clicks / this.maxClicks) > 0.33 && (this.clicks / this.maxClicks) <= 0.66,
-    	  'alpheios-stat-block__bigColor': (this.clicks / this.maxClicks) > 0.66
-    	}
+      return {
+        'alpheios-stat-block__smallColor': (this.clicks / this.maxClicks) <= 0.33,
+        'alpheios-stat-block__mediumColor': (this.clicks / this.maxClicks) > 0.33 && (this.clicks / this.maxClicks) <= 0.66,
+        'alpheios-stat-block__bigColor': (this.clicks / this.maxClicks) > 0.66
+      }
     }
   }
 });

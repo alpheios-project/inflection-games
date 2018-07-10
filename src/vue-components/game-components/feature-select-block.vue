@@ -68,11 +68,13 @@
   }
 </script>
 <style  lang="scss" scoped>
+  @import "../../styles/alpheios";
+
   .alpheios-features-select-block {
   	display: block;
     width: 145px;
     float: left;
-    border-right: 1px dashed;
+    border-right: 1px dashed $alpheios-sidebar-header-border-color;
   }
   .alpheios-features-select-block__title {
   	font-weight: bold;

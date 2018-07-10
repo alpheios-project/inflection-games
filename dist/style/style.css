@@ -7669,14 +7669,16 @@ div.infl-prdgm-tbl-cell--full-match[data-v-51645c47] {
   color: #099f20;
 }
 
-
+/***************** panel settings **********************/
 .alpheios-stat-block[data-v-bbcaacc0] {
   text-align: center;
 }
 .alpheios-stat-block__list[data-v-bbcaacc0] {
-  padding: 0;
+  padding: 10px;
   margin: 0 0 10px;
   list-style: none;
+  display: inline-block;
+  border: 1px dashed #B8B7B5;
 }
 .alpheios-stat-block__list__item[data-v-bbcaacc0] {
   display: inline-block;
@@ -7710,12 +7712,12 @@ div.infl-prdgm-tbl-cell--full-match[data-v-51645c47] {
   color: #881c07;
 }
 
-
+/***************** panel settings **********************/
 .alpheios-features-select-block[data-v-30aecb3f] {
   display: block;
   width: 145px;
   float: left;
-  border-right: 1px dashed;
+  border-right: 1px dashed #B8B7B5;
 }
 .alpheios-features-select-block__title[data-v-30aecb3f] {
   font-weight: bold;
