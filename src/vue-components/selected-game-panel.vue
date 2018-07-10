@@ -13,7 +13,7 @@
         :successGames = "successGames"
       ></stat-panel>
 
-      <div :class = "{ 'alpheios-selected_game_panel__has_featureblock': featuresList }" >
+      <div :class = "{ 'alpheios-selected_game_panel__game': true, 'alpheios-selected_game_panel__has_featureblock': featuresList }" >
         <feature-select-panel 
           v-if = "featuresList"
 
@@ -24,6 +24,7 @@
           :inflection-data = "selectedView.inflectionData"
 
           @selectFeature = selectFeature
+          @incrementClicks = "incrementClicks"
         ></feature-select-panel>
 
   			<inflection-table-panel 
@@ -36,12 +37,18 @@
           :clicks = "clicks"
           @incrementClicks = "incrementClicks"
           @incrementSuccessGames = "incrementSuccessGames"
+          @incrementFailedGames = "incrementFailedGames"
 
           :selectedFeature = "selectedFeature"
           :selectedFeatureChange = "selectedFeatureChange"
         ></inflection-table-panel>
-      </div><!--alpheios-selected_game_panel__has_featureblock-->
 
+        <finish-result-panel
+          :result = "gameResult"
+        ></finish-result-panel>
+
+      </div><!--alpheios-selected_game_panel__has_featureblock-->
+    
 		</div>
 	</div>
 </template>
@@ -49,13 +56,15 @@
   import InflectionTablePanel from '@/vue-components/inflection-games-panels/inflection-table-panel.vue'
   import StatPanel from '@/vue-components/inflection-games-panels/stat-panel.vue'
   import FeatureSelectPanel from '@/vue-components/inflection-games-panels/feature-select-panel.vue'
+  import FinishResultPanel from '@/vue-components/inflection-games-panels/finish-result-panel.vue'
 
   export default {
     name: 'SelectedGamePanel',
     components: {
       inflectionTablePanel: InflectionTablePanel,
       statPanel: StatPanel,
-      featureSelectPanel: FeatureSelectPanel
+      featureSelectPanel: FeatureSelectPanel,
+      finishResultPanel: FinishResultPanel
     },
     data () {
       return {
@@ -66,7 +75,8 @@
         successGames: 0,
         featuresListChanged: 0,
         selectedFeature: false,
-        selectedFeatureChange: 0
+        selectedFeatureChange: 0,
+        gameResult: false
       }
     },
     props: {
@@ -133,9 +143,11 @@
       },
       incrementSuccessGames: function () {
         this.successGames = this.successGames + 1
+        this.gameResult = 'success'
       },
       incrementFailedGames: function () {
         this.failedGames = this.failedGames + 1
+        this.gameResult = 'failed'
       },
       getFeatures: function (cell) {
         let ignoreProps = ['role', 'value', 'hidden', 'fullMatch']
@@ -156,6 +168,7 @@
         this.finishGameFlag = false
         this.selectedFeatureChange = 0,
         this.selectedFeature = false
+        this.gameResult = false
       }
     }
   }
@@ -166,5 +179,17 @@
 	}
   .alpheios-selected_game_panel__has_featureblock .alpheios-games-panel__wide_table {
     margin-left: 155px;
+  }
+
+  .alpheios-selected_game_panel__has_featureblock:before,
+  .alpheios-selected_game_panel__has_featureblock:after {
+    clear: both;
+    display: table;
+    content: '';
+  }
+
+  .alpheios-selected_game_panel__game {
+    position: relative;
+    overflow: hidden;
   }
 </style>

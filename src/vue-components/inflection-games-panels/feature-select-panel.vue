@@ -69,6 +69,7 @@
       	let hasFullMatch = this.gameCheckTable.rows.some(row => row.cells.some(cell => cell.fullMatch && cell[featureName] === featureValue.value))
       	featureValue.status = hasFullMatch ? 'success' : 'failed'
       	this.$emit('selectFeature', featureName, featureValue.status, featureValue.value)
+      	this.$emit('incrementClicks')
       },
 
       getFeatures: function (cell) {
