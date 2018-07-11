@@ -1,6 +1,6 @@
 {
   "name": "alpheios-inflection-games",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Inflection games library for an Alpheios project",
   "main": "dist/alpheios-inflection-games.min.js",
   "scripts": {
