@@ -1,7 +1,4 @@
 #travis config
-- export COVERALLS_SERVICE_NAME=travis-ci
-- export COVERALLS_REPO_TOKEN=abc12345
-
 language: node_js
 node_js: 
  - "10.5.0"

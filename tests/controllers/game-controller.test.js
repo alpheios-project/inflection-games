@@ -20,7 +20,7 @@ describe('games-controller.test.js', () => {
     jest.clearAllMocks()
   })
 
-  it('1 GamesController - new constructor without arguments creates gamesComponent with draggable=false', () => {
+  it('1 GamesController - new constructor without arguments creates gamesComponent with draggable = false', () => {
     let gC = new GamesController()
     expect(gC.gamesComponent).toBeInstanceOf(Vue)
     expect(gC.gamesComponent.gamesData).toBeInstanceOf(Object)
@@ -28,7 +28,7 @@ describe('games-controller.test.js', () => {
     expect(gC.gamesComponent.gamesData.draggable).toBeFalsy()
   })
 
-  it('2 GamesController - new constructor with draggable === true creates gamesComponent with draggable=true', () => {
+  it('2 GamesController - new constructor with draggable === true creates gamesComponent with draggable = true', () => {
     let gC = new GamesController(true)
     expect(gC.gamesComponent.gamesData.draggable).toBeTruthy()
   })
