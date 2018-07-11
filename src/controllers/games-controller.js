@@ -6,6 +6,7 @@ import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables
 export default class GamesController {
   constructor (draggable) {
     this.gamesComponent = GamesController.gamesComponentCreate(draggable)
+    this.LDFAdapter = LDFAdapter
   }
 
   open () {
@@ -45,10 +46,12 @@ export default class GamesController {
 
   async getInflectionDataFromHomonym (homonym) {
     try {
-      let inflectionData = await LDFAdapter.getInflectionData(homonym)
+      let inflectionData = await this.LDFAdapter.getInflectionData(homonym)
+      console.info('*************************catch inflectionData', inflectionData)
       this.gamesComponent.gamesData.inflectionData = inflectionData
       this.gamesComponent.gamesData.inflectionDataReady = true
     } catch (error) {
+      console.info('*************************catch error', error.message)
       console.error(`LexicalQuery failed: ${error.message}`)
     }
   }
@@ -62,9 +65,9 @@ export default class GamesController {
       data: {
         currentGamesComponents: 'gamesPanel',
         visible: false,
-        homonym: {},
+        homonym: false,
         gamesData: {
-          draggable: draggable,
+          draggable: draggable || false,
           zIndex: 4000,
           inflectionData: null,
           inflectionDataReady: false,

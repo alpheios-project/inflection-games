@@ -88,7 +88,7 @@
         required: true
       },
       homonym: {
-        type: Object,
+        type: [Object, Boolean],
         required: true
       }
     },

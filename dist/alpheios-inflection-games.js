@@ -25707,7 +25707,7 @@ __webpack_require__.r(__webpack_exports__);
       required: true
     },
     homonym: {
-      type: Object,
+      type: [Object, Boolean],
       required: true
     }
   },
@@ -38095,6 +38095,7 @@ __webpack_require__.r(__webpack_exports__);
 class GamesController {
   constructor (draggable) {
     this.gamesComponent = GamesController.gamesComponentCreate(draggable)
+    this.LDFAdapter = alpheios_inflection_tables__WEBPACK_IMPORTED_MODULE_3__["LanguageDatasetFactory"]
   }
 
   open () {
@@ -38134,10 +38135,12 @@ class GamesController {
 
   async getInflectionDataFromHomonym (homonym) {
     try {
-      let inflectionData = await alpheios_inflection_tables__WEBPACK_IMPORTED_MODULE_3__["LanguageDatasetFactory"].getInflectionData(homonym)
+      let inflectionData = await this.LDFAdapter.getInflectionData(homonym)
+      console.info('*************************catch inflectionData', inflectionData)
       this.gamesComponent.gamesData.inflectionData = inflectionData
       this.gamesComponent.gamesData.inflectionDataReady = true
     } catch (error) {
+      console.info('*************************catch error', error.message)
       console.error(`LexicalQuery failed: ${error.message}`)
     }
   }
@@ -38151,9 +38154,9 @@ class GamesController {
       data: {
         currentGamesComponents: 'gamesPanel',
         visible: false,
-        homonym: {},
+        homonym: false,
         gamesData: {
-          draggable: draggable,
+          draggable: draggable || false,
           zIndex: 4000,
           inflectionData: null,
           inflectionDataReady: false,
@@ -38454,7 +38457,6 @@ class WindowServices {
       ]
       for (const zIndex of zIndexValues) {
         if (zIndex && zIndex !== 'auto') {
-          // Value has some numerical z-index value
           zIndexMax = Math.max(zIndexMax, zIndex)
         }
       }
