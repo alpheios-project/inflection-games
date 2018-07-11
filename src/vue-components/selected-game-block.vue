@@ -1,7 +1,7 @@
 <template>
 	<div class = "alpheios-selected-game-block">
 
-		<p class = "alpheios-selected-game-block__title">{{ selectedGameTitle }}</p>
+		<!-- <p class = "alpheios-selected-game-block__title">{{ selectedGameTitle }}</p> -->
 		<div 
 			v-if = "selectedGameReady"
 			class = "alpheios-selected-game-block__game_wrap"
@@ -18,6 +18,7 @@
           v-if = "featuresList"
 
           :selectedGame = "selectedGame"
+          :finishGameFlag = "finishGameFlag"
 
           @selectFeature = selectFeature
           @incrementClicks = "incrementClicks"
@@ -79,7 +80,11 @@
         required: true
       },
       selectedGame: {
-        type: Object,
+        type: [Object, Boolean],
+        required: true
+      },
+      changedGame: {
+        type: Number,
         required: true
       }
     },
@@ -90,7 +95,6 @@
       	} else {
       	  return `Selected game - ${this.selectedGame.partOfSpeech} - ${this.selectedGame.name}`
       	}
-
       },
       selectedView: function () {
       	return this.selectedGameReady ? this.selectedGame.view : null
@@ -114,10 +118,12 @@
       incrementSuccessGames: function () {
         this.successGames = this.successGames + 1
         this.gameResult = 'success'
+        this.finishGame()
       },
       incrementFailedGames: function () {
         this.failedGames = this.failedGames + 1
         this.gameResult = 'failed'
+        this.finishGame()
       },
       selectFeature: function (featureName, featureStatus, featureValue) {
         this.selectedFeature = {
@@ -135,6 +141,10 @@
         this.selectedFeatureChange = 0,
         this.selectedFeature = false
         this.gameResult = false
+        if (this.selectedGame) {
+          this.selectedGame.clearGameStuff()  
+        }
+        
       }
     }
   }

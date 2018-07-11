@@ -20,7 +20,6 @@ export default class WindowServices {
       ]
       for (const zIndex of zIndexValues) {
         if (zIndex && zIndex !== 'auto') {
-          // Value has some numerical z-index value
           zIndexMax = Math.max(zIndexMax, zIndex)
         }
       }

@@ -1,22 +1,17 @@
 <template>
   <div class = "alpheios-stat-block">
     <ul class = "alpheios-stat-block__list">
-      <li class="alpheios-stat-block__list__item alpheios-stat-block__list__item__clicks">
-        <p class="alpheios-stat-block__list__item__title">Made clicks</p>
-        <p class="alpheios-stat-block__list__item__value" :class="clicksClass">{{ clicks }}</p>
+      <li 
+        class="alpheios-stat-block__list__item"
+        :class = "item.class"
+        v-for="(item, index) in statItems" 
+        :key="index"
+      >
+        <p class="alpheios-stat-block__list__item__title">{{ item.title }}</p>
+        <p class="alpheios-stat-block__list__item__value" :class="item.classValue">{{ item.value }}</p>
       </li>
-      <li class="alpheios-stat-block__list__item alpheios-stat-block__list__item__max_clicks">
-        <p class="alpheios-stat-block__list__item__title">Max clicks</p>
-        <p class="alpheios-stat-block__list__item__value">{{ maxClicks }}</p>
-      </li>
-      <li class="alpheios-stat-block__list__item alpheios-stat-block__list__item__failed">
-        <p class="alpheios-stat-block__list__item__title">Failed</p>
-        <p class="alpheios-stat-block__list__item__value">{{ failedGames }}</p>
-      </li>
-      <li class="alpheios-stat-block__list__item alpheios-stat-block__list__item__success">
-        <p class="alpheios-stat-block__list__item__title">Success</p>
-        <p class="alpheios-stat-block__list__item__value">{{ successGames }}</p>
-      </li>
+
+      
     </ul>
   </div>
 </template>
@@ -48,6 +43,14 @@
           'alpheios-stat-block__mediumColor': (this.clicks / this.maxClicks) > 0.33 && (this.clicks / this.maxClicks) <= 0.66,
           'alpheios-stat-block__bigColor': (this.clicks / this.maxClicks) > 0.66
         }
+      },
+      statItems: function () {
+        return [
+          { title: 'Made clicks', value: this.clicks, class: "alpheios-stat-block__list__item__clicks", classValue: this.clicksClass },
+          { title: 'Max clicks', value: this.maxClicks, class: "alpheios-stat-block__list__item__max_clicks" },
+          { title: 'Failed', value: this.failedGames, class: "alpheios-stat-block__list__item__failed" },
+          { title: 'Success', value: this.successGames, class: "alpheios-stat-block__list__item__success" }
+        ]
       }
     }
   }

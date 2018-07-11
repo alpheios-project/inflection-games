@@ -3,18 +3,18 @@ import Game from '@/lib/game'
 export default class InflectionGame extends Game {
   constructor (view) {
     super(view)
-
-    this.createGameStuff(view)
+    this.view = view
+    this.createGameStuff()
   }
 
-  createGameStuff (view) {
+  createGameStuff () {
     let gameTable = { rows: [] }
     let featuresList = {}
 
-    view.wideTable.rows.forEach(row => {
+    this.view.wideTable.rows.forEach(row => {
       let cells = []
       row.cells.forEach(cell => {
-        cell.fullMatch = cell.role === 'data' ? InflectionGame.compareLexemesToCell(view.inflectionData, cell) : null
+        cell.fullMatch = cell.role === 'data' ? InflectionGame.compareLexemesToCell(this.view.inflectionData, cell) : null
         cell.hidden = cell.role === 'data'
         cells.push(Object.assign({}, cell))
 
@@ -25,6 +25,21 @@ export default class InflectionGame extends Game {
 
     this.gameTable = gameTable
     this.featuresList = featuresList
+  }
+
+  clearGameStuff () {
+    if (this.gameTable && this.gameTable.rows) {
+      this.gameTable.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          cell.hidden = cell.role === 'data'
+        })
+      })
+    }
+    if (this.featuresList) {
+      Object.values(this.featuresList).forEach(featureValues => {
+        featureValues.forEach(featVal => { featVal.status = null })
+      })
+    }
   }
 
   updateFeaturesList (cell, featuresList) {
@@ -49,7 +64,9 @@ export default class InflectionGame extends Game {
   }
 
   featureHasFullMatch (featureName, featureValue) {
-    return this.gameTable.rows.some(row => row.cells.some(cell => cell.fullMatch && cell[featureName] === featureValue.value))
+    return this.gameTable.rows.some(row => row.cells.some(cell => {
+      return cell.fullMatch && cell[featureName] === featureValue.value
+    }))
   }
 
   get featuresListTitles () {
@@ -61,7 +78,8 @@ export default class InflectionGame extends Game {
   }
 
   static getFeatures (cell) {
-    return Object.keys(cell).filter(prop => (prop !== 'role' && prop !== 'value'))
+    let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
+    return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
   }
 
   static compareLexemesToCell (inflectionData, cell) {

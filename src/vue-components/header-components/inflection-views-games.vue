@@ -14,21 +14,30 @@
       class = "alpheios-inflection-views-games__list"
     >
       <li 
-        class="alpheios-inflection-views-games__list__item"
-        :class="{ 'alpheios-inflection-views-games__list__item__selected': selectedId === gameVariant.view_id }"
-
-        v-for = "(gameVariant, index) in gamesList" 
-        :key = "index"
-        @click = "selectGame(gameVariant)"
-
-        v-show = "!showOnlySelected || selectedId === gameVariant.view_id"
+        v-for="(gameKey, indexGT) in gamesListKeys" 
+        :key="indexGT"
       >
+        <p 
+          class = "alpheios-inflection-views-games__game_title"
+          v-show = "!showOnlySelected || checkHasSelectedChildren(gameKey)"
+        >{{ gameKey }}</p>
+        <ul>
+          <li 
+            v-for="(gameItem, indexItem) in gamesList[gameKey]"
+            :key="indexItem"
 
-        <span >
-          <b>{{ gameVariant.partOfSpeech }}</b> - {{ gameVariant.view_name }}
-          
-        </span>
-        
+            class="alpheios-inflection-views-games__list__item"
+            :class="{ 'alpheios-inflection-views-games__list__item__selected': selectedId === gameItem.id }"
+
+            @click = "selectGame(gameItem)"
+            v-show = "!showOnlySelected || selectedId === gameItem.id"
+          >
+            <span >
+              <b>{{ gameItem.partOfSpeech }}</b> - {{ gameItem.name }}
+            </span>
+
+          </li>
+        </ul>
       </li>
     </ul>
 
@@ -51,7 +60,11 @@
     },
     props: {
       gamesList: {
-        type: Array,
+        type: Object,
+        required: true
+      },
+      gamesListChanged: {
+        type: Number,
         required: true
       },
       locale: {
@@ -63,27 +76,41 @@
         required: true
       },
       selectedGame: {
-        type: Object,
+        type: [Object, Boolean],
         required: true
       }
     },
+    watch: {
+      gamesListChanged () {
+        this.selectedId = null
+        this.showOnlySelected = false
+      }
+    },
     computed: {
-      inflectionViewsGamesTitle: function () {
-        return this.gamesList && this.gamesList.length > 0 ? 'Games variants' : 'There are no game variants for selected homonym'
+      gamesListKeys () {
+        return Object.keys(this.gamesList)
       },
-      showHideVariantsLabel: function () {
+
+      inflectionViewsGamesTitle () {
+        return this.gamesList && Object.values(this.gamesList).length > 0 ? 'Games variants' : 'There are no game variants for selected homonym'
+      },
+
+      showHideVariantsLabel () {
         return this.showOnlySelected ? 'show all' : 'hide unselected'
       }
     },
     methods: {
-      selectGame: function (gameVariant) {
-        this.selectedId = gameVariant.view_id
+      selectGame (gameVariant) {
+        this.selectedId = gameVariant.id
         this.$emit('selectedGameEvent', gameVariant)
       },
-      showHideVariants: function () {
+      showHideVariants () {
         if (this.selectedGameReady) {
           this.showOnlySelected = !this.showOnlySelected
         }
+      },
+      checkHasSelectedChildren (gameKey) {
+        return this.gamesList[gameKey].some(game => game.id === this.selectedId)
       }
     }
   }
@@ -121,6 +148,13 @@
 
   .alpheios-inflection-views-games__list {
     margin: 0;
+    list-style: none;
+    padding: 0;
+  }
+
+  .alpheios-inflection-views-games__game_title {
+    font-weight: bold;
+    margin: 0 0 5px 0;
   }
 
   .alpheios-inflection-views-games__list__item {

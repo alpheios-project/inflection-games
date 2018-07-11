@@ -1,7 +1,5 @@
 <template>
-	<div :class = "resultClasses">
-		{{ resultLabel }}
-	</div>
+	<div :class = "resultClasses">{{ resultLabel }}</div>
 </template>
 <script>
   export default {
@@ -54,10 +52,10 @@
     opacity: 0.1;
     font-weight: bold;
 
-    -webkit-transition: 2s ease-in-out;
-    -moz-transition: 2s ease-in-out;
-    -o-transition: 2s ease-in-out;
-    transition: 2s ease-in-out;
+    -webkit-transition: 0.5s ease-in-out;
+    -moz-transition: 0.5s ease-in-out;
+    -o-transition: 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
 
     -webkit-transform: translateY(0);
     -moz-transform: translateY(0);
@@ -85,6 +83,11 @@
 
     visibility: visible;
     opacity: 0.8;
+
+    -webkit-transition: 2s ease-in-out;
+    -moz-transition: 2s ease-in-out;
+    -o-transition: 2s ease-in-out;
+    transition: 2s ease-in-out;
   }
 
   .alpheios-finish-result-block__failed {
@@ -100,5 +103,10 @@
 
     font-size: 36px;
     opacity: 0.8;
+
+    -webkit-transition: 2s ease-in-out;
+    -moz-transition: 2s ease-in-out;
+    -o-transition: 2s ease-in-out;
+    transition: 2s ease-in-out;
   }
 </style>

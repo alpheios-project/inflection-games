@@ -26,6 +26,8 @@
 		<inflection-views-games 
 			v-if = "showInflectionsPanel"
 			:gamesList = "gamesSet.gamesList"
+      :gamesListChanged = "gamesListChanged"
+      
 			:locale = "data.locale"
 			@selectedGameEvent = "selectedGameEvent"
 
@@ -70,9 +72,10 @@
       return {
         draggable: true,
         interactInstance: undefined,
-        selectedGame: {},
+        selectedGame: false,
         selectedGameReady: false,
-        changedGame: 0
+        changedGame: 0,
+        gamesListChanged: 0
       }
     },
     props: {
@@ -103,6 +106,7 @@
       	}
       },
       gamesSet: function () {
+        this.gamesListChanged = this.gamesListChanged + 1
       	return this.data.inflectionDataReady && this.data.locale ? new GamesSet(this.data.inflectionData, this.data.locale) : {}
       },
       inflectionDataFinal: function () {
@@ -124,14 +128,15 @@
         this.$emit('close')
       },
       selectedGameEvent (gameVariant) {
-      	this.selectedGame = this.gamesSet.getViewByGameListItem(gameVariant)
+      	this.selectedGame = gameVariant
       	this.selectedGameReady = true
       	this.changedGame = this.changedGame + 1
       },
       clearData () {
-        this.selectedGame = {}
+        this.selectedGame = false
         this.selectedGameReady = false
         this.changedGame = 0
+        this.gamesListChanged = 0
       }
     },
     mounted () {

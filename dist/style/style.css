@@ -7623,6 +7623,12 @@
 }
 .alpheios-inflection-views-games__list[data-v-f3aa724e] {
   margin: 0;
+  list-style: none;
+  padding: 0;
+}
+.alpheios-inflection-views-games__game_title[data-v-f3aa724e] {
+  font-weight: bold;
+  margin: 0 0 5px 0;
 }
 .alpheios-inflection-views-games__list__item[data-v-f3aa724e] {
   cursor: pointer;
@@ -7768,10 +7774,10 @@ div.infl-prdgm-tbl-cell--full-match[data-v-51645c47] {
   line-height: 60px;
   opacity: 0.1;
   font-weight: bold;
-  -webkit-transition: 2s ease-in-out;
-  -moz-transition: 2s ease-in-out;
-  -o-transition: 2s ease-in-out;
-  transition: 2s ease-in-out;
+  -webkit-transition: 0.5s ease-in-out;
+  -moz-transition: 0.5s ease-in-out;
+  -o-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
   -webkit-transform: translateY(0);
   -moz-transform: translateY(0);
   -o-transform: translateY(0);
@@ -7792,6 +7798,10 @@ div.infl-prdgm-tbl-cell--full-match[data-v-51645c47] {
   font-size: 36px;
   visibility: visible;
   opacity: 0.8;
+  -webkit-transition: 2s ease-in-out;
+  -moz-transition: 2s ease-in-out;
+  -o-transition: 2s ease-in-out;
+  transition: 2s ease-in-out;
 }
 .alpheios-finish-result-block__failed {
   color: #881c07;
@@ -7803,6 +7813,10 @@ div.infl-prdgm-tbl-cell--full-match[data-v-51645c47] {
   visibility: visible;
   font-size: 36px;
   opacity: 0.8;
+  -webkit-transition: 2s ease-in-out;
+  -moz-transition: 2s ease-in-out;
+  -o-transition: 2s ease-in-out;
+  transition: 2s ease-in-out;
 }
 
 

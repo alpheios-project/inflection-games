@@ -25272,19 +25272,23 @@ __webpack_require__.r(__webpack_exports__);
     selectedGame: {
     	type: Object,
     	required: true
+    },
+    finishGameFlag: {
+      type: Boolean,
+      required: true
     }
   },
   computed: {
-    featuresKeys: function () {
+    featuresKeys () {
     	return this.selectedGame.featuresListTitles
     },
-    featuresList: function () {
+    featuresList () {
       return this.selectedGame.featuresList
     }
   },
 
   methods: {
-    featureItemClass: function (featureName, featureValue) {
+    featureItemClass (featureName, featureValue) {
     	return {
     	  'alpheios-features-select-block__list_values__item': true,
     	  'alpheios-features-select-block__list_values__item__success': featureValue.status === 'success',
@@ -25292,11 +25296,50 @@ __webpack_require__.r(__webpack_exports__);
     	}
     },
 
-    selectFeature: function (featureName, featureValue) {
-    	let hasFullMatch = this.selectedGame.featureHasFullMatch(featureName, featureValue)
-    	featureValue.status = hasFullMatch ? 'success' : 'failed'
-    	this.$emit('selectFeature', featureName, featureValue.status, featureValue.value)
-    	this.$emit('incrementClicks')
+    checkFeatureHasFullMatch (featureName, featureValue) {
+      return this.selectedGame.featureHasFullMatch(featureName, featureValue) ? 'success' : 'failed'
+    },
+
+    checkIfOnlyOneFeatureValueLeft (featureName) {
+      let hasOnlyOneFeatureLeft = this.featuresList[featureName].filter(featureValue => featureValue.status === null).length === 1
+      if (hasOnlyOneFeatureLeft) {
+        let lastFeatureValue = this.featuresList[featureName].find(featureValue => featureValue.status === null)
+
+        lastFeatureValue.status = this.checkFeatureHasFullMatch(featureName, lastFeatureValue)
+        return true
+      }
+      return false
+    },
+
+    checkIfChosenTheOnlyFeatureWithFullMatch (featureName) {
+      let uncheckedFeatureValues = this.featuresList[featureName].filter(featureValue => featureValue.status === null)
+
+      let allNotFullMatch = uncheckedFeatureValues.every(featureValue => !this.selectedGame.featureHasFullMatch(featureName, featureValue))
+      if (allNotFullMatch) {
+        uncheckedFeatureValues.forEach(featureValue => { featureValue.status = 'failed' })
+        return true
+      }
+      return false
+    },
+
+    checkIfFeatureAllValuesChosen (featureName) {
+      if (this.checkIfOnlyOneFeatureValueLeft(featureName)) {
+        return true
+      }
+      if (this.checkIfChosenTheOnlyFeatureWithFullMatch(featureName)) {
+        return true
+      }
+      return false
+    },
+
+    selectFeature (featureName, featureValue) {
+      if (!this.finishGameFlag) {
+        featureValue.status = this.checkFeatureHasFullMatch(featureName, featureValue)
+    	  this.$emit('selectFeature', featureName, featureValue.status, featureValue.value)
+    	  this.$emit('incrementClicks')
+
+        this.checkIfFeatureAllValuesChosen(featureName)
+      }
     }
   }
 });
@@ -25313,8 +25356,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
 //
 //
 //
@@ -25446,7 +25487,7 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     checkCell: function (cell) {
-      if (cell.role === 'data' && cell.hidden) {
+      if (cell.role === 'data' && cell.hidden && !this.finishGameFlag) {
         this.$emit('incrementClicks')
         cell.hidden = false
         if (cell.fullMatch) {
@@ -25477,7 +25518,7 @@ __webpack_require__.r(__webpack_exports__);
         row.cells.filter(cell => cell.role === 'data' && !cell.fullMatch).every(cell => !cell.hidden)
       )
       if (onlyFullMatchUncovered) {
-        this.$emit('incrementFailedGames')
+        this.$emit('incrementSuccessGames')
         this.finishGame()
       }
     }
@@ -25496,11 +25537,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
 //
 //
 //
@@ -25546,6 +25582,14 @@ __webpack_require__.r(__webpack_exports__);
         'alpheios-stat-block__mediumColor': (this.clicks / this.maxClicks) > 0.33 && (this.clicks / this.maxClicks) <= 0.66,
         'alpheios-stat-block__bigColor': (this.clicks / this.maxClicks) > 0.66
       }
+    },
+    statItems: function () {
+      return [
+        { title: 'Made clicks', value: this.clicks, class: "alpheios-stat-block__list__item__clicks", classValue: this.clicksClass },
+        { title: 'Max clicks', value: this.maxClicks, class: "alpheios-stat-block__list__item__max_clicks" },
+        { title: 'Failed', value: this.failedGames, class: "alpheios-stat-block__list__item__failed" },
+        { title: 'Success', value: this.successGames, class: "alpheios-stat-block__list__item__success" }
+      ]
     }
   }
 });
@@ -25573,6 +25617,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _vue_components_selected_game_block_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/vue-components/selected-game-block.vue */ "./vue-components/selected-game-block.vue");
 /* harmony import */ var _lib_window_services_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/lib/window-services.js */ "./lib/window-services.js");
 /* harmony import */ var _lib_games_set_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/lib/games-set.js */ "./lib/games-set.js");
+//
+//
 //
 //
 //
@@ -25645,9 +25691,10 @@ __webpack_require__.r(__webpack_exports__);
     return {
       draggable: true,
       interactInstance: undefined,
-      selectedGame: {},
+      selectedGame: false,
       selectedGameReady: false,
-      changedGame: 0
+      changedGame: 0,
+      gamesListChanged: 0
     }
   },
   props: {
@@ -25678,6 +25725,7 @@ __webpack_require__.r(__webpack_exports__);
     	}
     },
     gamesSet: function () {
+      this.gamesListChanged = this.gamesListChanged + 1
     	return this.data.inflectionDataReady && this.data.locale ? new _lib_games_set_js__WEBPACK_IMPORTED_MODULE_8__["default"](this.data.inflectionData, this.data.locale) : {}
     },
     inflectionDataFinal: function () {
@@ -25699,14 +25747,15 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('close')
     },
     selectedGameEvent (gameVariant) {
-    	this.selectedGame = this.gamesSet.getViewByGameListItem(gameVariant)
+    	this.selectedGame = gameVariant
     	this.selectedGameReady = true
     	this.changedGame = this.changedGame + 1
     },
     clearData () {
-      this.selectedGame = {}
+      this.selectedGame = false
       this.selectedGameReady = false
       this.changedGame = 0
+      this.gamesListChanged = 0
     }
   },
   mounted () {
@@ -25814,6 +25863,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -25831,7 +25889,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: {
     gamesList: {
-      type: Array,
+      type: Object,
+      required: true
+    },
+    gamesListChanged: {
+      type: Number,
       required: true
     },
     locale: {
@@ -25843,27 +25905,41 @@ __webpack_require__.r(__webpack_exports__);
       required: true
     },
     selectedGame: {
-      type: Object,
+      type: [Object, Boolean],
       required: true
     }
   },
+  watch: {
+    gamesListChanged () {
+      this.selectedId = null
+      this.showOnlySelected = false
+    }
+  },
   computed: {
-    inflectionViewsGamesTitle: function () {
-      return this.gamesList && this.gamesList.length > 0 ? 'Games variants' : 'There are no game variants for selected homonym'
+    gamesListKeys () {
+      return Object.keys(this.gamesList)
     },
-    showHideVariantsLabel: function () {
+
+    inflectionViewsGamesTitle () {
+      return this.gamesList && Object.values(this.gamesList).length > 0 ? 'Games variants' : 'There are no game variants for selected homonym'
+    },
+
+    showHideVariantsLabel () {
       return this.showOnlySelected ? 'show all' : 'hide unselected'
     }
   },
   methods: {
-    selectGame: function (gameVariant) {
-      this.selectedId = gameVariant.view_id
+    selectGame (gameVariant) {
+      this.selectedId = gameVariant.id
       this.$emit('selectedGameEvent', gameVariant)
     },
-    showHideVariants: function () {
+    showHideVariants () {
       if (this.selectedGameReady) {
         this.showOnlySelected = !this.showOnlySelected
       }
+    },
+    checkHasSelectedChildren (gameKey) {
+      return this.gamesList[gameKey].some(game => game.id === this.selectedId)
     }
   }
 });
@@ -26055,6 +26131,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -26088,7 +26165,11 @@ __webpack_require__.r(__webpack_exports__);
       required: true
     },
     selectedGame: {
-      type: Object,
+      type: [Object, Boolean],
+      required: true
+    },
+    changedGame: {
+      type: Number,
       required: true
     }
   },
@@ -26099,7 +26180,6 @@ __webpack_require__.r(__webpack_exports__);
     	} else {
     	  return `Selected game - ${this.selectedGame.partOfSpeech} - ${this.selectedGame.name}`
     	}
-
     },
     selectedView: function () {
     	return this.selectedGameReady ? this.selectedGame.view : null
@@ -26123,10 +26203,12 @@ __webpack_require__.r(__webpack_exports__);
     incrementSuccessGames: function () {
       this.successGames = this.successGames + 1
       this.gameResult = 'success'
+      this.finishGame()
     },
     incrementFailedGames: function () {
       this.failedGames = this.failedGames + 1
       this.gameResult = 'failed'
+      this.finishGame()
     },
     selectFeature: function (featureName, featureStatus, featureValue) {
       this.selectedFeature = {
@@ -26144,6 +26226,10 @@ __webpack_require__.r(__webpack_exports__);
       this.selectedFeatureChange = 0,
       this.selectedFeature = false
       this.gameResult = false
+      if (this.selectedGame) {
+        this.selectedGame.clearGameStuff()  
+      }
+      
     }
   }
 });
@@ -26320,7 +26406,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { class: _vm.resultClasses }, [
-    _vm._v("\n\t" + _vm._s(_vm.resultLabel) + "\n")
+    _vm._v(_vm._s(_vm.resultLabel))
   ])
 }
 var staticRenderFns = []
@@ -26413,80 +26499,34 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "alpheios-stat-block" }, [
-    _c("ul", { staticClass: "alpheios-stat-block__list" }, [
-      _c(
-        "li",
-        {
-          staticClass:
-            "alpheios-stat-block__list__item alpheios-stat-block__list__item__clicks"
-        },
-        [
-          _c("p", { staticClass: "alpheios-stat-block__list__item__title" }, [
-            _vm._v("Made clicks")
-          ]),
-          _vm._v(" "),
-          _c(
-            "p",
-            {
-              staticClass: "alpheios-stat-block__list__item__value",
-              class: _vm.clicksClass
-            },
-            [_vm._v(_vm._s(_vm.clicks))]
-          )
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "li",
-        {
-          staticClass:
-            "alpheios-stat-block__list__item alpheios-stat-block__list__item__max_clicks"
-        },
-        [
-          _c("p", { staticClass: "alpheios-stat-block__list__item__title" }, [
-            _vm._v("Max clicks")
-          ]),
-          _vm._v(" "),
-          _c("p", { staticClass: "alpheios-stat-block__list__item__value" }, [
-            _vm._v(_vm._s(_vm.maxClicks))
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "li",
-        {
-          staticClass:
-            "alpheios-stat-block__list__item alpheios-stat-block__list__item__failed"
-        },
-        [
-          _c("p", { staticClass: "alpheios-stat-block__list__item__title" }, [
-            _vm._v("Failed")
-          ]),
-          _vm._v(" "),
-          _c("p", { staticClass: "alpheios-stat-block__list__item__value" }, [
-            _vm._v(_vm._s(_vm.failedGames))
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "li",
-        {
-          staticClass:
-            "alpheios-stat-block__list__item alpheios-stat-block__list__item__success"
-        },
-        [
-          _c("p", { staticClass: "alpheios-stat-block__list__item__title" }, [
-            _vm._v("Success")
-          ]),
-          _vm._v(" "),
-          _c("p", { staticClass: "alpheios-stat-block__list__item__value" }, [
-            _vm._v(_vm._s(_vm.successGames))
-          ])
-        ]
-      )
-    ])
+    _c(
+      "ul",
+      { staticClass: "alpheios-stat-block__list" },
+      _vm._l(_vm.statItems, function(item, index) {
+        return _c(
+          "li",
+          {
+            key: index,
+            staticClass: "alpheios-stat-block__list__item",
+            class: item.class
+          },
+          [
+            _c("p", { staticClass: "alpheios-stat-block__list__item__title" }, [
+              _vm._v(_vm._s(item.title))
+            ]),
+            _vm._v(" "),
+            _c(
+              "p",
+              {
+                staticClass: "alpheios-stat-block__list__item__value",
+                class: item.classValue
+              },
+              [_vm._v(_vm._s(item.value))]
+            )
+          ]
+        )
+      })
+    )
   ])
 }
 var staticRenderFns = []
@@ -26559,6 +26599,7 @@ var render = function() {
         ? _c("inflection-views-games", {
             attrs: {
               gamesList: _vm.gamesSet.gamesList,
+              gamesListChanged: _vm.gamesListChanged,
               locale: _vm.data.locale,
               selectedGameReady: _vm.selectedGameReady,
               selectedGame: _vm.selectedGame
@@ -26652,42 +26693,65 @@ var render = function() {
     _c(
       "ul",
       { staticClass: "alpheios-inflection-views-games__list" },
-      _vm._l(_vm.gamesList, function(gameVariant, index) {
-        return _c(
-          "li",
-          {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value:
-                  !_vm.showOnlySelected ||
-                  _vm.selectedId === gameVariant.view_id,
-                expression:
-                  "!showOnlySelected || selectedId === gameVariant.view_id"
-              }
-            ],
-            key: index,
-            staticClass: "alpheios-inflection-views-games__list__item",
-            class: {
-              "alpheios-inflection-views-games__list__item__selected":
-                _vm.selectedId === gameVariant.view_id
+      _vm._l(_vm.gamesListKeys, function(gameKey, indexGT) {
+        return _c("li", { key: indexGT }, [
+          _c(
+            "p",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value:
+                    !_vm.showOnlySelected ||
+                    _vm.checkHasSelectedChildren(gameKey),
+                  expression:
+                    "!showOnlySelected || checkHasSelectedChildren(gameKey)"
+                }
+              ],
+              staticClass: "alpheios-inflection-views-games__game_title"
             },
-            on: {
-              click: function($event) {
-                _vm.selectGame(gameVariant)
-              }
-            }
-          },
-          [
-            _c("span", [
-              _c("b", [_vm._v(_vm._s(gameVariant.partOfSpeech))]),
-              _vm._v(
-                " - " + _vm._s(gameVariant.view_name) + "\n          \n        "
+            [_vm._v(_vm._s(gameKey))]
+          ),
+          _vm._v(" "),
+          _c(
+            "ul",
+            _vm._l(_vm.gamesList[gameKey], function(gameItem, indexItem) {
+              return _c(
+                "li",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value:
+                        !_vm.showOnlySelected || _vm.selectedId === gameItem.id,
+                      expression:
+                        "!showOnlySelected || selectedId === gameItem.id"
+                    }
+                  ],
+                  key: indexItem,
+                  staticClass: "alpheios-inflection-views-games__list__item",
+                  class: {
+                    "alpheios-inflection-views-games__list__item__selected":
+                      _vm.selectedId === gameItem.id
+                  },
+                  on: {
+                    click: function($event) {
+                      _vm.selectGame(gameItem)
+                    }
+                  }
+                },
+                [
+                  _c("span", [
+                    _c("b", [_vm._v(_vm._s(gameItem.partOfSpeech))]),
+                    _vm._v(" - " + _vm._s(gameItem.name) + "\n            ")
+                  ])
+                ]
               )
-            ])
-          ]
-        )
+            })
+          )
+        ])
       })
     )
   ])
@@ -26842,10 +26906,6 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "alpheios-selected-game-block" }, [
-    _c("p", { staticClass: "alpheios-selected-game-block__title" }, [
-      _vm._v(_vm._s(_vm.selectedGameTitle))
-    ]),
-    _vm._v(" "),
     _vm.selectedGameReady
       ? _c(
           "div",
@@ -26872,7 +26932,10 @@ var render = function() {
               [
                 _vm.featuresList
                   ? _c("feature-select-block", {
-                      attrs: { selectedGame: _vm.selectedGame },
+                      attrs: {
+                        selectedGame: _vm.selectedGame,
+                        finishGameFlag: _vm.finishGameFlag
+                      },
                       on: {
                         selectFeature: _vm.selectFeature,
                         incrementClicks: _vm.incrementClicks
@@ -38223,68 +38286,18 @@ class GamesSet {
   }
 
   createGamesList () {
-    this.gamesList = this.matchingGames.map(game => {
-      return {
-        'gameName': game.gameType,
-        'partOfSpeech': game.partOfSpeech,
-        'view_id': game.id,
-        'view_name': game.name
-      }
+    let gamesList = {}
+    this.matchingGames.forEach(game => { gamesList[game.gameType] = [] })
+
+    this.matchingGames.forEach(game => {
+      gamesList[game.gameType].push(game)
     })
+    this.gamesList = gamesList
   }
 
   getViewByGameListItem (gameListItem) {
     return this.matchingGames.find(game => game.id === gameListItem.view_id)
   }
-
-/*
-  createFilteredPartsOfSpeech () {
-    this.filteredPartsOfSpeech = this.partsOfSpeech.filter(partOfSpeech => this.viewSet.getViews(partOfSpeech).filter(view => view.hasComponentData).length > 0)
-  }
-
-  createGamesVariants () {
-    let variants = []
-
-    this.filteredPartsOfSpeech.forEach(partOfSpeech =>
-      this.getViewsByPartOfSpeech(partOfSpeech).forEach(view =>
-        variants.push({ partOfSpeech: partOfSpeech, view: view })
-      )
-    )
-    this.gamesVariants = variants
-  }
-
-  getViewByDataFromTheList (gameVariant) {
-    return this.viewSet.getViews(gameVariant.partOfSpeech).find(view => view.id === gameVariant.view_id)
-  }
-
-  getFeatures (cell) {
-    return Object.keys(cell).filter(prop => (prop !== 'role' && prop !== 'value'))
-  }
-
-  compareLexemesToCell (cell) {
-    let cellFeatures = this.getFeatures(cell)
-
-    return this.inflectionData.homonym.lexemes.some(lexeme =>
-      lexeme.inflections.some(inflection =>
-        cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
-      )
-    )
-  }
-
-  findFullMatchInView (view) {
-    return view.wideTable.rows.some(row =>
-      row.cells.some(cell => (cell.role === 'data') && this.compareLexemesToCell(cell))
-    )
-  }
-
-  filterViewsWithFullMatch (viewsArray) {
-    return viewsArray.filter(view => this.findFullMatchInView(view))
-  }
-
-  getViewsByPartOfSpeech (partOfSpeech) {
-    return this.filterViewsWithFullMatch(this.viewSet.getViews(partOfSpeech))
-  }
-  */
 }
 
 
@@ -38306,18 +38319,18 @@ __webpack_require__.r(__webpack_exports__);
 class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor (view) {
     super(view)
-
-    this.createGameStuff(view)
+    this.view = view
+    this.createGameStuff()
   }
 
-  createGameStuff (view) {
+  createGameStuff () {
     let gameTable = { rows: [] }
     let featuresList = {}
 
-    view.wideTable.rows.forEach(row => {
+    this.view.wideTable.rows.forEach(row => {
       let cells = []
       row.cells.forEach(cell => {
-        cell.fullMatch = cell.role === 'data' ? InflectionGame.compareLexemesToCell(view.inflectionData, cell) : null
+        cell.fullMatch = cell.role === 'data' ? InflectionGame.compareLexemesToCell(this.view.inflectionData, cell) : null
         cell.hidden = cell.role === 'data'
         cells.push(Object.assign({}, cell))
 
@@ -38328,6 +38341,21 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
     this.gameTable = gameTable
     this.featuresList = featuresList
+  }
+
+  clearGameStuff () {
+    if (this.gameTable && this.gameTable.rows) {
+      this.gameTable.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          cell.hidden = cell.role === 'data'
+        })
+      })
+    }
+    if (this.featuresList) {
+      Object.values(this.featuresList).forEach(featureValues => {
+        featureValues.forEach(featVal => { featVal.status = null })
+      })
+    }
   }
 
   updateFeaturesList (cell, featuresList) {
@@ -38352,7 +38380,9 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 
   featureHasFullMatch (featureName, featureValue) {
-    return this.gameTable.rows.some(row => row.cells.some(cell => cell.fullMatch && cell[featureName] === featureValue.value))
+    return this.gameTable.rows.some(row => row.cells.some(cell => {
+      return cell.fullMatch && cell[featureName] === featureValue.value
+    }))
   }
 
   get featuresListTitles () {
@@ -38364,7 +38394,8 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 
   static getFeatures (cell) {
-    return Object.keys(cell).filter(prop => (prop !== 'role' && prop !== 'value'))
+    let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
+    return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
   }
 
   static compareLexemesToCell (inflectionData, cell) {

@@ -82,7 +82,7 @@
       },
 
       checkCell: function (cell) {
-        if (cell.role === 'data' && cell.hidden) {
+        if (cell.role === 'data' && cell.hidden && !this.finishGameFlag) {
           this.$emit('incrementClicks')
           cell.hidden = false
           if (cell.fullMatch) {
@@ -113,7 +113,7 @@
           row.cells.filter(cell => cell.role === 'data' && !cell.fullMatch).every(cell => !cell.hidden)
         )
         if (onlyFullMatchUncovered) {
-          this.$emit('incrementFailedGames')
+          this.$emit('incrementSuccessGames')
           this.finishGame()
         }
       }
