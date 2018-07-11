@@ -25288,7 +25288,7 @@ __webpack_require__.r(__webpack_exports__);
   },
 
   methods: {
-    featureItemClass (featureName, featureValue) {
+    featureItemClass (featureValue) {
     	return {
     	  'alpheios-features-select-block__list_values__item': true,
     	  'alpheios-features-select-block__list_values__item__success': featureValue.status === 'success',
@@ -26366,7 +26366,7 @@ var render = function() {
                     "li",
                     {
                       key: indexFL,
-                      class: _vm.featureItemClass(featureName, featureValue),
+                      class: _vm.featureItemClass(featureValue),
                       on: {
                         click: function($event) {
                           _vm.selectFeature(featureName, featureValue)

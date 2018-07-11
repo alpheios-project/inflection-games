@@ -12,7 +12,7 @@
 
 				<ul class="alpheios-features-select-block__list_values">
 					<li
-						:class="featureItemClass(featureName, featureValue)"
+						:class="featureItemClass(featureValue)"
 						@click = "selectFeature(featureName, featureValue)"
 						v-for="(featureValue, indexFL) in featuresList[featureName]" 
 						:key="indexFL"
@@ -54,7 +54,7 @@
     },
 
     methods: {
-      featureItemClass (featureName, featureValue) {
+      featureItemClass (featureValue) {
       	return {
       	  'alpheios-features-select-block__list_values__item': true,
       	  'alpheios-features-select-block__list_values__item__success': featureValue.status === 'success',

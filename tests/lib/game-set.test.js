@@ -1,11 +1,10 @@
 /* eslint-env jest */
 /* eslint-disable no-unused-vars */
 import 'whatwg-fetch'
-import GamesSet from '@/lib/games-set.js'
-import Vue from 'vue/dist/vue' // Vue in a runtime + compiler configuration
 import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
 import {AlpheiosTuftsAdapter} from 'alpheios-morph-client'
 
+import GamesSet from '@/lib/games-set.js'
 import InflectionGame from '@/lib/games/inflection-game.js'
 
 describe('games-set.test.js', () => {
