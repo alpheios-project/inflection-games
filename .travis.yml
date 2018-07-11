@@ -4,6 +4,6 @@ node_js:
  - "10.5.0"
 notifications:
   slack: alpheiosproject:9WEA6UNyLr3U0bWIJctp1rqS
-after_deploy:
+after_install:
 - export COVERALLS_SERVICE_NAME=travis-ci
 - export COVERALLS_REPO_TOKEN=abc12345
