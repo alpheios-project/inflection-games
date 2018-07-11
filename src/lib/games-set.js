@@ -38,8 +38,4 @@ export default class GamesSet {
     })
     this.gamesList = gamesList
   }
-
-  getViewByGameListItem (gameListItem) {
-    return this.matchingGames.find(game => game.id === gameListItem.view_id)
-  }
 }

@@ -47,11 +47,9 @@ export default class GamesController {
   async getInflectionDataFromHomonym (homonym) {
     try {
       let inflectionData = await this.LDFAdapter.getInflectionData(homonym)
-      console.info('*************************catch inflectionData', inflectionData)
       this.gamesComponent.gamesData.inflectionData = inflectionData
       this.gamesComponent.gamesData.inflectionDataReady = true
     } catch (error) {
-      console.info('*************************catch error', error.message)
       console.error(`LexicalQuery failed: ${error.message}`)
     }
   }

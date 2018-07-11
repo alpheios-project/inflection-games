@@ -38136,11 +38136,9 @@ class GamesController {
   async getInflectionDataFromHomonym (homonym) {
     try {
       let inflectionData = await this.LDFAdapter.getInflectionData(homonym)
-      console.info('*************************catch inflectionData', inflectionData)
       this.gamesComponent.gamesData.inflectionData = inflectionData
       this.gamesComponent.gamesData.inflectionDataReady = true
     } catch (error) {
-      console.info('*************************catch error', error.message)
       console.error(`LexicalQuery failed: ${error.message}`)
     }
   }
@@ -38235,7 +38233,7 @@ __webpack_require__.r(__webpack_exports__);
 class Game {
   /* base class */
   constructor (view) {
-    this.partOfSpeech = view.partOfSpeech ? view.partOfSpeech : (view.paradigm ? view.paradigm.partOfSpeech : '')
+    this.partOfSpeech = view.partOfSpeech ? view.partOfSpeech : (view.paradigm ? view.paradigm.partOfSpeech : null)
     this.id = view.id
     this.name = view.name
   }
@@ -38296,10 +38294,6 @@ class GamesSet {
       gamesList[game.gameType].push(game)
     })
     this.gamesList = gamesList
-  }
-
-  getViewByGameListItem (gameListItem) {
-    return this.matchingGames.find(game => game.id === gameListItem.view_id)
   }
 }
 
