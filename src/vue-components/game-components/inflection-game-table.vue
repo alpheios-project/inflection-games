@@ -112,6 +112,7 @@
         let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
           row.cells.filter(cell => cell.role === 'data' && !cell.fullMatch).every(cell => !cell.hidden)
         )
+
         if (onlyFullMatchUncovered) {
           this.$emit('incrementSuccessGames')
           this.finishGame()

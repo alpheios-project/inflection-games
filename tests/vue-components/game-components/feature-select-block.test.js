@@ -25,9 +25,6 @@ describe('feature-select-block.test.js', () => {
     testInflectionData = await LDFAdapter.getInflectionData(testHomonym)
     testLocale = 'en-US'
 
-    gameSet = new GamesSet(testInflectionData, 'en-US')
-    testSelectedGame = gameSet.gamesList['Guess inflection'][0]
-
     featureFullMatch = new Feature('tense', 'present', Constants.LANG_GREEK)
     featureNotFullMatch = new Feature('number', 'dual', Constants.LANG_GREEK)
   })
@@ -36,6 +33,9 @@ describe('feature-select-block.test.js', () => {
     jest.spyOn(console, 'error')
     jest.spyOn(console, 'log')
     jest.spyOn(console, 'warn')
+
+    gameSet = new GamesSet(testInflectionData, 'en-US')
+    testSelectedGame = gameSet.gamesList['Guess inflection'][0]
 
     cmp = mount(FeatureSelectBlock, {
       propsData: {

@@ -25326,10 +25326,7 @@ __webpack_require__.r(__webpack_exports__);
       if (this.checkIfOnlyOneFeatureValueLeft(featureName)) {
         return true
       }
-      if (this.checkIfChosenTheOnlyFeatureWithFullMatch(featureName)) {
-        return true
-      }
-      return false
+      this.checkIfChosenTheOnlyFeatureWithFullMatch(featureName)
     },
 
     selectFeature (featureName, featureValue) {
@@ -25384,9 +25381,6 @@ __webpack_require__.r(__webpack_exports__);
       },
       failedResult: function () {
       	return this.result === 'failed'
-      },
-      noResult: function () {
-      	return this.result === false
       }
     }
   });
@@ -25451,6 +25445,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     'selectedFeatureChange': function () {
+      console.log('************************this.selectedFeature', this.selectedFeature)
       if (this.selectedFeature.status === 'success') {
         this.checkSuccessFeature()
       } 
@@ -25517,6 +25512,7 @@ __webpack_require__.r(__webpack_exports__);
       let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
         row.cells.filter(cell => cell.role === 'data' && !cell.fullMatch).every(cell => !cell.hidden)
       )
+
       if (onlyFullMatchUncovered) {
         this.$emit('incrementSuccessGames')
         this.finishGame()
@@ -25690,7 +25686,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   data () {
     return {
-      draggable: true,
       interactInstance: undefined,
       selectedGame: false,
       selectedGameReady: false,
