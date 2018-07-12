@@ -5,12 +5,14 @@
 		v-show = "visible" 
 		:style = "mainstyles">
 
-        <icon-button 
-        	@iconClickEvent = 'closePanel'
-        	tooltipText = "Close"
-        	tooltipDirection = "left"
-        	:additionalStyles = "stylesForTooltipCloseIcon"
-        ><close-icon></close-icon></icon-button>
+    <icon-button 
+     	@iconClickEvent = 'closePanel'
+     	tooltipText = "Close"
+     	tooltipDirection = "left"
+     	:additionalStyles = "stylesForTooltipCloseIcon"
+     >
+      <close-icon></close-icon>
+     </icon-button>
 
 		<title-block
 			v-if = "homonym.targetWord"

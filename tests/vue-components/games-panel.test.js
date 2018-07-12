@@ -50,8 +50,6 @@ describe('games-panel.test.js', () => {
   })
 
   it('2 GamePanel - mainstyles depends on zIndex property', () => {
-    cmp.setProps({ data: { zIndex: null } })
-
     expect(cmp.vm.mainstyles).toBeNull()
 
     cmp.setProps({ data: { zIndex: 2000 } })
