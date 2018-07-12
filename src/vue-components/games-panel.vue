@@ -57,7 +57,7 @@
   import GamesSet from '@/lib/games-set.js'
 
   export default {
-    name: 'GamePanel',
+    name: 'GamesPanel',
     components: {
       closeIcon: CloseIcon,
       iconButton: IconButton,
@@ -93,32 +93,30 @@
       }
     },
     computed: {
-      mainstyles: function () {
-      	return {
-      	  'z-index': this.data.zIndex
-      	}
+      mainstyles () {
+      	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
       },
-      stylesForTooltipCloseIcon: function () {
+      stylesForTooltipCloseIcon () {
       	return {
       	  'position': 'absolute',
       	  'right': '5px',
       	  'width': '30px'
       	}
       },
-      gamesSet: function () {
-        this.gamesListChanged = this.gamesListChanged + 1
-      	return this.data.inflectionDataReady && this.data.locale ? new GamesSet(this.data.inflectionData, this.data.locale) : {}
+      gamesSet () {
+        if (this.data.inflectionDataReady && this.data.locale) {
+          this.gamesListChanged = this.gamesListChanged + 1
+          return new GamesSet(this.data.inflectionData, this.data.locale)
+        }
+      	return null
       },
-      inflectionDataFinal: function () {
-      	return this.data.inflectionDataReady ? this.data.inflectionData : {}
+      definitionsFinal () {
+      	return this.data.definitionsDataReady ? this.data.definitions : null
       },
-      definitionsFinal: function () {
-      	return this.data.definitionsDataReady ? this.data.definitions : {}
-      },
-      showFeaturesPanel: function () {
+      showFeaturesPanel () {
       	return this.homonym.lexemes && this.homonym.lexemes.length > 0
       },
-      showInflectionsPanel: function () {
+      showInflectionsPanel () {
       	return this.data.inflectionDataReady && this.data.locale
       }
     },
@@ -135,8 +133,6 @@
       clearData () {
         this.selectedGame = false
         this.selectedGameReady = false
-        this.changedGame = 0
-        this.gamesListChanged = 0
       }
     },
     mounted () {

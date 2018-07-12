@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import 'whatwg-fetch'
 import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
-import {AlpheiosTuftsAdapter} from 'alpheios-morph-client'
+import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
 
 import GamesSet from '@/lib/games-set.js'
 import InflectionGame from '@/lib/games/inflection-game.js'

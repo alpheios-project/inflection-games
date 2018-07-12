@@ -25676,7 +25676,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'GamePanel',
+  name: 'GamesPanel',
   components: {
     closeIcon: _images_inline_icons_close_svg__WEBPACK_IMPORTED_MODULE_0___default.a,
     iconButton: _vue_components_common_components_icon_button_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -25712,32 +25712,30 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   computed: {
-    mainstyles: function () {
-    	return {
-    	  'z-index': this.data.zIndex
-    	}
+    mainstyles () {
+    	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
     },
-    stylesForTooltipCloseIcon: function () {
+    stylesForTooltipCloseIcon () {
     	return {
     	  'position': 'absolute',
     	  'right': '5px',
     	  'width': '30px'
     	}
     },
-    gamesSet: function () {
-      this.gamesListChanged = this.gamesListChanged + 1
-    	return this.data.inflectionDataReady && this.data.locale ? new _lib_games_set_js__WEBPACK_IMPORTED_MODULE_8__["default"](this.data.inflectionData, this.data.locale) : {}
+    gamesSet () {
+      if (this.data.inflectionDataReady && this.data.locale) {
+        this.gamesListChanged = this.gamesListChanged + 1
+        return new _lib_games_set_js__WEBPACK_IMPORTED_MODULE_8__["default"](this.data.inflectionData, this.data.locale)
+      }
+    	return null
     },
-    inflectionDataFinal: function () {
-    	return this.data.inflectionDataReady ? this.data.inflectionData : {}
+    definitionsFinal () {
+    	return this.data.definitionsDataReady ? this.data.definitions : null
     },
-    definitionsFinal: function () {
-    	return this.data.definitionsDataReady ? this.data.definitions : {}
-    },
-    showFeaturesPanel: function () {
+    showFeaturesPanel () {
     	return this.homonym.lexemes && this.homonym.lexemes.length > 0
     },
-    showInflectionsPanel: function () {
+    showInflectionsPanel () {
     	return this.data.inflectionDataReady && this.data.locale
     }
   },
@@ -25754,8 +25752,6 @@ __webpack_require__.r(__webpack_exports__);
     clearData () {
       this.selectedGame = false
       this.selectedGameReady = false
-      this.changedGame = 0
-      this.gamesListChanged = 0
     }
   },
   mounted () {
