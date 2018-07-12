@@ -92,10 +92,7 @@
         if (this.checkIfOnlyOneFeatureValueLeft(featureName)) {
           return true
         }
-        if (this.checkIfChosenTheOnlyFeatureWithFullMatch(featureName)) {
-          return true
-        }
-        return false
+        this.checkIfChosenTheOnlyFeatureWithFullMatch(featureName)
       },
 
       selectFeature (featureName, featureValue) {

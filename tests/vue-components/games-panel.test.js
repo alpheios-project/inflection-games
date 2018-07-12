@@ -29,7 +29,7 @@ describe('games-panel.test.js', () => {
     jest.spyOn(console, 'log')
     jest.spyOn(console, 'warn')
 
-    cmp = shallowMount(GamesPanel, {
+    cmp = mount(GamesPanel, {
       propsData: {
         data: {},
         visible: false,
@@ -47,6 +47,19 @@ describe('games-panel.test.js', () => {
 
   it('1 GamePanel - renders a vue instance (min requirements)', () => {
     expect(cmp.isVueInstance()).toBeTruthy()
+    expect(cmp.vm.interactInstance).toBeUndefined()
+  })
+
+  it('2 GamePanel - defined interactInstance if data has draggable', () => {
+    let cmp1 = mount(GamesPanel, {
+      propsData: {
+        data: { draggable: true },
+        visible: false,
+        homonym: false
+      },
+      sync: false
+    })
+    expect(cmp1.vm.interactInstance).toBeDefined()
   })
 
   it('2 GamePanel - mainstyles depends on zIndex property', () => {

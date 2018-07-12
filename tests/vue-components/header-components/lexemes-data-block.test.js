@@ -42,6 +42,7 @@ describe('lexemes-data-block.test.js', () => {
   it('1 LexemesDataBlock - renders a vue instance (min requirements)', () => {
     expect(cmp.isVueInstance()).toBeTruthy()
     expect(cmp.findAll(DefinitionsBlock).length).toEqual(0)
+    expect(cmp.vm.hidden).toBeFalsy()
   })
 
   it('2 LexemesDataBlock - renders DefinitionsBlock if definitions are loaded', () => {
@@ -75,6 +76,7 @@ describe('lexemes-data-block.test.js', () => {
 
   it('5 LexemesDataBlock - getPartOfSpeechFromLemma returns partOfSpeach', () => {
     expect(cmp.vm.getPartOfSpeechFromLemma(testHomonym.lexemes[0].lemma)).toEqual('verb')
+    expect(cmp.vm.getPartOfSpeechFromLemma({})).toEqual('')
   })
 
   it('6 LexemesDataBlock - showHideLink changes hidden attribute', () => {

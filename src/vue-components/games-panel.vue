@@ -71,7 +71,6 @@
     },
     data () {
       return {
-        draggable: true,
         interactInstance: undefined,
         selectedGame: false,
         selectedGameReady: false,

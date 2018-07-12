@@ -26,9 +26,6 @@
       },
       failedResult: function () {
       	return this.result === 'failed'
-      },
-      noResult: function () {
-      	return this.result === false
       }
     }
   }
