@@ -25445,7 +25445,6 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     'selectedFeatureChange': function () {
-      console.log('************************this.selectedFeature', this.selectedFeature)
       if (this.selectedFeature.status === 'success') {
         this.checkSuccessFeature()
       } 
