@@ -46,7 +46,7 @@
         required: true
       },
       definitions: {
-      	type: Object,
+      	type: [Object, Boolean],
         required: true
       },
       definitionsDataReady: {

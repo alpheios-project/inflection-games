@@ -113,7 +113,7 @@
       	return null
       },
       definitionsFinal () {
-      	return this.data.definitionsDataReady ? this.data.definitions : null
+      	return this.data.definitionsDataReady ? this.data.definitions : false
       },
       showFeaturesPanel () {
       	return this.homonym.lexemes && this.homonym.lexemes.length > 0

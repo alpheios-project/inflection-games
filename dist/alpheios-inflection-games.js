@@ -25732,7 +25732,7 @@ __webpack_require__.r(__webpack_exports__);
     	return null
     },
     definitionsFinal () {
-    	return this.data.definitionsDataReady ? this.data.definitions : null
+    	return this.data.definitionsDataReady ? this.data.definitions : false
     },
     showFeaturesPanel () {
     	return this.homonym.lexemes && this.homonym.lexemes.length > 0
@@ -26005,7 +26005,7 @@ __webpack_require__.r(__webpack_exports__);
       required: true
     },
     definitions: {
-    	type: Object,
+    	type: [Object, Boolean],
       required: true
     },
     definitionsDataReady: {

@@ -77,16 +77,16 @@ describe('games-panel.test.js', () => {
   })
 
   it('5 GamePanel - definitionsFinal returns definitions if they are loaded or null while they are not loaded', () => {
-    expect(cmp.vm.definitionsFinal).toBeNull()
+    expect(cmp.vm.definitionsFinal).toBeFalsy()
 
     cmp.setProps({
       data: {
-        definitions: [{ 'id1': 'fooDefinition' }],
+        definitions: { 'id1': ['fooDefinition'] },
         definitionsDataReady: true
       }
     })
 
-    expect(cmp.vm.definitionsFinal).toEqual([{ 'id1': 'fooDefinition' }])
+    expect(cmp.vm.definitionsFinal).toEqual({ 'id1': ['fooDefinition'] })
   })
 
   it('6 GamePanel - showFeaturesPanel returns true if lexemes are loaded', () => {

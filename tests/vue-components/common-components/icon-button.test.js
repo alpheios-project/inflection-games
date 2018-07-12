@@ -31,7 +31,7 @@ describe('icon-button.test.js', () => {
 
   it('1 IconButton - renders a vue instance (min requirements)', () => {
     expect(cmp.isVueInstance()).toBeTruthy()
-    expect(cmp.find(TooltipWrap)).toBeTruthy()
+    expect(cmp.findAll(TooltipWrap).length).toEqual(1)
   })
 
   it('2 IconButton - emitEvent on click', () => {

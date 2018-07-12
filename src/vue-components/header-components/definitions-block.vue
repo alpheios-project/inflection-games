@@ -12,7 +12,7 @@
 			<li 
 				v-for = "(definition, indexD) in definitions" 
 				:key = "indexD"
-				class = ""alpheios-definitions-block__multiple__item"
+				class = "alpheios-definitions-block__multiple__item"
 			>{{ definition }}</li>
 		</ul>
 	</div>
