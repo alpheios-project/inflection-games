@@ -67,10 +67,6 @@
         type: Number,
         required: true
       },
-      locale: {
-        type: String,
-        required: true
-      },
       selectedGameReady: {
         type: Boolean,
         required: true
@@ -110,7 +106,7 @@
         }
       },
       checkHasSelectedChildren (gameKey) {
-        return this.gamesList[gameKey].some(game => game.id === this.selectedId)
+        return this.gamesList[gameKey] ? this.gamesList[gameKey].some(game => game.id === this.selectedId) : false
       }
     }
   }

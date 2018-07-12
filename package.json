@@ -5,7 +5,7 @@
   "main": "dist/alpheios-inflection-games.min.js",
   "scripts": {
     "test": "standard --fix && jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "test-c": "standard --fix && jest tests/vue-components/header-components/lexemes-data-block.test.js --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test-c": "standard --fix && jest tests/vue-components/header-components/inflection-views-games.test.js --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "build": "standard --fix && node --experimental-modules ./node_modules/alpheios-node-build/dist/build.mjs all all vue",
     "build-prod": "standard --fix && node --experimental-modules ./node_modules/alpheios-node-build/dist/build.mjs all production lib",
     "build-dev": "standard --fix && node --experimental-modules ./node_modules/alpheios-node-build/dist/build.mjs all development lib",

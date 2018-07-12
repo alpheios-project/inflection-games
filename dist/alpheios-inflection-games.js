@@ -25662,7 +25662,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 
@@ -25894,10 +25893,6 @@ __webpack_require__.r(__webpack_exports__);
       type: Number,
       required: true
     },
-    locale: {
-      type: String,
-      required: true
-    },
     selectedGameReady: {
       type: Boolean,
       required: true
@@ -25937,7 +25932,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     checkHasSelectedChildren (gameKey) {
-      return this.gamesList[gameKey].some(game => game.id === this.selectedId)
+      return this.gamesList[gameKey] ? this.gamesList[gameKey].some(game => game.id === this.selectedId) : false
     }
   }
 });
@@ -26598,7 +26593,6 @@ var render = function() {
             attrs: {
               gamesList: _vm.gamesSet.gamesList,
               gamesListChanged: _vm.gamesListChanged,
-              locale: _vm.data.locale,
               selectedGameReady: _vm.selectedGameReady,
               selectedGame: _vm.selectedGame
             },
@@ -26647,9 +26641,20 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.definitions.length > 1
-      ? _c("ul", { staticClass: "alpheios-definitions-block__multiple" }, [
-          _vm._v('"\n\t\t>' + _vm._s(_vm.definition))
-        ])
+      ? _c(
+          "ul",
+          { staticClass: "alpheios-definitions-block__multiple" },
+          _vm._l(_vm.definitions, function(definition, indexD) {
+            return _c(
+              "li",
+              {
+                key: indexD,
+                staticClass: "alpheios-definitions-block__multiple__item"
+              },
+              [_vm._v(_vm._s(definition))]
+            )
+          })
+        )
       : _vm._e()
   ])
 }

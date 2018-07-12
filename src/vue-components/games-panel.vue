@@ -30,7 +30,6 @@
 			:gamesList = "gamesSet.gamesList"
       :gamesListChanged = "gamesListChanged"
       
-			:locale = "data.locale"
 			@selectedGameEvent = "selectedGameEvent"
 
 			:selectedGameReady = "selectedGameReady"
