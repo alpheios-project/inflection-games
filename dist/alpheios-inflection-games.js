@@ -25774,7 +25774,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     visible (flag) {
-      console.info('***********************watch visible', flag)
       if (flag) { this.clearData() }
     }
   }

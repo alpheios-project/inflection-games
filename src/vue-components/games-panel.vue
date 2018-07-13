@@ -157,7 +157,6 @@
     },
     watch: {
       visible (flag) {
-        console.info('***********************watch visible', flag)
         if (flag) { this.clearData() }
       }
     }
