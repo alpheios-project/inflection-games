@@ -25445,12 +25445,15 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     'selectedFeatureChange': function () {
-      if (this.selectedFeature.status === 'success') {
-        this.checkSuccessFeature()
-      } 
-      if (this.selectedFeature.status === 'failed') {
-        this.checkFailedFeature()
+      switch (this.selectedFeature.status) {
+        case 'success' :
+          this.checkSuccessFeature()
+          break
+        case 'failed' :
+          this.checkFailedFeature()
+          break
       }
+
       this.checkIfLastUnCovered()
     }
   },
@@ -25657,6 +25660,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -25689,7 +25698,9 @@ __webpack_require__.r(__webpack_exports__);
       selectedGame: false,
       selectedGameReady: false,
       changedGame: 0,
-      gamesListChanged: 0
+      gamesListChanged: 0,
+      failedGames: 0,
+      successGames: 0
     }
   },
   props: {
@@ -25747,12 +25758,24 @@ __webpack_require__.r(__webpack_exports__);
     clearData () {
       this.selectedGame = false
       this.selectedGameReady = false
+    },
+    incrementSuccessGames () {
+      this.successGames = this.successGames + 1
+    },
+    incrementFailedGames () {
+      this.failedGames = this.failedGames + 1
     }
   },
   mounted () {
     if (this.data && this.data.draggable) {
       this.interactInstance = interactjs__WEBPACK_IMPORTED_MODULE_2___default()(this.$el)
         .draggable(_lib_window_services_js__WEBPACK_IMPORTED_MODULE_7__["default"].draggableSettings())
+    }
+  },
+  watch: {
+    visible (flag) {
+      console.info('***********************watch visible', flag)
+      if (flag) { this.clearData() }
     }
   }
 });	
@@ -25898,8 +25921,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     gamesListChanged () {
-      this.selectedId = null
-      this.showOnlySelected = false
+      this.clearSelectedStatus()
+    },
+    selectedGameReady (flag) {
+      if (!flag) { this.clearSelectedStatus() }
     }
   },
   computed: {
@@ -25927,6 +25952,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     checkHasSelectedChildren (gameKey) {
       return this.gamesList[gameKey] ? this.gamesList[gameKey].some(game => game.id === this.selectedId) : false
+    },
+
+    clearSelectedStatus () {
+      this.selectedId = null
+      this.showOnlySelected = false
     }
   }
 });
@@ -26117,8 +26147,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 
 
@@ -26138,8 +26166,6 @@ __webpack_require__.r(__webpack_exports__);
       clicks: 0,
       maxClicks: 6,
       finishGameFlag: false,
-      failedGames: 0,
-      successGames: 0,
       featuresListChanged: 0,
       selectedFeature: false,
       selectedFeatureChange: 0,
@@ -26158,22 +26184,20 @@ __webpack_require__.r(__webpack_exports__);
     changedGame: {
       type: Number,
       required: true
+    },
+    failedGames: {
+      type: Number,
+      required: true
+    },
+    successGames: {
+      type: Number,
+      required: true
     }
   },
   computed: {
-    selectedGameTitle: function () {
-    	if (!this.selectedGameReady) {
-    	  return 'Select game from upper panel'
-    	} else {
-    	  return `Selected game - ${this.selectedGame.partOfSpeech} - ${this.selectedGame.name}`
-    	}
-    },
-    selectedView: function () {
-    	return this.selectedGameReady ? this.selectedGame.view : null
-    },
     featuresList: function () {
       this.featuresListChanged = this.featuresListChanged + 1
-      return this.selectedGame.featuresList
+      return this.selectedGame && this.selectedGame.featuresList ? this.selectedGame.featuresList : null
     }
   },
   methods: {
@@ -26181,19 +26205,18 @@ __webpack_require__.r(__webpack_exports__);
       this.clicks = this.clicks + 1
       if (this.clicks > this.maxClicks) {
         this.incrementFailedGames()
-        this.finishGame()
       }
     },
     finishGame: function () {
       this.finishGameFlag = true
     },
     incrementSuccessGames: function () {
-      this.successGames = this.successGames + 1
+      this.$emit('incrementSuccessGames')
       this.gameResult = 'success'
       this.finishGame()
     },
     incrementFailedGames: function () {
-      this.failedGames = this.failedGames + 1
+      this.$emit('incrementFailedGames')
       this.gameResult = 'failed'
       this.finishGame()
     },
@@ -26598,7 +26621,13 @@ var render = function() {
         attrs: {
           selectedGameReady: _vm.selectedGameReady,
           selectedGame: _vm.selectedGame,
-          changedGame: _vm.changedGame
+          changedGame: _vm.changedGame,
+          failedGames: _vm.failedGames,
+          successGames: _vm.successGames
+        },
+        on: {
+          incrementSuccessGames: _vm.incrementSuccessGames,
+          incrementFailedGames: _vm.incrementFailedGames
         }
       })
     ],

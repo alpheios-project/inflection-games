@@ -1,7 +1,5 @@
 <template>
 	<div class = "alpheios-selected-game-block">
-
-		<!-- <p class = "alpheios-selected-game-block__title">{{ selectedGameTitle }}</p> -->
 		<div 
 			v-if = "selectedGameReady"
 			class = "alpheios-selected-game-block__game_wrap"
@@ -66,8 +64,6 @@
         clicks: 0,
         maxClicks: 6,
         finishGameFlag: false,
-        failedGames: 0,
-        successGames: 0,
         featuresListChanged: 0,
         selectedFeature: false,
         selectedFeatureChange: 0,
@@ -86,22 +82,20 @@
       changedGame: {
         type: Number,
         required: true
+      },
+      failedGames: {
+        type: Number,
+        required: true
+      },
+      successGames: {
+        type: Number,
+        required: true
       }
     },
     computed: {
-      selectedGameTitle: function () {
-      	if (!this.selectedGameReady) {
-      	  return 'Select game from upper panel'
-      	} else {
-      	  return `Selected game - ${this.selectedGame.partOfSpeech} - ${this.selectedGame.name}`
-      	}
-      },
-      selectedView: function () {
-      	return this.selectedGameReady ? this.selectedGame.view : null
-      },
       featuresList: function () {
         this.featuresListChanged = this.featuresListChanged + 1
-        return this.selectedGame.featuresList
+        return this.selectedGame && this.selectedGame.featuresList ? this.selectedGame.featuresList : null
       }
     },
     methods: {
@@ -109,19 +103,18 @@
         this.clicks = this.clicks + 1
         if (this.clicks > this.maxClicks) {
           this.incrementFailedGames()
-          this.finishGame()
         }
       },
       finishGame: function () {
         this.finishGameFlag = true
       },
       incrementSuccessGames: function () {
-        this.successGames = this.successGames + 1
+        this.$emit('incrementSuccessGames')
         this.gameResult = 'success'
         this.finishGame()
       },
       incrementFailedGames: function () {
-        this.failedGames = this.failedGames + 1
+        this.$emit('incrementFailedGames')
         this.gameResult = 'failed'
         this.finishGame()
       },

@@ -46,12 +46,15 @@
         }
       },
       'selectedFeatureChange': function () {
-        if (this.selectedFeature.status === 'success') {
-          this.checkSuccessFeature()
-        } 
-        if (this.selectedFeature.status === 'failed') {
-          this.checkFailedFeature()
+        switch (this.selectedFeature.status) {
+          case 'success' :
+            this.checkSuccessFeature()
+            break
+          case 'failed' :
+            this.checkFailedFeature()
+            break
         }
+
         this.checkIfLastUnCovered()
       }
     },

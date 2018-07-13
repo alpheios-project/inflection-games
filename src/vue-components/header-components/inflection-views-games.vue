@@ -78,8 +78,10 @@
     },
     watch: {
       gamesListChanged () {
-        this.selectedId = null
-        this.showOnlySelected = false
+        this.clearSelectedStatus()
+      },
+      selectedGameReady (flag) {
+        if (!flag) { this.clearSelectedStatus() }
       }
     },
     computed: {
@@ -107,6 +109,11 @@
       },
       checkHasSelectedChildren (gameKey) {
         return this.gamesList[gameKey] ? this.gamesList[gameKey].some(game => game.id === this.selectedId) : false
+      },
+
+      clearSelectedStatus () {
+        this.selectedId = null
+        this.showOnlySelected = false
       }
     }
   }

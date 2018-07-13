@@ -40,6 +40,12 @@
 			:selectedGameReady = "selectedGameReady"
 			:selectedGame = "selectedGame"
 			:changedGame = "changedGame"
+
+      :failedGames = "failedGames"
+      :successGames = "successGames"
+
+      @incrementSuccessGames = "incrementSuccessGames"
+      @incrementFailedGames = "incrementFailedGames"
 		></selected-game-block>
 	</div>
 </template>
@@ -75,7 +81,9 @@
         selectedGame: false,
         selectedGameReady: false,
         changedGame: 0,
-        gamesListChanged: 0
+        gamesListChanged: 0,
+        failedGames: 0,
+        successGames: 0
       }
     },
     props: {
@@ -133,12 +141,24 @@
       clearData () {
         this.selectedGame = false
         this.selectedGameReady = false
+      },
+      incrementSuccessGames () {
+        this.successGames = this.successGames + 1
+      },
+      incrementFailedGames () {
+        this.failedGames = this.failedGames + 1
       }
     },
     mounted () {
       if (this.data && this.data.draggable) {
         this.interactInstance = interact(this.$el)
           .draggable(WindowServices.draggableSettings())
+      }
+    },
+    watch: {
+      visible (flag) {
+        console.info('***********************watch visible', flag)
+        if (flag) { this.clearData() }
       }
     }
   }	

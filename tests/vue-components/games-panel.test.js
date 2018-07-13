@@ -175,4 +175,37 @@ describe('games-panel.test.js', () => {
     expect(cmp.vm.selectedGame).toBeFalsy()
     expect(cmp.vm.selectedGameReady).toBeFalsy()
   })
+
+  it('11 GamePanel - incrementSuccessGames adds 1 to successGames', () => {
+    cmp.vm.successGames = 1
+
+    cmp.vm.incrementSuccessGames()
+
+    expect(cmp.vm.successGames).toEqual(2)
+  })
+
+  it('12 GamePanel - incrementFailedGames adds 1 to failedGames', () => {
+    cmp.vm.failedGames = 1
+
+    cmp.vm.incrementFailedGames()
+
+    expect(cmp.vm.failedGames).toEqual(2)
+  })
+
+  it('13 GamePanel - if panel becomes visible, clearData is executed', async () => {
+    cmp.vm.clearData = jest.fn()
+    cmp.setProps({
+      visible: false
+    })
+
+    await Vue.nextTick()
+    expect(cmp.vm.clearData).not.toBeCalled()
+
+    cmp.setProps({
+      visible: true
+    })
+
+    await Vue.nextTick()
+    expect(cmp.vm.clearData).toBeCalled()
+  })
 })
