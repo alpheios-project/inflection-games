@@ -1,12 +1,12 @@
 import Vue from 'vue/dist/vue' // Vue in a runtime + compiler configuration
 import GamesPanel from '@/vue-components/games-panel.vue'
 import WindowServices from '@/lib/window-services.js'
-import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
+import { ViewSetFactory } from 'alpheios-inflection-tables'
 
 export default class GamesController {
   constructor (draggable) {
     this.gamesComponent = GamesController.gamesComponentCreate(draggable)
-    this.LDFAdapter = LDFAdapter
+    // this.LDFAdapter = LDFAdapter
   }
 
   open () {
@@ -44,7 +44,8 @@ export default class GamesController {
     this.gamesComponent.gamesData.definitionsDataReady = true
   }
 
-  async getInflectionDataFromHomonym (homonym) {
+  getInflectionDataFromHomonym (homonym) {
+    /*
     try {
       let inflectionData = await this.LDFAdapter.getInflectionData(homonym)
       this.gamesComponent.gamesData.inflectionData = inflectionData
@@ -52,6 +53,9 @@ export default class GamesController {
     } catch (error) {
       console.error(`LexicalQuery failed: ${error.message}`)
     }
+    */
+    this.gamesComponent.gamesData.inflectionsViewSet = ViewSetFactory.create(homonym, this.gamesComponent.gamesData.currentValue)
+    this.gamesComponent.gamesData.inflectionDataReady = this.gamesComponent.gamesData.inflectionsViewSet.hasMatchingViews
   }
 
   static gamesComponentCreate (draggable) {
@@ -67,7 +71,8 @@ export default class GamesController {
         gamesData: {
           draggable: draggable || false,
           zIndex: 4000,
-          inflectionData: null,
+          // inflectionData: null,
+          inflectionsViewSet: null,
           inflectionDataReady: false,
           locale: null,
           definitions: null,

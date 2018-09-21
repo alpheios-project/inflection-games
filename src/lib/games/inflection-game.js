@@ -99,6 +99,8 @@ export default class InflectionGame extends Game {
   }
 
   static matchViewsCheck (view) {
+    view.render()
+    console.info('**************matchViewsCheck', !view.hasPrerenderedTables, view.isImplemented, view.wideView, !view.isEmpty)
     return view.hasComponentData && InflectionGame.findFullMatchInView(view)
   }
 }

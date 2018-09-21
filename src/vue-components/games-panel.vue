@@ -24,7 +24,10 @@
 			:definitionsDataReady = "data.definitionsDataReady"
 			:definitions = "definitionsFinal"
 		></lexemes-data-block>
-
+    <div v-if = "showInflectionsPanel">
+    {{ gamesSet.gamesList }}
+    </div>
+<!--
 		<inflection-views-games 
 			v-if = "showInflectionsPanel"
 			:gamesList = "gamesSet.gamesList"
@@ -47,6 +50,7 @@
       @incrementSuccessGames = "incrementSuccessGames"
       @incrementFailedGames = "incrementFailedGames"
 		></selected-game-block>
+    --> 
 	</div>
 </template>
 <script>
@@ -114,7 +118,7 @@
       gamesSet () {
         if (this.data.inflectionDataReady && this.data.locale) {
           this.gamesListChanged = this.gamesListChanged + 1
-          return new GamesSet(this.data.inflectionData, this.data.locale)
+          return new GamesSet(this.data.inflectionsViewSet)
         }
       	return null
       },
@@ -180,7 +184,7 @@
 		top: 50px;
 
 		border: 1px solid $alpheios-games-panel-border-color;
-		padding: 10px;
+		padding: 10px 35px 10px 10px;
 
 		-webkit-box-shadow: 4px 4px 10px 1px $alpheios-games-panel-border-shadow-color;
 		-moz-box-shadow: 4px 4px 10px 1px $alpheios-games-panel-border-shadow-color;

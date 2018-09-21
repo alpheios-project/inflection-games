@@ -1,14 +1,12 @@
-import { ViewSet } from 'alpheios-inflection-tables'
-
 import InflectionGame from '@/lib/games/inflection-game'
 
 export default class GamesSet {
-  constructor (inflectionData, locale) {
-    this.inflectionData = inflectionData
-    this.locale = locale
+  constructor (inflectionsViewSet) {
+    this.inflectionsViewSet = inflectionsViewSet
+    // this.locale = locale
 
-    this.viewSet = new ViewSet(this.inflectionData, this.locale)
-    this.partsOfSpeech = this.viewSet.partsOfSpeech
+    // this.viewSet = new ViewSet(this.inflectionData, this.locale)
+    this.partsOfSpeech = this.inflectionsViewSet.partsOfSpeech
 
     this.games = [ InflectionGame ]
     this.matchingGames = []
@@ -18,9 +16,12 @@ export default class GamesSet {
   }
 
   getMatchingViewsGames () {
+    console.info('**********************this.partsOfSpeech', this.partsOfSpeech)
     this.games.forEach((game, index) => {
       this.partsOfSpeech.forEach(partOfSpeech => {
-        this.viewSet.getViews(partOfSpeech).forEach(view => {
+        console.info('**********************partOfSpeech', partOfSpeech)
+        this.inflectionsViewSet.getViews(partOfSpeech).forEach(view => {
+          console.info('**********************partOfSpeech view', view)
           if (game.matchViewsCheck(view)) {
             this.matchingGames.push(new this.games[index](view))
           }
