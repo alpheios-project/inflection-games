@@ -6,6 +6,7 @@ import LexemesDataBlock from '@/vue-components/header-components/lexemes-data-bl
 import DefinitionsBlock from '@/vue-components/header-components/definitions-block.vue'
 
 import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { Constants } from 'alpheios-data-models'
 
 describe('lexemes-data-block.test.js', () => {
   console.error = function () {}
@@ -16,7 +17,7 @@ describe('lexemes-data-block.test.js', () => {
 
   beforeAll(async () => {
     maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym('grc', 'συνδέει')
+    testHomonym = await maAdapter.getHomonym(Constants.LANG_GREEK, 'συνδέει')
   })
 
   beforeEach(() => {

@@ -21,7 +21,7 @@ describe('inflection-game-table.test.js', () => {
 
   beforeAll(async () => {
     maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym('grc', 'συνδέει')
+    testHomonym = await maAdapter.getHomonym(Constants.LANG_GREEK, 'συνδέει')
     testInflectionData = await LDFAdapter.getInflectionData(testHomonym)
     testLocale = 'en-US'
   })

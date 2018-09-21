@@ -3,6 +3,7 @@
 import 'whatwg-fetch'
 import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
 import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { Constants } from 'alpheios-data-models'
 
 import GamesSet from '@/lib/games-set.js'
 import InflectionGame from '@/lib/games/inflection-game.js'
@@ -16,7 +17,7 @@ describe('games-set.test.js', () => {
 
   beforeAll(async () => {
     maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym('grc', 'συνδέει')
+    testHomonym = await maAdapter.getHomonym(Constants.LANG_GREEK, 'συνδέει')
     testInflectionData = await LDFAdapter.getInflectionData(testHomonym)
   })
   beforeEach(() => {
