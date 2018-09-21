@@ -24,10 +24,7 @@
 			:definitionsDataReady = "data.definitionsDataReady"
 			:definitions = "definitionsFinal"
 		></lexemes-data-block>
-    <div v-if = "showInflectionsPanel">
-    {{ gamesSet.gamesList }}
-    </div>
-<!--
+
 		<inflection-views-games 
 			v-if = "showInflectionsPanel"
 			:gamesList = "gamesSet.gamesList"
@@ -50,7 +47,7 @@
       @incrementSuccessGames = "incrementSuccessGames"
       @incrementFailedGames = "incrementFailedGames"
 		></selected-game-block>
-    --> 
+
 	</div>
 </template>
 <script>

@@ -12,6 +12,7 @@ export default class GamesSet {
     this.matchingGames = []
 
     this.getMatchingViewsGames()
+    console.info('****************matchingGames', this.matchingGames)
     this.createGamesList()
   }
 
@@ -38,5 +39,6 @@ export default class GamesSet {
       gamesList[game.gameType].push(game)
     })
     this.gamesList = gamesList
+    console.info('****************matchingGames', this.gamesList)
   }
 }

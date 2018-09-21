@@ -1,15 +1,19 @@
 <template>
     <div class="alpheios-inflection-game-table" v-if="gameTable">
-        <div class="infl-prdgm-tbl">
-            <div class="infl-prdgm-tbl__row" v-for="row in gameTable.rows">
+        <div class="infl-table infl-table--wide" :style="selectedGame.view.wideView.style">
+            <template v-for="row in gameTable.rows">
                 <div 
-                  class = "infl-prdgm-tbl__cell" 
                   :class = "cellClasses(cell)" 
                   v-for = "cell in row.cells"
                   @click = "checkCell(cell)">
-                    <span v-show="!cell.hidden">{{cell.value}}</span>
+                  <template v-if="cell.isDataCell">
+                    <span v-show="!cell.gameHidden">{{ cell.value }}</span>
+                  </template>
+                  <template v-else>
+                    <span v-html="cell.value"></span>
+                  </template>
                 </div>
-            </div>
+            </template>
         </div>
     </div>
 </template>
@@ -36,6 +40,7 @@
     },
     computed: {
       gameTable: function () {
+        console.info('**************gameTable', this.selectedGame.gameTable)
         return this.selectedGame.gameTable
       }
     },
@@ -59,23 +64,18 @@
       }
     },
     methods: {
-      cellClassesLabel: function (cell) {
-        return 'infl-prdgm-tbl-cell--label'
-      },
-      cellClassesData: function (cell) {
-        return {
-          'infl-prdgm-tbl-cell--data': !cell.hidden,
-          'infl-prdgm-tbl-cell--full-match': !cell.hidden && cell.fullMatch
-        }
-      },
       cellClasses: function (cell) {
-        if (cell.role === 'label') { return this.cellClassesLabel(cell) }
-        if (cell.role === 'data') { return this.cellClassesData(cell) }
+        let classes = cell.classes
+        classes['infl-cell--morph-match'] = false
+        classes['infl-data-cell'] = cell.isDataCell
+        classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
+        classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
+        return classes
       },
       showAllCells: function () {
         this.gameTable.rows.forEach(row => {
           row.cells.forEach(cell => {
-            if (cell.role === 'data') { cell.hidden = false }
+            if (cell.isDataCell) { cell.gameHidden = false }
           })
         })
       },
@@ -85,9 +85,9 @@
       },
 
       checkCell: function (cell) {
-        if (cell.role === 'data' && cell.hidden && !this.finishGameFlag) {
+        if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
           this.$emit('incrementClicks')
-          cell.hidden = false
+          cell.gameHidden = false
           if (cell.fullMatch) {
             this.$emit('incrementSuccessGames')
             this.finishGame()
@@ -98,7 +98,9 @@
       checkSuccessFeature: function () {
         this.gameTable.rows.forEach(row => {
           row.cells.forEach(cell => {
-            if (cell.role === 'data' && cell[this.selectedFeature.name] !== this.selectedFeature.value) { cell.hidden = false }
+            if (cell.isDataCell && !cell.fullMatch && cell.features.some(feature => feature.type === this.selectedFeature.name && feature.value !== this.selectedFeature.value)) {
+              cell.gameHidden = false
+            }
           })
         })
       },
@@ -106,15 +108,19 @@
       checkFailedFeature: function () {
         this.gameTable.rows.forEach(row => {
           row.cells.forEach(cell => {
-            if (cell.role === 'data' && cell[this.selectedFeature.name] === this.selectedFeature.value) { cell.hidden = false }
+            if (cell.isDataCell && cell.features.some(feature => feature.type === this.selectedFeature.name && feature.value === this.selectedFeature.value)) {
+              cell.gameHidden = false
+            }
           })
         })
       },
 
       checkIfLastUnCovered: function () {
         let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
-          row.cells.filter(cell => cell.role === 'data' && !cell.fullMatch).every(cell => !cell.hidden)
+          row.cells.filter(cell => cell.isDataCell && !cell.fullMatch).every(cell => !cell.gameHidden)
         )
+
+        console.info('**********************checkIfLastUnCovered', onlyFullMatchUncovered)
 
         if (onlyFullMatchUncovered) {
           this.$emit('incrementSuccessGames')
@@ -127,44 +133,29 @@
 <style lang="scss" scoped>
     @import "../../styles/alpheios";
 
-    .infl-prdgm-tbl {
-        display: table;
-        border-top: 1px solid gray;
-        border-left: 1px solid gray;
-        margin-bottom: 30px;
-    }
-
-    .infl-prdgm-tbl__row {
-        display: table-row;
-    }
-
-    .infl-prdgm-tbl__cell {
-        display: table-cell;
+    .alpheios-inflection-game-table .infl-cell {
+        font-size: 14px;
         padding: 2px 5px;
-        border-right: 1px solid gray;
-        border-bottom: 1px solid gray;
-        min-width: 20px;
-        cursor: pointer;
     }
 
-    .infl-prdgm-tbl-cell--label {
-        font-weight: 700;
-        cursor: inherit;
+    .alpheios-inflection-game-table .infl-data-cell {
+      cursor: pointer;
     }
-
-    div.infl-prdgm-tbl-cell--data {
+    
+    .alpheios-inflection-game-table div.infl-tbl-cell--data {
       background-color: #fceae6;
       background-image: url(../../images/cross-icon.png);
       background-position: 5% 50%;
-      background-size: auto 50%;
+      background-size: 12px 12px;
       background-repeat: no-repeat;
       padding: 2px 5px 2px 20px;
       color: #881c07;
     }
-    div.infl-prdgm-tbl-cell--full-match {
+    .alpheios-inflection-game-table div.infl-tbl-cell--full-match {
         background-color: #e6fcea;
         background-image: url(../../images/check-icon.png);
         font-weight: 700;
         color: #099f20;
     }
+
 </style>

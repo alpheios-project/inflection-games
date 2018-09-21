@@ -12,7 +12,7 @@
 
 				<ul class="alpheios-features-select-block__list_values">
 					<li
-						:class="featureItemClass(featureValue)"
+						:class="featureItemClass(featureValue, featureName)"
 						@click = "selectFeature(featureName, featureValue)"
 						v-for="(featureValue, indexFL) in featuresList[featureName]" 
 						:key="indexFL"
@@ -54,15 +54,18 @@
     },
 
     methods: {
-      featureItemClass (featureValue) {
-      	return {
+      featureItemClass (featureValue, featureName) {
+      	let classes = {
       	  'alpheios-features-select-block__list_values__item': true,
       	  'alpheios-features-select-block__list_values__item__success': featureValue.status === 'success',
-      	  'alpheios-features-select-block__list_values__item__failed': featureValue.status === 'failed'
-      	}
+          'alpheios-features-select-block__list_values__item__failed': featureValue.status === 'failed'
+        }
+        classes[featureName] = true
+        return classes
       },
 
       checkFeatureHasFullMatch (featureName, featureValue) {
+        console.info('*********************checkFeatureHasFullMatch', featureName, featureValue)
         return this.selectedGame.featureHasFullMatch(featureName, featureValue) ? 'success' : 'failed'
       },
 
@@ -112,7 +115,7 @@
 
   .alpheios-features-select-block {
   	display: block;
-    width: 145px;
+    width: 250px;
     float: left;
     border-right: 1px dashed $alpheios-sidebar-header-border-color;
   }
@@ -128,6 +131,17 @@
     margin: 0;
   }
 
+  .alpheios-features-select-block__list_features li {
+    display: inline-block;
+    vertical-align: top;
+    width: 45%;
+    margin-right: 2%;
+
+    .lemmas {
+      width: 98%;
+    }
+  }
+
   .alpheios-features-select-block__list_features_title {
   	font-weight: bold;
   	margin: 0 0 5px;
@@ -136,14 +150,15 @@
   .alpheios-features-select-block__list_values {
   	margin: 0 0 10px;
     list-style: none;
-    padding-left: 10px;
+    // padding-left: 10px;
+    padding-left: 0;
   }
 
   .alpheios-features-select-block__list_values__item {
   	background-color: transparent;
   	background-image: url(../../images/radiobutton-icon.png);
-  	background-position: left center;
-  	background-size: auto 60%;
+    background-position: left 4px;
+    background-size: 10px auto;
   	background-repeat: no-repeat;
 
   	padding-left: 15px;

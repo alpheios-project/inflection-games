@@ -26815,15 +26815,18 @@ __webpack_require__.r(__webpack_exports__);
   },
 
   methods: {
-    featureItemClass (featureValue) {
-    	return {
+    featureItemClass (featureValue, featureName) {
+    	let classes = {
     	  'alpheios-features-select-block__list_values__item': true,
     	  'alpheios-features-select-block__list_values__item__success': featureValue.status === 'success',
-    	  'alpheios-features-select-block__list_values__item__failed': featureValue.status === 'failed'
-    	}
+        'alpheios-features-select-block__list_values__item__failed': featureValue.status === 'failed'
+      }
+      classes[featureName] = true
+      return classes
     },
 
     checkFeatureHasFullMatch (featureName, featureValue) {
+      console.info('*********************checkFeatureHasFullMatch', featureName, featureValue)
       return this.selectedGame.featureHasFullMatch(featureName, featureValue) ? 'success' : 'failed'
     },
 
@@ -26939,6 +26942,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'InflectionGameTable',
@@ -26962,6 +26969,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     gameTable: function () {
+      console.info('**************gameTable', this.selectedGame.gameTable)
       return this.selectedGame.gameTable
     }
   },
@@ -26985,23 +26993,18 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    cellClassesLabel: function (cell) {
-      return 'infl-prdgm-tbl-cell--label'
-    },
-    cellClassesData: function (cell) {
-      return {
-        'infl-prdgm-tbl-cell--data': !cell.hidden,
-        'infl-prdgm-tbl-cell--full-match': !cell.hidden && cell.fullMatch
-      }
-    },
     cellClasses: function (cell) {
-      if (cell.role === 'label') { return this.cellClassesLabel(cell) }
-      if (cell.role === 'data') { return this.cellClassesData(cell) }
+      let classes = cell.classes
+      classes['infl-cell--morph-match'] = false
+      classes['infl-data-cell'] = cell.isDataCell
+      classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
+      classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
+      return classes
     },
     showAllCells: function () {
       this.gameTable.rows.forEach(row => {
         row.cells.forEach(cell => {
-          if (cell.role === 'data') { cell.hidden = false }
+          if (cell.isDataCell) { cell.gameHidden = false }
         })
       })
     },
@@ -27011,9 +27014,9 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     checkCell: function (cell) {
-      if (cell.role === 'data' && cell.hidden && !this.finishGameFlag) {
+      if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
         this.$emit('incrementClicks')
-        cell.hidden = false
+        cell.gameHidden = false
         if (cell.fullMatch) {
           this.$emit('incrementSuccessGames')
           this.finishGame()
@@ -27024,7 +27027,9 @@ __webpack_require__.r(__webpack_exports__);
     checkSuccessFeature: function () {
       this.gameTable.rows.forEach(row => {
         row.cells.forEach(cell => {
-          if (cell.role === 'data' && cell[this.selectedFeature.name] !== this.selectedFeature.value) { cell.hidden = false }
+          if (cell.isDataCell && !cell.fullMatch && cell.features.some(feature => feature.type === this.selectedFeature.name && feature.value !== this.selectedFeature.value)) {
+            cell.gameHidden = false
+          }
         })
       })
     },
@@ -27032,15 +27037,19 @@ __webpack_require__.r(__webpack_exports__);
     checkFailedFeature: function () {
       this.gameTable.rows.forEach(row => {
         row.cells.forEach(cell => {
-          if (cell.role === 'data' && cell[this.selectedFeature.name] === this.selectedFeature.value) { cell.hidden = false }
+          if (cell.isDataCell && cell.features.some(feature => feature.type === this.selectedFeature.name && feature.value === this.selectedFeature.value)) {
+            cell.gameHidden = false
+          }
         })
       })
     },
 
     checkIfLastUnCovered: function () {
       let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
-        row.cells.filter(cell => cell.role === 'data' && !cell.fullMatch).every(cell => !cell.hidden)
+        row.cells.filter(cell => cell.isDataCell && !cell.fullMatch).every(cell => !cell.gameHidden)
       )
+
+      console.info('**********************checkIfLastUnCovered', onlyFullMatchUncovered)
 
       if (onlyFullMatchUncovered) {
         this.$emit('incrementSuccessGames')
@@ -27142,9 +27151,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _vue_components_selected_game_block_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/vue-components/selected-game-block.vue */ "./vue-components/selected-game-block.vue");
 /* harmony import */ var _lib_window_services_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/lib/window-services.js */ "./lib/window-services.js");
 /* harmony import */ var _lib_games_set_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/lib/games-set.js */ "./lib/games-set.js");
-//
-//
-//
 //
 //
 //
@@ -27906,7 +27912,7 @@ var render = function() {
                     "li",
                     {
                       key: indexFL,
-                      class: _vm.featureItemClass(featureValue),
+                      class: _vm.featureItemClass(featureValue, featureName),
                       on: {
                         click: function($event) {
                           _vm.selectFeature(featureName, featureValue)
@@ -27975,16 +27981,16 @@ var render = function() {
     ? _c("div", { staticClass: "alpheios-inflection-game-table" }, [
         _c(
           "div",
-          { staticClass: "infl-prdgm-tbl" },
-          _vm._l(_vm.gameTable.rows, function(row) {
-            return _c(
-              "div",
-              { staticClass: "infl-prdgm-tbl__row" },
-              _vm._l(row.cells, function(cell) {
+          {
+            staticClass: "infl-table infl-table--wide",
+            style: _vm.selectedGame.view.wideView.style
+          },
+          [
+            _vm._l(_vm.gameTable.rows, function(row) {
+              return _vm._l(row.cells, function(cell) {
                 return _c(
                   "div",
                   {
-                    staticClass: "infl-prdgm-tbl__cell",
                     class: _vm.cellClasses(cell),
                     on: {
                       click: function($event) {
@@ -27993,25 +27999,35 @@ var render = function() {
                     }
                   },
                   [
-                    _c(
-                      "span",
-                      {
-                        directives: [
-                          {
-                            name: "show",
-                            rawName: "v-show",
-                            value: !cell.hidden,
-                            expression: "!cell.hidden"
-                          }
+                    cell.isDataCell
+                      ? [
+                          _c(
+                            "span",
+                            {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: !cell.gameHidden,
+                                  expression: "!cell.gameHidden"
+                                }
+                              ]
+                            },
+                            [_vm._v(_vm._s(cell.value))]
+                          )
                         ]
-                      },
-                      [_vm._v(_vm._s(cell.value))]
-                    )
-                  ]
+                      : [
+                          _c("span", {
+                            domProps: { innerHTML: _vm._s(cell.value) }
+                          })
+                        ]
+                  ],
+                  2
                 )
               })
-            )
-          })
+            })
+          ],
+          2
         )
       ])
     : _vm._e()
@@ -28136,10 +28152,30 @@ var render = function() {
         : _vm._e(),
       _vm._v(" "),
       _vm.showInflectionsPanel
-        ? _c("div", [
-            _vm._v("\n    " + _vm._s(_vm.gamesSet.gamesList) + "\n    ")
-          ])
-        : _vm._e()
+        ? _c("inflection-views-games", {
+            attrs: {
+              gamesList: _vm.gamesSet.gamesList,
+              gamesListChanged: _vm.gamesListChanged,
+              selectedGameReady: _vm.selectedGameReady,
+              selectedGame: _vm.selectedGame
+            },
+            on: { selectedGameEvent: _vm.selectedGameEvent }
+          })
+        : _vm._e(),
+      _vm._v(" "),
+      _c("selected-game-block", {
+        attrs: {
+          selectedGameReady: _vm.selectedGameReady,
+          selectedGame: _vm.selectedGame,
+          changedGame: _vm.changedGame,
+          failedGames: _vm.failedGames,
+          successGames: _vm.successGames
+        },
+        on: {
+          incrementSuccessGames: _vm.incrementSuccessGames,
+          incrementFailedGames: _vm.incrementFailedGames
+        }
+      })
     ],
     1
   )
@@ -39774,7 +39810,7 @@ __webpack_require__.r(__webpack_exports__);
 class Game {
   /* base class */
   constructor (view) {
-    this.partOfSpeech = view.partOfSpeech ? view.partOfSpeech : (view.paradigm ? view.paradigm.partOfSpeech : null)
+    this.partOfSpeech = view.partOfSpeech
     this.id = view.id
     this.name = view.name
   }
@@ -39808,6 +39844,7 @@ class GamesSet {
     this.matchingGames = []
 
     this.getMatchingViewsGames()
+    console.info('****************matchingGames', this.matchingGames)
     this.createGamesList()
   }
 
@@ -39834,6 +39871,7 @@ class GamesSet {
       gamesList[game.gameType].push(game)
     })
     this.gamesList = gamesList
+    console.info('****************matchingGames', this.gamesList)
   }
 }
 
@@ -39862,16 +39900,20 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
   createGameStuff () {
     let gameTable = { rows: [] }
-    let featuresList = {}
+    let featuresList = this.updateFeaturesList()
 
-    this.view.wideTable.rows.forEach(row => {
+    this.view.wideView.rows.forEach(row => {
       let cells = []
-      row.cells.forEach(cell => {
-        cell.fullMatch = cell.role === 'data' ? InflectionGame.compareLexemesToCell(this.view.inflectionData, cell) : null
-        cell.hidden = cell.role === 'data'
-        cells.push(Object.assign({}, cell))
+      row.cells.filter(cell => !cell.classes['infl-cell--sp0'] && !cell.classes['hidden']).forEach(cell => {
+        let gameCell = Object.assign({}, cell)
+        gameCell.isDataCell = cell.isDataCell
+        gameCell.fullMatch = cell.isDataCell && cell.suffixMatches
+        gameCell.gameHidden = cell.isDataCell
+        gameCell.value = !cell.isDataCell ? cell.value : cell.morphemes.map(morpheme => morpheme.value).join(', ')
+        console.info('*****************gameCell', gameCell, cell)
+        cells.push(gameCell)
 
-        this.updateFeaturesList(cell, featuresList)
+        // this.updateFeaturesList(cell, featuresList)
       })
       gameTable.rows.push({ cells: cells })
     })
@@ -39884,7 +39926,7 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
     if (this.gameTable && this.gameTable.rows) {
       this.gameTable.rows.forEach(row => {
         row.cells.forEach(cell => {
-          cell.hidden = cell.role === 'data'
+          cell.hidden = cell.isDataCell
         })
       })
     }
@@ -39895,31 +39937,23 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
     }
   }
 
-  updateFeaturesList (cell, featuresList) {
-    if (cell.role === 'data') {
-      let cellFeatures = InflectionGame.getFeatures(cell)
-
-      cellFeatures.forEach(feature => {
-        if (featuresList[feature] === undefined) {
-          featuresList[feature] = []
-        }
-
-        if (!featuresList[feature].find(item => item.value === cell[feature])) {
-          featuresList[feature].push(
-            {
-              value: cell[feature],
-              status: null
-            }
-          )
+  updateFeaturesList () {
+    let featuresList = {}
+    Object.keys(this.view.features).forEach(featureKey => {
+      featuresList[this.view.features[featureKey].type] = Array.from(this.view.features[featureKey].featureMap.keys()).map(featureValue => {
+        return {
+          value: featureValue,
+          status: null
         }
       })
-    }
+    })
+    return featuresList
   }
 
   featureHasFullMatch (featureName, featureValue) {
-    return this.gameTable.rows.some(row => row.cells.some(cell => {
-      return cell.fullMatch && cell[featureName] === featureValue.value
-    }))
+    return this.gameTable.rows.some(row => row.cells.some(cell =>
+      cell.isDataCell && cell.fullMatch && cell.features.some(feature => feature.type === featureName && feature.value === featureValue.value)
+    ))
   }
 
   get featuresListTitles () {
@@ -39931,30 +39965,36 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 
   static getFeatures (cell) {
-    let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
-    return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
+    // let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
+    return cell.features.map(feature => feature.type) // Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
   }
 
-  static compareLexemesToCell (inflectionData, cell) {
-    let cellFeatures = InflectionGame.getFeatures(cell)
+  // static compareLexemesToCell (inflectionData, cell) {
+  //   let cellFeatures = InflectionGame.getFeatures(cell)
 
-    return inflectionData.homonym.lexemes.some(lexeme =>
-      lexeme.inflections.some(inflection =>
-        cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
-      )
-    )
-  }
+  //   return inflectionData.homonym.lexemes.some(lexeme =>
+  //     lexeme.inflections.some(inflection =>
+  //       cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
+  //     )
+  //   )
+  // }
 
   static findFullMatchInView (view) {
-    return view.wideTable.rows.some(row =>
-      row.cells.some(cell => (cell.role === 'data') && InflectionGame.compareLexemesToCell(view.inflectionData, cell))
-    )
+    // return view.wideView.rows.some(row =>
+    //   row.cells.some(cell => cell.isDataCell && cell.suffixMatches)
+    // )
+    return view.morphemes.some(morpheme => morpheme.match.fullMatch)
+  }
+
+  static checkViewFormatCorrect (view) {
+    return !view.hasPrerenderedTables && view.isImplemented && view.wideView && !view.isEmpty
   }
 
   static matchViewsCheck (view) {
     view.render()
-    console.info('**************matchViewsCheck', !view.hasPrerenderedTables, view.isImplemented, view.wideView, !view.isEmpty)
-    return view.hasComponentData && InflectionGame.findFullMatchInView(view)
+    console.info('**************matchViewsCheck1', InflectionGame.checkViewFormatCorrect(view))
+    console.info('**************matchViewsCheck2', InflectionGame.findFullMatchInView(view))
+    return InflectionGame.checkViewFormatCorrect(view) && InflectionGame.findFullMatchInView(view)
   }
 }
 

@@ -143,11 +143,15 @@
   }
 </script>
 <style  lang="scss">
+  .alpheios-selected-game-block {
+    overflow: auto;
+  }
+  
 	.alpheios-selected-game-block__title {
 		font-weight: bold;
 	}
   .alpheios-selected-game-block__has_featureblock .alpheios-inflection-game-table {
-    margin-left: 155px;
+    margin-left: 260px;
   }
 
   .alpheios-selected-game-block__has_featureblock:before,
@@ -159,6 +163,6 @@
 
   .alpheios-selected-game-block__game_layout {
     position: relative;
-    overflow: hidden;
+    // overflow: hidden;
   }
 </style>

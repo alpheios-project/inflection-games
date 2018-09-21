@@ -9,16 +9,20 @@ export default class InflectionGame extends Game {
 
   createGameStuff () {
     let gameTable = { rows: [] }
-    let featuresList = {}
+    let featuresList = this.updateFeaturesList()
 
-    this.view.wideTable.rows.forEach(row => {
+    this.view.wideView.rows.forEach(row => {
       let cells = []
-      row.cells.forEach(cell => {
-        cell.fullMatch = cell.role === 'data' ? InflectionGame.compareLexemesToCell(this.view.inflectionData, cell) : null
-        cell.hidden = cell.role === 'data'
-        cells.push(Object.assign({}, cell))
+      row.cells.filter(cell => !cell.classes['infl-cell--sp0'] && !cell.classes['hidden']).forEach(cell => {
+        let gameCell = Object.assign({}, cell)
+        gameCell.isDataCell = cell.isDataCell
+        gameCell.fullMatch = cell.isDataCell && cell.suffixMatches
+        gameCell.gameHidden = cell.isDataCell
+        gameCell.value = !cell.isDataCell ? cell.value : cell.morphemes.map(morpheme => morpheme.value).join(', ')
+        console.info('*****************gameCell', gameCell, cell)
+        cells.push(gameCell)
 
-        this.updateFeaturesList(cell, featuresList)
+        // this.updateFeaturesList(cell, featuresList)
       })
       gameTable.rows.push({ cells: cells })
     })
@@ -31,7 +35,7 @@ export default class InflectionGame extends Game {
     if (this.gameTable && this.gameTable.rows) {
       this.gameTable.rows.forEach(row => {
         row.cells.forEach(cell => {
-          cell.hidden = cell.role === 'data'
+          cell.hidden = cell.isDataCell
         })
       })
     }
@@ -42,31 +46,23 @@ export default class InflectionGame extends Game {
     }
   }
 
-  updateFeaturesList (cell, featuresList) {
-    if (cell.role === 'data') {
-      let cellFeatures = InflectionGame.getFeatures(cell)
-
-      cellFeatures.forEach(feature => {
-        if (featuresList[feature] === undefined) {
-          featuresList[feature] = []
-        }
-
-        if (!featuresList[feature].find(item => item.value === cell[feature])) {
-          featuresList[feature].push(
-            {
-              value: cell[feature],
-              status: null
-            }
-          )
+  updateFeaturesList () {
+    let featuresList = {}
+    Object.keys(this.view.features).forEach(featureKey => {
+      featuresList[this.view.features[featureKey].type] = Array.from(this.view.features[featureKey].featureMap.keys()).map(featureValue => {
+        return {
+          value: featureValue,
+          status: null
         }
       })
-    }
+    })
+    return featuresList
   }
 
   featureHasFullMatch (featureName, featureValue) {
-    return this.gameTable.rows.some(row => row.cells.some(cell => {
-      return cell.fullMatch && cell[featureName] === featureValue.value
-    }))
+    return this.gameTable.rows.some(row => row.cells.some(cell =>
+      cell.isDataCell && cell.fullMatch && cell.features.some(feature => feature.type === featureName && feature.value === featureValue.value)
+    ))
   }
 
   get featuresListTitles () {
@@ -78,29 +74,35 @@ export default class InflectionGame extends Game {
   }
 
   static getFeatures (cell) {
-    let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
-    return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
+    // let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
+    return cell.features.map(feature => feature.type) // Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
   }
 
-  static compareLexemesToCell (inflectionData, cell) {
-    let cellFeatures = InflectionGame.getFeatures(cell)
+  // static compareLexemesToCell (inflectionData, cell) {
+  //   let cellFeatures = InflectionGame.getFeatures(cell)
 
-    return inflectionData.homonym.lexemes.some(lexeme =>
-      lexeme.inflections.some(inflection =>
-        cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
-      )
-    )
-  }
+  //   return inflectionData.homonym.lexemes.some(lexeme =>
+  //     lexeme.inflections.some(inflection =>
+  //       cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
+  //     )
+  //   )
+  // }
 
   static findFullMatchInView (view) {
-    return view.wideTable.rows.some(row =>
-      row.cells.some(cell => (cell.role === 'data') && InflectionGame.compareLexemesToCell(view.inflectionData, cell))
-    )
+    // return view.wideView.rows.some(row =>
+    //   row.cells.some(cell => cell.isDataCell && cell.suffixMatches)
+    // )
+    return view.morphemes.some(morpheme => morpheme.match.fullMatch)
+  }
+
+  static checkViewFormatCorrect (view) {
+    return !view.hasPrerenderedTables && view.isImplemented && view.wideView && !view.isEmpty
   }
 
   static matchViewsCheck (view) {
     view.render()
-    console.info('**************matchViewsCheck', !view.hasPrerenderedTables, view.isImplemented, view.wideView, !view.isEmpty)
-    return view.hasComponentData && InflectionGame.findFullMatchInView(view)
+    console.info('**************matchViewsCheck1', InflectionGame.checkViewFormatCorrect(view))
+    console.info('**************matchViewsCheck2', InflectionGame.findFullMatchInView(view))
+    return InflectionGame.checkViewFormatCorrect(view) && InflectionGame.findFullMatchInView(view)
   }
 }
