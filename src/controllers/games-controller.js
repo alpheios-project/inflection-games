@@ -2,11 +2,11 @@ import Vue from 'vue/dist/vue' // Vue in a runtime + compiler configuration
 import GamesPanel from '@/vue-components/games-panel.vue'
 import WindowServices from '@/lib/window-services.js'
 import { ViewSetFactory } from 'alpheios-inflection-tables'
+import { Feature } from 'alpheios-data-models'
 
 export default class GamesController {
   constructor (draggable) {
     this.gamesComponent = GamesController.gamesComponentCreate(draggable)
-    // this.LDFAdapter = LDFAdapter
   }
 
   open () {
@@ -24,9 +24,22 @@ export default class GamesController {
   }
 
   updateHomonym (homonym) {
+    console.info('*******************homonym', homonym)
     if (!this.gamesComponent.visible) {
-      this.gamesComponent.homonym = homonym
-      this.getInflectionDataFromHomonym(homonym)
+      this.gamesComponent.slimHomonym = {
+        targetWord: homonym.targetWord,
+        lexemes: homonym.lexemes.map(lex => {
+          return {
+            lemma: {
+              ID: lex.lemma.ID,
+              word: lex.lemma.word,
+              partOfSpeech: lex.lemma.features[Feature.types.part].value
+            }
+          }
+        })
+      }
+
+      this.getInflectionViewSetDataFromHomonym(homonym)
     }
   }
 
@@ -44,18 +57,9 @@ export default class GamesController {
     this.gamesComponent.gamesData.definitionsDataReady = true
   }
 
-  getInflectionDataFromHomonym (homonym) {
-    /*
-    try {
-      let inflectionData = await this.LDFAdapter.getInflectionData(homonym)
-      this.gamesComponent.gamesData.inflectionData = inflectionData
-      this.gamesComponent.gamesData.inflectionDataReady = true
-    } catch (error) {
-      console.error(`LexicalQuery failed: ${error.message}`)
-    }
-    */
+  getInflectionViewSetDataFromHomonym (homonym) {
     this.gamesComponent.gamesData.inflectionsViewSet = ViewSetFactory.create(homonym, this.gamesComponent.gamesData.currentValue)
-    this.gamesComponent.gamesData.inflectionDataReady = this.gamesComponent.gamesData.inflectionsViewSet.hasMatchingViews
+    this.gamesComponent.gamesData.hasMatchingViews = this.gamesComponent.gamesData.inflectionsViewSet.hasMatchingViews
   }
 
   static gamesComponentCreate (draggable) {
@@ -67,13 +71,12 @@ export default class GamesController {
       data: {
         currentGamesComponents: 'gamesPanel',
         visible: false,
-        homonym: false,
+        slimHomonym: false,
         gamesData: {
           draggable: draggable || false,
           zIndex: 4000,
-          // inflectionData: null,
           inflectionsViewSet: null,
-          inflectionDataReady: false,
+          hasMatchingViews: false,
           locale: null,
           definitions: null,
           definitionsDataReady: false
@@ -89,9 +92,9 @@ export default class GamesController {
           return this
         },
         clearData: function () {
-          this.homonym = {}
-          this.gamesData.inflectionData = null
-          this.gamesData.inflectionDataReady = false
+          this.slimHomonym = {}
+          this.gamesData.inflectionsViewSet = null
+          this.gamesData.hasMatchingViews = false
         }
       }
     })

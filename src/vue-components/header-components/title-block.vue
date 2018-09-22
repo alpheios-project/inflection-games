@@ -24,7 +24,7 @@
   @import "../../styles/alpheios";
 
   .alpheios-title-block__title {
-    font-size: 30px;
+    font-size: 20px;
     margin: 10px 0;
     color: $alpheios-headers-color;
   }

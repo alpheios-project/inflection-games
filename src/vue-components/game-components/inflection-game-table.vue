@@ -40,7 +40,6 @@
     },
     computed: {
       gameTable: function () {
-        console.info('**************gameTable', this.selectedGame.gameTable)
         return this.selectedGame.gameTable
       }
     },
@@ -85,9 +84,11 @@
       },
 
       checkCell: function (cell) {
+        console.info('*****************checkCell before', cell.isDataCell, !cell.gameHidden)
         if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
           this.$emit('incrementClicks')
           cell.gameHidden = false
+          console.info('*****************checkCell after', cell,  cell.isDataCell, !cell.gameHidden)
           if (cell.fullMatch) {
             this.$emit('incrementSuccessGames')
             this.finishGame()
@@ -119,8 +120,6 @@
         let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
           row.cells.filter(cell => cell.isDataCell && !cell.fullMatch).every(cell => !cell.gameHidden)
         )
-
-        console.info('**********************checkIfLastUnCovered', onlyFullMatchUncovered)
 
         if (onlyFullMatchUncovered) {
           this.$emit('incrementSuccessGames')

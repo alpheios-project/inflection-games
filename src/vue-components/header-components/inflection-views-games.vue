@@ -100,7 +100,7 @@
     methods: {
       selectGame (gameVariant) {
         this.selectedId = gameVariant.id
-        this.$emit('selectedGameEvent', gameVariant)
+        this.$emit('selectedGameEvent', gameVariant.id, gameVariant.type)
       },
       showHideVariants () {
         if (this.selectedGameReady) {
@@ -108,7 +108,7 @@
         }
       },
       checkHasSelectedChildren (gameKey) {
-        return this.gamesList[gameKey] ? this.gamesList[gameKey].some(game => game.id === this.selectedId) : false
+        return this.gamesList[gameKey] ? Object.values(this.gamesList[gameKey]).some(game => game.id === this.selectedId) : false
       },
 
       clearSelectedStatus () {

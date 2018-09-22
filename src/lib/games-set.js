@@ -2,29 +2,27 @@ import InflectionGame from '@/lib/games/inflection-game'
 
 export default class GamesSet {
   constructor (inflectionsViewSet) {
-    this.inflectionsViewSet = inflectionsViewSet
-    // this.locale = locale
-
-    // this.viewSet = new ViewSet(this.inflectionData, this.locale)
-    this.partsOfSpeech = this.inflectionsViewSet.partsOfSpeech
+    // this.inflectionsViewSet = inflectionsViewSet
+    this.partsOfSpeech = inflectionsViewSet.partsOfSpeech
 
     this.games = [ InflectionGame ]
-    this.matchingGames = []
+    this.matchingGames = {}
 
-    this.getMatchingViewsGames()
-    console.info('****************matchingGames', this.matchingGames)
+    this.getMatchingViewsGames(inflectionsViewSet)
     this.createGamesList()
   }
 
-  getMatchingViewsGames () {
-    console.info('**********************this.partsOfSpeech', this.partsOfSpeech)
+  getMatchingViewsGames (inflectionsViewSet) {
     this.games.forEach((game, index) => {
       this.partsOfSpeech.forEach(partOfSpeech => {
-        console.info('**********************partOfSpeech', partOfSpeech)
-        this.inflectionsViewSet.getViews(partOfSpeech).forEach(view => {
-          console.info('**********************partOfSpeech view', view)
-          if (game.matchViewsCheck(view)) {
-            this.matchingGames.push(new this.games[index](view))
+        inflectionsViewSet.getViews(partOfSpeech).forEach(view => {
+          let newGame = new this.games[index](view)
+          if (newGame.matchViewsCheck(view)) {
+            if (this.matchingGames[game.gameType] === undefined) {
+              this.matchingGames[game.gameType] = {}
+            }
+
+            this.matchingGames[game.gameType][newGame.id] = newGame
           }
         })
       })
@@ -33,12 +31,21 @@ export default class GamesSet {
 
   createGamesList () {
     let gamesList = {}
-    this.matchingGames.forEach(game => { gamesList[game.gameType] = [] })
+    Object.keys(this.matchingGames).forEach(gameType => { gamesList[gameType] = [] })
 
-    this.matchingGames.forEach(game => {
-      gamesList[game.gameType].push(game)
-    })
+    for (let gameType in this.matchingGames) {
+      gamesList[gameType] = {}
+      for (let gameId in this.matchingGames[gameType]) {
+        let game = this.matchingGames[gameType][gameId]
+        gamesList[gameType][gameId] = {
+          id: game.id,
+          name: game.name,
+          partOfSpeech: game.partOfSpeech,
+          type: gameType
+        }
+      }
+    }
+
     this.gamesList = gamesList
-    console.info('****************matchingGames', this.gamesList)
   }
 }

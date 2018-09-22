@@ -16,7 +16,7 @@
         :key="indexLex"
       >
         <span class="alpheios-lexemes-data-block__list__item__word">{{ lex.lemma.word }}</span>
-        <span class="alpheios-lexemes-data-block__list__item__part_of_speech"> ({{ getPartOfSpeechFromLemma(lex.lemma) }})</span>
+        <span class="alpheios-lexemes-data-block__list__item__part_of_speech"> ({{ lex.lemma.partOfSpeech }})</span>
         <definitions-block
           v-if="definitionsDataReady"
           :definitions = "getDefinitions(lex.lemma.ID)"
@@ -63,9 +63,6 @@
       getDefinitions (lemmaID) {
       	return this.definitionsDataReady ? this.definitions[lemmaID] : []
       },
-      getPartOfSpeechFromLemma (lemma) {
-        return lemma.features && lemma.features[Feature.types.part] ? lemma.features[Feature.types.part].value : ''
-      },
       showHideLink () {
         this.hidden = !this.hidden
       }
@@ -95,6 +92,7 @@
 
   .alpheios-lexemes-data-block__list__item {
     margin-bottom: 10px;
+    cursor: pointer;
   }
 
   .alpheios-lexemes-data-block__list__item__word {

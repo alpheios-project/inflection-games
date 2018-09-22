@@ -15,12 +15,12 @@
      </icon-button>
 
 		<title-block
-			v-if = "homonym.targetWord"
-			:word = "homonym.targetWord"
+			v-if = "slimHomonym.targetWord"
+			:word = "slimHomonym.targetWord"
 		></title-block>
 		<lexemes-data-block 
 			v-if = "showFeaturesPanel"
-			:lexemes = "homonym.lexemes" 
+			:lexemes = "slimHomonym.lexemes" 
 			:definitionsDataReady = "data.definitionsDataReady"
 			:definitions = "definitionsFinal"
 		></lexemes-data-block>
@@ -96,7 +96,7 @@
         type: Boolean,
         required: true
       },
-      homonym: {
+      slimHomonym: {
         type: [Object, Boolean],
         required: true
       }
@@ -113,7 +113,7 @@
       	}
       },
       gamesSet () {
-        if (this.data.inflectionDataReady && this.data.locale) {
+        if (this.showInflectionsPanel) {
           this.gamesListChanged = this.gamesListChanged + 1
           return new GamesSet(this.data.inflectionsViewSet)
         }
@@ -123,10 +123,10 @@
       	return this.data.definitionsDataReady ? this.data.definitions : false
       },
       showFeaturesPanel () {
-      	return this.homonym.lexemes && this.homonym.lexemes.length > 0
+      	return this.slimHomonym.lexemes && this.slimHomonym.lexemes.length > 0
       },
       showInflectionsPanel () {
-      	return this.data.inflectionDataReady && this.data.locale
+      	return this.data.hasMatchingViews && this.data.locale
       }
     },
     methods: {
@@ -134,10 +134,12 @@
       	this.clearData()
         this.$emit('close')
       },
-      selectedGameEvent (gameVariant) {
-      	this.selectedGame = gameVariant
+      selectedGameEvent (gameId, gameType) {
+        this.selectedGame = this.gamesSet.matchingGames[gameType][gameId]
+        this.selectedGame.createGameStuff()
       	this.selectedGameReady = true
-      	this.changedGame = this.changedGame + 1
+        this.changedGame = this.changedGame + 1
+        console.info('**************this.selectedGame', this.selectedGame)
       },
       clearData () {
         this.selectedGame = false
@@ -158,7 +160,9 @@
     },
     watch: {
       visible (flag) {
-        if (flag) { this.clearData() }
+        if (flag) { 
+          this.clearData()
+        }
       }
     }
   }	

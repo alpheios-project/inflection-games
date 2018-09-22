@@ -65,7 +65,6 @@
       },
 
       checkFeatureHasFullMatch (featureName, featureValue) {
-        console.info('*********************checkFeatureHasFullMatch', featureName, featureValue)
         return this.selectedGame.featureHasFullMatch(featureName, featureValue) ? 'success' : 'failed'
       },
 
