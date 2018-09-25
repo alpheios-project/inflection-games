@@ -27182,8 +27182,10 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('close')
     },
     selectedGameEvent (gameId, gameType) {
-      this.selectedGame = this.gamesSet.matchingGames[gameType][gameId]
-      this.selectedGame.createGameStuff()
+      let selectedGame = this.gamesSet.matchingGames[gameType][gameId]
+      // Vue.set(this, selectedGame, this.gamesSet.matchingGames[gameType][gameId])
+      selectedGame.createGameStuff()
+      this.selectedGame = selectedGame
     	this.selectedGameReady = true
       this.changedGame = this.changedGame + 1
       console.info('**************this.selectedGame', this.selectedGame)
