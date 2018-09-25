@@ -4,7 +4,7 @@
             <template v-for="row in gameTable.rows">
                 <div 
                   :class = "cellClasses(cell)" 
-                  v-for = "cell in row.cells"
+                  v-for = "cell in row.cells" :key="cell._index"
                   @click = "checkCell(cell)">
                   <template v-if="cell.isDataCell">
                     <span v-show="!cell.gameHidden">{{ cell.value }}</span>
@@ -40,6 +40,7 @@
     },
     computed: {
       gameTable: function () {
+        console.info('***********gameTable', this.selectedGame.gameTable)
         return this.selectedGame.gameTable
       }
     },
@@ -88,7 +89,8 @@
         if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
           this.$emit('incrementClicks')
           cell.gameHidden = false
-          console.info('*****************checkCell after', cell,  cell.isDataCell, !cell.gameHidden)
+          let classes = this.cellClasses(cell)
+          console.info('*****************checkCell after', cell,  cell.isDataCell, !cell.gameHidden, classes)
           if (cell.fullMatch) {
             this.$emit('incrementSuccessGames')
             this.finishGame()

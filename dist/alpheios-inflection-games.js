@@ -26862,6 +26862,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     gameTable: function () {
+      console.info('***********gameTable', this.selectedGame.gameTable)
       return this.selectedGame.gameTable
     }
   },
@@ -26910,7 +26911,8 @@ __webpack_require__.r(__webpack_exports__);
       if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
         this.$emit('incrementClicks')
         cell.gameHidden = false
-        console.info('*****************checkCell after', cell,  cell.isDataCell, !cell.gameHidden)
+        let classes = this.cellClasses(cell)
+        console.info('*****************checkCell after', cell,  cell.isDataCell, !cell.gameHidden, classes)
         if (cell.fullMatch) {
           this.$emit('incrementSuccessGames')
           this.finishGame()
@@ -27884,6 +27886,7 @@ var render = function() {
                 return _c(
                   "div",
                   {
+                    key: cell._index,
                     class: _vm.cellClasses(cell),
                     on: {
                       click: function($event) {
@@ -39580,15 +39583,13 @@ class GamesController {
     if (!this.gamesComponent.visible) {
       this.gamesComponent.slimHomonym = {
         targetWord: homonym.targetWord,
-        lexemes: homonym.lexemes.map(lex => {
-          return {
-            lemma: {
-              ID: lex.lemma.ID,
-              word: lex.lemma.word,
-              partOfSpeech: lex.lemma.features[alpheios_data_models__WEBPACK_IMPORTED_MODULE_4__["Feature"].types.part].value
-            }
+        lexemes: homonym.lexemes.map(lex => ({
+          lemma: {
+            ID: lex.lemma.ID,
+            word: lex.lemma.word,
+            partOfSpeech: lex.lemma.features[alpheios_data_models__WEBPACK_IMPORTED_MODULE_4__["Feature"].types.part].value
           }
-        })
+        }))
       }
 
       this.getInflectionViewSetDataFromHomonym(homonym)
@@ -39663,7 +39664,7 @@ class GamesController {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('svg',{attrs:{"viewBox":"0 0 20 20","xmlns":"http://www.w3.org/2000/svg"}},[_c('path',{attrs:{"fill":"none","d":"M16 16L4 4M16 4L4 16"}})])};var toString = function () {return "C:\\_Irina\\_clients\\_Alpheios Project\\git\\inflections-games\\src\\images\\inline-icons\\close.svg"};module.exports = { render: render, toString: toString };
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('svg',{attrs:{"viewBox":"0 0 20 20","xmlns":"http://www.w3.org/2000/svg"}},[_c('path',{attrs:{"fill":"none","d":"M16 16L4 4M16 4L4 16"}})])};var toString = function () {return "c:\\_Irina\\_clients\\_Alpheios Project\\git\\inflections-games\\src\\images\\inline-icons\\close.svg"};module.exports = { render: render, toString: toString };
 
 /***/ }),
 

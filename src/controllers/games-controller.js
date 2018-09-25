@@ -28,15 +28,13 @@ export default class GamesController {
     if (!this.gamesComponent.visible) {
       this.gamesComponent.slimHomonym = {
         targetWord: homonym.targetWord,
-        lexemes: homonym.lexemes.map(lex => {
-          return {
-            lemma: {
-              ID: lex.lemma.ID,
-              word: lex.lemma.word,
-              partOfSpeech: lex.lemma.features[Feature.types.part].value
-            }
+        lexemes: homonym.lexemes.map(lex => ({
+          lemma: {
+            ID: lex.lemma.ID,
+            word: lex.lemma.word,
+            partOfSpeech: lex.lemma.features[Feature.types.part].value
           }
-        })
+        }))
       }
 
       this.getInflectionViewSetDataFromHomonym(homonym)
