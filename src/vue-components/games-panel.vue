@@ -136,12 +136,10 @@
       },
       selectedGameEvent (gameId, gameType) {
         let selectedGame = this.gamesSet.matchingGames[gameType][gameId]
-        // Vue.set(this, selectedGame, this.gamesSet.matchingGames[gameType][gameId])
         selectedGame.createGameStuff()
         this.selectedGame = selectedGame
       	this.selectedGameReady = true
         this.changedGame = this.changedGame + 1
-        console.info('**************this.selectedGame', this.selectedGame)
       },
       clearData () {
         this.selectedGame = false

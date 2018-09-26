@@ -12,40 +12,52 @@ export default class GamesSet {
     this.createGamesList()
   }
 
-  getMatchingViewsGames (inflectionsViewSet) {
-    this.games.forEach((game, index) => {
-      this.partsOfSpeech.forEach(partOfSpeech => {
-        inflectionsViewSet.getViews(partOfSpeech).forEach(view => {
-          let newGame = new this.games[index](view)
-          if (newGame.matchViewsCheck(view)) {
-            if (this.matchingGames[game.gameType] === undefined) {
-              this.matchingGames[game.gameType] = {}
-            }
+  initMatchingGameWithType (gameType) {
+    if (this.matchingGames[gameType] === undefined) {
+      this.matchingGames[gameType] = {}
+    }
+  }
 
-            this.matchingGames[game.gameType][newGame.id] = newGame
-          }
-        })
+  addGameToMatchingGames (gameIndex, view, gameType) {
+    let newGame = new this.games[gameIndex](view)
+
+    if (newGame.matchViewsCheck(view)) {
+      this.initMatchingGameWithType(gameType)
+      this.matchingGames[gameType][newGame.id] = newGame
+    }
+  }
+
+  getMatchingViewsGames (inflectionsViewSet) {
+    this.games.forEach((game, gameIndex) => {
+      this.partsOfSpeech.forEach(partOfSpeech => {
+        inflectionsViewSet
+          .getViews(partOfSpeech)
+          .forEach(view => this.addGameToMatchingGames(gameIndex, view, game.gameType))
       })
     })
   }
 
-  createGamesList () {
-    let gamesList = {}
-    Object.keys(this.matchingGames).forEach(gameType => { gamesList[gameType] = [] })
+  addGameToGameList (gameType, gameId) {
+    if (this.matchingGames[gameType] && this.matchingGames[gameType][gameId]) {
+      let game = this.matchingGames[gameType][gameId]
 
-    for (let gameType in this.matchingGames) {
-      gamesList[gameType] = {}
-      for (let gameId in this.matchingGames[gameType]) {
-        let game = this.matchingGames[gameType][gameId]
-        gamesList[gameType][gameId] = {
-          id: game.id,
-          name: game.name,
-          partOfSpeech: game.partOfSpeech,
-          type: gameType
-        }
+      if (!this.gamesList[gameType]) { this.gamesList[gameType] = {} }
+
+      this.gamesList[gameType][gameId] = {
+        id: game.id,
+        name: game.name,
+        partOfSpeech: game.partOfSpeech,
+        type: gameType
       }
     }
+  }
 
-    this.gamesList = gamesList
+  createGamesList () {
+    this.gamesList = {}
+    for (let gameType in this.matchingGames) {
+      for (let gameId in this.matchingGames[gameType]) {
+        this.addGameToGameList(gameType, gameId)
+      }
+    }
   }
 }

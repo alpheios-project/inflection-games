@@ -7,14 +7,14 @@
 
 		<ul class="alpheios-features-select-block__list_features">
 
-			<li v-for="(featureName, indexF) in featuresKeys" :key="indexF">
+			<li v-for="(featureName, indexF) in featuresTitles" :key="indexF">
 				<p class="alpheios-features-select-block__list_features_title">{{ featureName }}</p>
 
 				<ul class="alpheios-features-select-block__list_values">
 					<li
 						:class="featureItemClass(featureValue, featureName)"
 						@click = "selectFeature(featureName, featureValue)"
-						v-for="(featureValue, indexFL) in featuresList[featureName]" 
+						v-for="(featureValue, indexFL) in features[featureName]" 
 						:key="indexFL"
 						>{{ featureValue.value }}</li>
 				</ul>
@@ -35,7 +35,7 @@
       }
     },
     props: {
-      selectedGame: {
+      featuresList: {
       	type: Object,
       	required: true
       },
@@ -45,11 +45,11 @@
       }
     },
     computed: {
-      featuresKeys () {
-      	return this.selectedGame.featuresListTitles
+      featuresTitles () {
+      	return this.featuresList.featuresTitles
       },
-      featuresList () {
-        return this.selectedGame.featuresList
+      features () {
+        return this.featuresList.features
       }
     },
 
@@ -64,26 +64,19 @@
         return classes
       },
 
-      checkFeatureHasFullMatch (featureName, featureValue) {
-        return this.selectedGame.featureHasFullMatch(featureName, featureValue) ? 'success' : 'failed'
-      },
-
       checkIfOnlyOneFeatureValueLeft (featureName) {
-        let hasOnlyOneFeatureLeft = this.featuresList[featureName].filter(featureValue => featureValue.status === null).length === 1
-        if (hasOnlyOneFeatureLeft) {
-          let lastFeatureValue = this.featuresList[featureName].find(featureValue => featureValue.status === null)
-
-          lastFeatureValue.status = this.checkFeatureHasFullMatch(featureName, lastFeatureValue)
+        let uncheckedFeatureValues = this.featuresList.getUncheckedFeatureValues(featureName)
+        if (uncheckedFeatureValues.length === 1) {
+          uncheckedFeatureValues[0].status = uncheckedFeatureValues[0].hasFullMatch ? 'success' : 'failed'
           return true
         }
         return false
       },
 
       checkIfChosenTheOnlyFeatureWithFullMatch (featureName) {
-        let uncheckedFeatureValues = this.featuresList[featureName].filter(featureValue => featureValue.status === null)
+        let uncheckedFeatureValues = this.featuresList.getUncheckedFeatureValues(featureName)
 
-        let allNotFullMatch = uncheckedFeatureValues.every(featureValue => !this.selectedGame.featureHasFullMatch(featureName, featureValue))
-        if (allNotFullMatch) {
+        if (uncheckedFeatureValues.every(featureValue => !featureValue.hasFullMatch)) {
           uncheckedFeatureValues.forEach(featureValue => { featureValue.status = 'failed' })
           return true
         }
@@ -99,7 +92,7 @@
 
       selectFeature (featureName, featureValue) {
         if (!this.finishGameFlag) {
-          featureValue.status = this.checkFeatureHasFullMatch(featureName, featureValue)
+          featureValue.status = featureValue.hasFullMatch ? 'success' : 'failed'
       	  this.$emit('selectFeature', featureName, featureValue.status, featureValue.value)
       	  this.$emit('incrementClicks')
 

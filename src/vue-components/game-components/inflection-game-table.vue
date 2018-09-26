@@ -40,7 +40,6 @@
     },
     computed: {
       gameTable: function () {
-        console.info('***********gameTable', this.selectedGame.gameTable)
         return this.selectedGame.gameTable
       }
     },
@@ -72,25 +71,16 @@
         classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
         return classes
       },
-      showAllCells: function () {
-        this.gameTable.rows.forEach(row => {
-          row.cells.forEach(cell => {
-            if (cell.isDataCell) { cell.gameHidden = false }
-          })
-        })
-      },
 
       finishGame: function () {
-        this.showAllCells()
+        this.gameTable.showAllCells()
       },
 
       checkCell: function (cell) {
-        console.info('*****************checkCell before', cell.isDataCell, !cell.gameHidden)
         if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
           this.$emit('incrementClicks')
           cell.gameHidden = false
           let classes = this.cellClasses(cell)
-          console.info('*****************checkCell after', cell,  cell.isDataCell, !cell.gameHidden, classes)
           if (cell.fullMatch) {
             this.$emit('incrementSuccessGames')
             this.finishGame()
@@ -99,31 +89,15 @@
       },
 
       checkSuccessFeature: function () {
-        this.gameTable.rows.forEach(row => {
-          row.cells.forEach(cell => {
-            if (cell.isDataCell && !cell.fullMatch && cell.features.some(feature => feature.type === this.selectedFeature.name && feature.value !== this.selectedFeature.value)) {
-              cell.gameHidden = false
-            }
-          })
-        })
+        this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value)
       },
 
       checkFailedFeature: function () {
-        this.gameTable.rows.forEach(row => {
-          row.cells.forEach(cell => {
-            if (cell.isDataCell && cell.features.some(feature => feature.type === this.selectedFeature.name && feature.value === this.selectedFeature.value)) {
-              cell.gameHidden = false
-            }
-          })
-        })
+        this.gameTable.checkFailedFeature(this.selectedFeature.name, this.selectedFeature.value)
       },
 
       checkIfLastUnCovered: function () {
-        let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
-          row.cells.filter(cell => cell.isDataCell && !cell.fullMatch).every(cell => !cell.gameHidden)
-        )
-
-        if (onlyFullMatchUncovered) {
+        if (this.gameTable.isOnlyFullMatchUncovered) {
           this.$emit('incrementSuccessGames')
           this.finishGame()
         }

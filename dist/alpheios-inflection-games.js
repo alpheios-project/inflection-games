@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("intl-messageformat"), require("alpheios-data-models"));
+		module.exports = factory(require("alpheios-data-models"), require("intl-messageformat"));
 	else if(typeof define === 'function' && define.amd)
-		define(["intl-messageformat", "alpheios-data-models"], factory);
+		define(["alpheios-data-models", "intl-messageformat"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("intl-messageformat"), require("alpheios-data-models")) : factory(root["intl-messageformat"], root["alpheios-data-models"]);
+		var a = typeof exports === 'object' ? factory(require("alpheios-data-models"), require("intl-messageformat")) : factory(root["alpheios-data-models"], root["intl-messageformat"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE_intl_messageformat__, __WEBPACK_EXTERNAL_MODULE_alpheios_data_models__) {
+})(window, function(__WEBPACK_EXTERNAL_MODULE_alpheios_data_models__, __WEBPACK_EXTERNAL_MODULE_intl_messageformat__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -26690,7 +26690,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   props: {
-    selectedGame: {
+    featuresList: {
     	type: Object,
     	required: true
     },
@@ -26700,11 +26700,11 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   computed: {
-    featuresKeys () {
-    	return this.selectedGame.featuresListTitles
+    featuresTitles () {
+    	return this.featuresList.featuresTitles
     },
-    featuresList () {
-      return this.selectedGame.featuresList
+    features () {
+      return this.featuresList.features
     }
   },
 
@@ -26719,26 +26719,19 @@ __webpack_require__.r(__webpack_exports__);
       return classes
     },
 
-    checkFeatureHasFullMatch (featureName, featureValue) {
-      return this.selectedGame.featureHasFullMatch(featureName, featureValue) ? 'success' : 'failed'
-    },
-
     checkIfOnlyOneFeatureValueLeft (featureName) {
-      let hasOnlyOneFeatureLeft = this.featuresList[featureName].filter(featureValue => featureValue.status === null).length === 1
-      if (hasOnlyOneFeatureLeft) {
-        let lastFeatureValue = this.featuresList[featureName].find(featureValue => featureValue.status === null)
-
-        lastFeatureValue.status = this.checkFeatureHasFullMatch(featureName, lastFeatureValue)
+      let uncheckedFeatureValues = this.featuresList.getUncheckedFeatureValues(featureName)
+      if (uncheckedFeatureValues.length === 1) {
+        uncheckedFeatureValues[0].status = uncheckedFeatureValues[0].hasFullMatch ? 'success' : 'failed'
         return true
       }
       return false
     },
 
     checkIfChosenTheOnlyFeatureWithFullMatch (featureName) {
-      let uncheckedFeatureValues = this.featuresList[featureName].filter(featureValue => featureValue.status === null)
+      let uncheckedFeatureValues = this.featuresList.getUncheckedFeatureValues(featureName)
 
-      let allNotFullMatch = uncheckedFeatureValues.every(featureValue => !this.selectedGame.featureHasFullMatch(featureName, featureValue))
-      if (allNotFullMatch) {
+      if (uncheckedFeatureValues.every(featureValue => !featureValue.hasFullMatch)) {
         uncheckedFeatureValues.forEach(featureValue => { featureValue.status = 'failed' })
         return true
       }
@@ -26754,7 +26747,7 @@ __webpack_require__.r(__webpack_exports__);
 
     selectFeature (featureName, featureValue) {
       if (!this.finishGameFlag) {
-        featureValue.status = this.checkFeatureHasFullMatch(featureName, featureValue)
+        featureValue.status = featureValue.hasFullMatch ? 'success' : 'failed'
     	  this.$emit('selectFeature', featureName, featureValue.status, featureValue.value)
     	  this.$emit('incrementClicks')
 
@@ -26862,7 +26855,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     gameTable: function () {
-      console.info('***********gameTable', this.selectedGame.gameTable)
       return this.selectedGame.gameTable
     }
   },
@@ -26894,25 +26886,16 @@ __webpack_require__.r(__webpack_exports__);
       classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
       return classes
     },
-    showAllCells: function () {
-      this.gameTable.rows.forEach(row => {
-        row.cells.forEach(cell => {
-          if (cell.isDataCell) { cell.gameHidden = false }
-        })
-      })
-    },
 
     finishGame: function () {
-      this.showAllCells()
+      this.gameTable.showAllCells()
     },
 
     checkCell: function (cell) {
-      console.info('*****************checkCell before', cell.isDataCell, !cell.gameHidden)
       if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
         this.$emit('incrementClicks')
         cell.gameHidden = false
         let classes = this.cellClasses(cell)
-        console.info('*****************checkCell after', cell,  cell.isDataCell, !cell.gameHidden, classes)
         if (cell.fullMatch) {
           this.$emit('incrementSuccessGames')
           this.finishGame()
@@ -26921,31 +26904,15 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     checkSuccessFeature: function () {
-      this.gameTable.rows.forEach(row => {
-        row.cells.forEach(cell => {
-          if (cell.isDataCell && !cell.fullMatch && cell.features.some(feature => feature.type === this.selectedFeature.name && feature.value !== this.selectedFeature.value)) {
-            cell.gameHidden = false
-          }
-        })
-      })
+      this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value)
     },
 
     checkFailedFeature: function () {
-      this.gameTable.rows.forEach(row => {
-        row.cells.forEach(cell => {
-          if (cell.isDataCell && cell.features.some(feature => feature.type === this.selectedFeature.name && feature.value === this.selectedFeature.value)) {
-            cell.gameHidden = false
-          }
-        })
-      })
+      this.gameTable.checkFailedFeature(this.selectedFeature.name, this.selectedFeature.value)
     },
 
     checkIfLastUnCovered: function () {
-      let onlyFullMatchUncovered = this.gameTable.rows.every(row => 
-        row.cells.filter(cell => cell.isDataCell && !cell.fullMatch).every(cell => !cell.gameHidden)
-      )
-
-      if (onlyFullMatchUncovered) {
+      if (this.gameTable.isOnlyFullMatchUncovered) {
         this.$emit('incrementSuccessGames')
         this.finishGame()
       }
@@ -27183,12 +27150,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     selectedGameEvent (gameId, gameType) {
       let selectedGame = this.gamesSet.matchingGames[gameType][gameId]
-      // Vue.set(this, selectedGame, this.gamesSet.matchingGames[gameType][gameId])
       selectedGame.createGameStuff()
       this.selectedGame = selectedGame
     	this.selectedGameReady = true
       this.changedGame = this.changedGame + 1
-      console.info('**************this.selectedGame', this.selectedGame)
     },
     clearData () {
       this.selectedGame = false
@@ -27787,7 +27752,7 @@ var render = function() {
         _c(
           "ul",
           { staticClass: "alpheios-features-select-block__list_features" },
-          _vm._l(_vm.featuresKeys, function(featureName, indexF) {
+          _vm._l(_vm.featuresTitles, function(featureName, indexF) {
             return _c("li", { key: indexF }, [
               _c(
                 "p",
@@ -27801,7 +27766,7 @@ var render = function() {
               _c(
                 "ul",
                 { staticClass: "alpheios-features-select-block__list_values" },
-                _vm._l(_vm.featuresList[featureName], function(
+                _vm._l(_vm.features[featureName], function(
                   featureValue,
                   indexFL
                 ) {
@@ -28399,7 +28364,7 @@ var render = function() {
                 _vm.featuresList
                   ? _c("feature-select-block", {
                       attrs: {
-                        selectedGame: _vm.selectedGame,
+                        featuresList: _vm.featuresList,
                         finishGameFlag: _vm.finishGameFlag
                       },
                       on: {
@@ -39751,41 +39716,221 @@ class GamesSet {
     this.createGamesList()
   }
 
-  getMatchingViewsGames (inflectionsViewSet) {
-    this.games.forEach((game, index) => {
-      this.partsOfSpeech.forEach(partOfSpeech => {
-        inflectionsViewSet.getViews(partOfSpeech).forEach(view => {
-          let newGame = new this.games[index](view)
-          if (newGame.matchViewsCheck(view)) {
-            if (this.matchingGames[game.gameType] === undefined) {
-              this.matchingGames[game.gameType] = {}
-            }
+  initMatchingGameWithType (gameType) {
+    if (this.matchingGames[gameType] === undefined) {
+      this.matchingGames[gameType] = {}
+    }
+  }
 
-            this.matchingGames[game.gameType][newGame.id] = newGame
-          }
-        })
+  addGameToMatchingGames (gameIndex, view, gameType) {
+    let newGame = new this.games[gameIndex](view)
+
+    if (newGame.matchViewsCheck(view)) {
+      this.initMatchingGameWithType(gameType)
+      this.matchingGames[gameType][newGame.id] = newGame
+    }
+  }
+
+  getMatchingViewsGames (inflectionsViewSet) {
+    this.games.forEach((game, gameIndex) => {
+      this.partsOfSpeech.forEach(partOfSpeech => {
+        inflectionsViewSet
+          .getViews(partOfSpeech)
+          .forEach(view => this.addGameToMatchingGames(gameIndex, view, game.gameType))
       })
     })
   }
 
-  createGamesList () {
-    let gamesList = {}
-    Object.keys(this.matchingGames).forEach(gameType => { gamesList[gameType] = [] })
+  addGameToGameList (gameType, gameId) {
+    if (this.matchingGames[gameType] && this.matchingGames[gameType][gameId]) {
+      let game = this.matchingGames[gameType][gameId]
 
+      if (!this.gamesList[gameType]) { this.gamesList[gameType] = {} }
+
+      this.gamesList[gameType][gameId] = {
+        id: game.id,
+        name: game.name,
+        partOfSpeech: game.partOfSpeech,
+        type: gameType
+      }
+    }
+  }
+
+  createGamesList () {
+    this.gamesList = {}
     for (let gameType in this.matchingGames) {
-      gamesList[gameType] = {}
       for (let gameId in this.matchingGames[gameType]) {
-        let game = this.matchingGames[gameType][gameId]
-        gamesList[gameType][gameId] = {
-          id: game.id,
-          name: game.name,
-          partOfSpeech: game.partOfSpeech,
-          type: gameType
-        }
+        this.addGameToGameList(gameType, gameId)
+      }
+    }
+  }
+}
+
+
+/***/ }),
+
+/***/ "./lib/games/features-list.js":
+/*!************************************!*\
+  !*** ./lib/games/features-list.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FeaturesList; });
+class FeaturesList {
+  constructor (view) {
+    this.uploadFeatures(view.features, view.morphemes)
+  }
+
+  uploadFeatures (features, morphemes) {
+    let featuresFromMorphemes = this.prepareFeaturesFromMorphemes(morphemes)
+    let featuresFromFeatures = this.prepareFeaturesFromFeatures(features, featuresFromMorphemes)
+    this.features = this.removeUnusefulFeatures(featuresFromFeatures)
+  }
+
+  prepareFeaturesFromMorphemes (morphemes) {
+    let featuresFromMorpheme = {}
+
+    morphemes.forEach(morpheme => {
+      if (morpheme.match.fullMatch) {
+        Object.values(morpheme.features).forEach(morphemeFeature => {
+          if (featuresFromMorpheme[morphemeFeature.type] === undefined) {
+            featuresFromMorpheme[morphemeFeature.type] = []
+          }
+          featuresFromMorpheme[morphemeFeature.type].push(morphemeFeature.value)
+        })
+      }
+    })
+    return featuresFromMorpheme
+  }
+
+  prepareFeaturesFromFeatures (features, featuresFromMorphemes) {
+    let featuresFromFeatures = {}
+
+    for (let featureKey in features) {
+      let featureType = features[featureKey].type
+      featuresFromFeatures[featureType] = Array.from(features[featureKey].featureMap.keys()).map(featureValue => ({
+        value: featureValue,
+        status: null,
+        hasFullMatch: featuresFromMorphemes[featureType] && featuresFromMorphemes[featureType].includes(featureValue)
+      }))
+    }
+    return featuresFromFeatures
+  }
+
+  removeUnusefulFeatures (featuresFromFeatures) {
+    let finalFeatures = {}
+
+    for (let featureType in featuresFromFeatures) {
+      if (featuresFromFeatures[featureType].some(featureVal => featureVal.hasFullMatch !== undefined)) {
+        finalFeatures[featureType] = featuresFromFeatures[featureType]
       }
     }
 
-    this.gamesList = gamesList
+    return finalFeatures
+  }
+
+  clearValuesStatus () {
+    Object.values(this.features).forEach(featureValues => {
+      featureValues.forEach(featVal => { featVal.status = null })
+    })
+  }
+
+  get featuresTitles () {
+    return Object.keys(this.features).filter(key => this.features[key].length > 1)
+  }
+
+  get featureHasOnlyOneValueUnchecked () {
+    return null
+  }
+
+  getUncheckedFeatureValues (featureName) {
+    return this.features[featureName].filter(featureValue => featureValue.status === null)
+  }
+}
+
+
+/***/ }),
+
+/***/ "./lib/games/game-table.js":
+/*!*********************************!*\
+  !*** ./lib/games/game-table.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return GameTable; });
+class GameTable {
+  constructor (view) {
+    this.uploadTable(view)
+  }
+
+  uploadTable (view) {
+    let rows = []
+    if (view.wideView) {
+      view.wideView.rows.forEach(row => {
+        let cells = []
+        row.cells.filter(cell => !cell.classes['infl-cell--sp0'] && !cell.classes['hidden']).forEach(cell => {
+          let gameCell = Object.assign({}, cell)
+          gameCell.isDataCell = cell.isDataCell ? cell.isDataCell : false
+          gameCell.fullMatch = cell.isDataCell && cell.suffixMatches
+          gameCell.gameHidden = cell.isDataCell
+          gameCell.value = !cell.isDataCell ? cell.value : cell.morphemes.map(morpheme => morpheme.value).join(', ')
+          cells.push(gameCell)
+        })
+        rows.push({ cells: cells })
+      })
+    }
+
+    this.rows = rows
+  }
+
+  clearValuesStatus () {
+    if (this.rows) {
+      this.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          cell.hidden = cell.isDataCell
+        })
+      })
+    }
+  }
+
+  checkFailedFeature (featureName, featureValue) {
+    this.rows.forEach(row => {
+      row.cells.forEach(cell => {
+        if (cell.isDataCell && !cell.fullMatch && cell.features.some(feature => feature.type === featureName && feature.value !== featureValue)) {
+          cell.gameHidden = false
+        }
+      })
+    })
+  }
+
+  checkSuccessFeature (featureName, featureValue) {
+    this.rows.forEach(row => {
+      row.cells.forEach(cell => {
+        if (cell.isDataCell && !cell.fullMatch && cell.features.some(feature => feature.type === featureName && feature.value !== featureValue)) {
+          cell.gameHidden = false
+        }
+      })
+    })
+  }
+
+  get isOnlyFullMatchUncovered () {
+    return this.rows.every(row =>
+      row.cells.filter(cell => cell.isDataCell && !cell.fullMatch).every(cell => !cell.gameHidden)
+    )
+  }
+
+  showAllCells () {
+    this.rows.forEach(row => {
+      row.cells.forEach(cell => {
+        if (cell.isDataCell) { cell.gameHidden = false }
+      })
+    })
   }
 }
 
@@ -39803,6 +39948,10 @@ class GamesSet {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return InflectionGame; });
 /* harmony import */ var _lib_game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/lib/game */ "./lib/game.js");
+/* harmony import */ var _lib_games_features_list__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/lib/games/features-list */ "./lib/games/features-list.js");
+/* harmony import */ var _lib_games_game_table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/lib/games/game-table */ "./lib/games/game-table.js");
+
+
 
 
 class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
@@ -39811,73 +39960,29 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.view = view
   }
 
-  createGameStuff () {
-    let gameTable = { rows: [] }
-    let featuresList = this.updateFeaturesList()
-    this.render()
-
-    if (this.view.wideView) {
-      this.view.wideView.rows.forEach(row => {
-        let cells = []
-        row.cells.filter(cell => !cell.classes['infl-cell--sp0'] && !cell.classes['hidden']).forEach(cell => {
-          let gameCell = Object.assign({}, cell)
-          gameCell.isDataCell = cell.isDataCell ? cell.isDataCell : false
-          gameCell.fullMatch = cell.isDataCell && cell.suffixMatches
-          gameCell.gameHidden = cell.isDataCell
-          gameCell.value = !cell.isDataCell ? cell.value : cell.morphemes.map(morpheme => morpheme.value).join(', ')
-          cells.push(gameCell)
-        })
-        gameTable.rows.push({ cells: cells })
-      })
-    }
-    this.gameTable = gameTable
-    this.featuresList = featuresList
-  }
-
-  clearGameStuff () {
-    if (this.gameTable && this.gameTable.rows) {
-      this.gameTable.rows.forEach(row => {
-        row.cells.forEach(cell => {
-          cell.hidden = cell.isDataCell
-        })
-      })
-    }
-    if (this.featuresList) {
-      Object.values(this.featuresList).forEach(featureValues => {
-        featureValues.forEach(featVal => { featVal.status = null })
-      })
-    }
-  }
-
-  updateFeaturesList () {
-    let featuresList = {}
-    Object.keys(this.view.features).forEach(featureKey => {
-      featuresList[this.view.features[featureKey].type] = Array.from(this.view.features[featureKey].featureMap.keys()).map(featureValue => {
-        return {
-          value: featureValue,
-          status: null
-        }
-      })
-    })
-    return featuresList
-  }
-
-  featureHasFullMatch (featureName, featureValue) {
-    return this.gameTable.rows.some(row => row.cells.some(cell =>
-      cell.isDataCell && cell.fullMatch && cell.features.some(feature => feature.type === featureName && feature.value === featureValue.value)
-    ))
-  }
-
-  get featuresListTitles () {
-    return Object.keys(this.featuresList).filter(key => this.featuresList[key].length > 1)
-  }
-
   static get gameType () {
     return 'Guess inflection'
   }
 
-  static getFeatures (cell) {
-    return cell.features.map(feature => feature.type)
+  createGameStuff () {
+    this.render()
+
+    this.gameTable = new _lib_games_game_table__WEBPACK_IMPORTED_MODULE_2__["default"](this.view)
+
+    this.featuresList = new _lib_games_features_list__WEBPACK_IMPORTED_MODULE_1__["default"](this.view)
+  }
+
+  clearGameStuff () {
+    if (this.gameTable) {
+      this.gameTable.clearValuesStatus()
+    }
+    if (this.featuresList) {
+      this.featuresList.clearValuesStatus()
+    }
+  }
+
+  get featuresListTitles () {
+    return this.featuresList.featuresListTitles
   }
 
   findFullMatchInView () {

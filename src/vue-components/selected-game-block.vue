@@ -15,7 +15,7 @@
         <feature-select-block 
           v-if = "featuresList"
 
-          :selectedGame = "selectedGame"
+          :featuresList = "featuresList"
           :finishGameFlag = "finishGameFlag"
 
           @selectFeature = selectFeature
