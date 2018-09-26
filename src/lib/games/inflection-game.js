@@ -6,6 +6,8 @@ export default class InflectionGame extends Game {
   constructor (view) {
     super(view)
     this.view = view
+    this.partOfSpeech = view.partOfSpeech
+    // console.info('****************this.view', this.view)
   }
 
   static get gameType () {

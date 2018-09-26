@@ -20,7 +20,7 @@
 		></title-block>
 		<lexemes-data-block 
 			v-if = "showFeaturesPanel"
-			:lexemes = "slimHomonym.lexemes" 
+			:lexemes = "lexemesInHeader" 
 			:definitionsDataReady = "data.definitionsDataReady"
 			:definitions = "definitionsFinal"
 		></lexemes-data-block>
@@ -102,6 +102,13 @@
       }
     },
     computed: {
+      lexemesInHeader () {
+        if (!this.selectedGame) {
+          return this.slimHomonym.lexemes
+        } else {
+          return this.slimHomonym.lexemes.filter(lex => lex.lemma.partOfSpeech === this.selectedGame.partOfSpeech)
+        }
+      },
       mainstyles () {
       	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
       },

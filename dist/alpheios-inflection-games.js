@@ -27116,6 +27116,13 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   computed: {
+    lexemesInHeader () {
+      if (!this.selectedGame) {
+        return this.slimHomonym.lexemes
+      } else {
+        return this.slimHomonym.lexemes.filter(lex => lex.lemma.partOfSpeech === this.selectedGame.partOfSpeech)
+      }
+    },
     mainstyles () {
     	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
     },
@@ -28007,7 +28014,7 @@ var render = function() {
       _vm.showFeaturesPanel
         ? _c("lexemes-data-block", {
             attrs: {
-              lexemes: _vm.slimHomonym.lexemes,
+              lexemes: _vm.lexemesInHeader,
               definitionsDataReady: _vm.data.definitionsDataReady,
               definitions: _vm.definitionsFinal
             }
@@ -39958,6 +39965,8 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor (view) {
     super(view)
     this.view = view
+    this.partOfSpeech = view.partOfSpeech
+    // console.info('****************this.view', this.view)
   }
 
   static get gameType () {
