@@ -6,12 +6,18 @@
                   :class = "cellClasses(cell)" 
                   v-for = "cell in row.cells" :key="cell._index"
                   @click = "checkCell(cell)">
-                  <template v-if="cell.isDataCell">
-                    <span v-show="!cell.gameHidden">{{ cell.value }}</span>
-                  </template>
-                  <template v-else>
-                    <span v-html="cell.value"></span>
-                  </template>
+                  <span v-if="cell.isDataCell" v-show="!cell.gameHidden">                  
+
+                    <template v-for="(morpheme, index) in cell.morphemes">
+                      <span :class="{ 'infl-suff--full-match': morpheme.match.fullMatch }">
+                          <template v-if="morpheme.value">{{morpheme.value}}</template>
+                          <template v-else>-</template>
+                      </span>
+                      <template  v-if="index < cell.morphemes.length-1">, </template>
+                    </template>
+
+                  </span>
+                  <span v-else v-html="cell.value"></span>
                 </div>
             </template>
         </div>
@@ -69,6 +75,9 @@
         classes['infl-data-cell'] = cell.isDataCell
         classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
         classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
+        if (cell.fullMatch) {
+          console.info('************************cell.morphemes', cell.morphemes) 
+        }
         return classes
       },
 
@@ -130,7 +139,13 @@
         background-color: #e6fcea;
         background-image: url(../../images/check-icon.png);
         font-weight: 700;
-        color: #099f20;
+        color: #881c07;
+        .infl-suff--full-match {
+          color: #fff;
+          background-color: #099f20;
+          padding: 0 2px;
+          font-weight: normal;
+        }
     }
 
 </style>

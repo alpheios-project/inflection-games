@@ -11,9 +11,10 @@ export default class GameTable {
         row.cells.filter(cell => !cell.classes['infl-cell--sp0'] && !cell.classes['hidden']).forEach(cell => {
           let gameCell = Object.assign({}, cell)
           gameCell.isDataCell = cell.isDataCell ? cell.isDataCell : false
-          gameCell.fullMatch = cell.isDataCell && cell.suffixMatches
+          gameCell.fullMatch = cell.isDataCell && cell.morphemes.some(morpheme => morpheme.match.fullMatch)
           gameCell.gameHidden = cell.isDataCell
           gameCell.value = !cell.isDataCell ? cell.value : cell.morphemes.map(morpheme => morpheme.value).join(', ')
+          gameCell.morphemes = cell.isDataCell ? cell.morphemes : []
           cells.push(gameCell)
         })
         rows.push({ cells: cells })

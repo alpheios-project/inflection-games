@@ -26832,6 +26832,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'InflectionGameTable',
@@ -26884,6 +26890,9 @@ __webpack_require__.r(__webpack_exports__);
       classes['infl-data-cell'] = cell.isDataCell
       classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
       classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
+      if (cell.fullMatch) {
+        console.info('************************cell.morphemes', cell.morphemes) 
+      }
       return classes
     },
 
@@ -27890,29 +27899,49 @@ var render = function() {
                   },
                   [
                     cell.isDataCell
-                      ? [
-                          _c(
-                            "span",
-                            {
-                              directives: [
-                                {
-                                  name: "show",
-                                  rawName: "v-show",
-                                  value: !cell.gameHidden,
-                                  expression: "!cell.gameHidden"
-                                }
+                      ? _c(
+                          "span",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: !cell.gameHidden,
+                                expression: "!cell.gameHidden"
+                              }
+                            ]
+                          },
+                          [
+                            _vm._l(cell.morphemes, function(morpheme, index) {
+                              return [
+                                _c(
+                                  "span",
+                                  {
+                                    class: {
+                                      "infl-suff--full-match":
+                                        morpheme.match.fullMatch
+                                    }
+                                  },
+                                  [
+                                    morpheme.value
+                                      ? [_vm._v(_vm._s(morpheme.value))]
+                                      : [_vm._v("-")]
+                                  ],
+                                  2
+                                ),
+                                _vm._v(" "),
+                                index < cell.morphemes.length - 1
+                                  ? [_vm._v(", ")]
+                                  : _vm._e()
                               ]
-                            },
-                            [_vm._v(_vm._s(cell.value))]
-                          )
-                        ]
-                      : [
-                          _c("span", {
-                            domProps: { innerHTML: _vm._s(cell.value) }
-                          })
-                        ]
-                  ],
-                  2
+                            })
+                          ],
+                          2
+                        )
+                      : _c("span", {
+                          domProps: { innerHTML: _vm._s(cell.value) }
+                        })
+                  ]
                 )
               })
             })
@@ -39940,9 +39969,10 @@ class GameTable {
         row.cells.filter(cell => !cell.classes['infl-cell--sp0'] && !cell.classes['hidden']).forEach(cell => {
           let gameCell = Object.assign({}, cell)
           gameCell.isDataCell = cell.isDataCell ? cell.isDataCell : false
-          gameCell.fullMatch = cell.isDataCell && cell.suffixMatches
+          gameCell.fullMatch = cell.isDataCell && cell.morphemes.some(morpheme => morpheme.match.fullMatch)
           gameCell.gameHidden = cell.isDataCell
           gameCell.value = !cell.isDataCell ? cell.value : cell.morphemes.map(morpheme => morpheme.value).join(', ')
+          gameCell.morphemes = cell.isDataCell ? cell.morphemes : []
           cells.push(gameCell)
         })
         rows.push({ cells: cells })
