@@ -28349,14 +28349,18 @@ var render = function() {
           "div",
           { staticClass: "alpheios-selected-game-block__game_wrap" },
           [
-            _c("stat-block", {
-              attrs: {
-                clicks: _vm.clicks,
-                maxClicks: _vm.maxClicks,
-                failedGames: _vm.failedGames,
-                successGames: _vm.successGames
-              }
-            }),
+            _vm.featuresList
+              ? _c("feature-select-block", {
+                  attrs: {
+                    featuresList: _vm.featuresList,
+                    finishGameFlag: _vm.finishGameFlag
+                  },
+                  on: {
+                    selectFeature: _vm.selectFeature,
+                    incrementClicks: _vm.incrementClicks
+                  }
+                })
+              : _vm._e(),
             _vm._v(" "),
             _c(
               "div",
@@ -28368,18 +28372,14 @@ var render = function() {
                 }
               },
               [
-                _vm.featuresList
-                  ? _c("feature-select-block", {
-                      attrs: {
-                        featuresList: _vm.featuresList,
-                        finishGameFlag: _vm.finishGameFlag
-                      },
-                      on: {
-                        selectFeature: _vm.selectFeature,
-                        incrementClicks: _vm.incrementClicks
-                      }
-                    })
-                  : _vm._e(),
+                _c("stat-block", {
+                  attrs: {
+                    clicks: _vm.clicks,
+                    maxClicks: _vm.maxClicks,
+                    failedGames: _vm.failedGames,
+                    successGames: _vm.successGames
+                  }
+                }),
                 _vm._v(" "),
                 _c("inflection-game-table", {
                   attrs: {

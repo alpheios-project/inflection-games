@@ -439,22 +439,24 @@
 
 
 .alpheios-selected-game-block {
-  overflow: auto;
+  /* overflow: auto; */
 }
 .alpheios-selected-game-block__title {
   font-weight: bold;
 }
 .alpheios-selected-game-block__has_featureblock .alpheios-inflection-game-table {
-  margin-left: 260px;
+  margin-left: 10px;
 }
-.alpheios-selected-game-block__has_featureblock:before,
-.alpheios-selected-game-block__has_featureblock:after {
+.alpheios-selected-game-block__game_wrap:before,
+.alpheios-selected-game-block__game_wrap:after {
   clear: both;
   display: table;
   content: '';
 }
 .alpheios-selected-game-block__game_layout {
   position: relative;
+  margin-left: 260px;
+  overflow: auto;
 }
 
 /***************** panel settings **********************/

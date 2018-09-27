@@ -4,23 +4,23 @@
 			v-if = "selectedGameReady"
 			class = "alpheios-selected-game-block__game_wrap"
 		>
-      <stat-block 
-        :clicks = "clicks"
-        :maxClicks = "maxClicks"
-        :failedGames = "failedGames"
-        :successGames = "successGames"
-      ></stat-block>
+      <feature-select-block 
+        v-if = "featuresList"
+
+        :featuresList = "featuresList"
+        :finishGameFlag = "finishGameFlag"
+
+        @selectFeature = selectFeature
+        @incrementClicks = "incrementClicks"
+      ></feature-select-block>
 
       <div :class = "{ 'alpheios-selected-game-block__game_layout': true, 'alpheios-selected-game-block__has_featureblock': featuresList }" >
-        <feature-select-block 
-          v-if = "featuresList"
-
-          :featuresList = "featuresList"
-          :finishGameFlag = "finishGameFlag"
-
-          @selectFeature = selectFeature
-          @incrementClicks = "incrementClicks"
-        ></feature-select-block>
+        <stat-block 
+          :clicks = "clicks"
+          :maxClicks = "maxClicks"
+          :failedGames = "failedGames"
+          :successGames = "successGames"
+        ></stat-block>
 
    			<inflection-game-table
           :selectedGame = "selectedGame"
@@ -144,18 +144,18 @@
 </script>
 <style  lang="scss">
   .alpheios-selected-game-block {
-    overflow: auto;
+    /* overflow: auto; */
   }
   
 	.alpheios-selected-game-block__title {
 		font-weight: bold;
 	}
   .alpheios-selected-game-block__has_featureblock .alpheios-inflection-game-table {
-    margin-left: 260px;
+    margin-left: 10px;
   }
 
-  .alpheios-selected-game-block__has_featureblock:before,
-  .alpheios-selected-game-block__has_featureblock:after {
+  .alpheios-selected-game-block__game_wrap:before,
+  .alpheios-selected-game-block__game_wrap:after {
     clear: both;
     display: table;
     content: '';
@@ -163,6 +163,7 @@
 
   .alpheios-selected-game-block__game_layout {
     position: relative;
-    // overflow: hidden;
+    margin-left: 260px;
+    overflow: auto;
   }
 </style>
