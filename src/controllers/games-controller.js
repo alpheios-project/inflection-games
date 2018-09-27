@@ -24,7 +24,6 @@ export default class GamesController {
   }
 
   updateHomonym (homonym) {
-    console.info('*******************homonym', homonym)
     if (!this.gamesComponent.visible) {
       this.gamesComponent.slimHomonym = {
         targetWord: homonym.targetWord,

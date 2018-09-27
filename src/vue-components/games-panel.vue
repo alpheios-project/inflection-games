@@ -64,6 +64,7 @@
 
   import WindowServices from '@/lib/window-services.js'
   import GamesSet from '@/lib/games-set.js'
+  import Vue from 'vue/dist/vue'
 
   export default {
     name: 'GamesPanel',
@@ -105,13 +106,6 @@
     computed: {
       lexemesInHeader () {
         return this.slimHomonym.lexemes
-        /*
-        if (!this.selectedGame) {
-          return this.slimHomonym.lexemes
-        } else {
-          return this.slimHomonym.lexemes.filter(lex => lex.lemma.partOfSpeech === this.selectedGame.partOfSpeech)
-        }
-        */
       },
       mainstyles () {
       	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
@@ -151,6 +145,24 @@
         this.selectedGame = selectedGame
       	this.selectedGameReady = true
         this.changedGame = this.changedGame + 1
+
+        Vue.nextTick(this.updateSizes())
+      },
+      updateSizes () {
+        let elSizes = this.$el.getBoundingClientRect()
+        this.$el.style.maxHeight = (window.innerHeight - elSizes.top - 20) + 'px'
+        this.$el.style.maxWidth = 'none'
+
+        console.info(`*************updateSizes window.innerHeight - ${window.innerHeight}, elSizes.top - ${elSizes.top}, maxHeight - ${this.$el.style.maxHeight}`)
+        console.info(`*************this.$el.querySelector('alpheios-features-select-block')`, this.$el.querySelectorAll('.alpheios-features-select-block'))
+/*
+        if ((elSizes.top + elSizes.height) > window.innerHeight) {
+          console.info('*********************updateSizes out of the viewport')
+
+        } else {
+          console.info('*********************updateSizes in the viewport')
+        }
+*/
       },
       clearData () {
         this.selectedGame = false
@@ -196,11 +208,13 @@
 		top: 50px;
 
 		border: 1px solid $alpheios-games-panel-border-color;
-		padding: 10px 35px 10px 10px;
+		padding: 10px;
 
 		-webkit-box-shadow: 4px 4px 10px 1px $alpheios-games-panel-border-shadow-color;
 		-moz-box-shadow: 4px 4px 10px 1px $alpheios-games-panel-border-shadow-color;
 		box-shadow: 4px 4px 10px 1px $alpheios-games-panel-border-shadow-color;
+
+    box-sizing: border-box;
 	}
     .alpheios-games-panel__close-btn {
         display: block;

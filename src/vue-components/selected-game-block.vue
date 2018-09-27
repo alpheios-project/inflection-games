@@ -152,6 +152,8 @@
 	}
   .alpheios-selected-game-block__has_featureblock .alpheios-inflection-game-table {
     margin-left: 10px;
+    padding-right: 10px;
+    overflow: auto;
   }
 
   .alpheios-selected-game-block__game_wrap:before,

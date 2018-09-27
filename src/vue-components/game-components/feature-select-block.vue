@@ -26,6 +26,7 @@
 	</div>
 </template>
 <script>
+  import Vue from 'vue/dist/vue'
   export default {
     name: 'FeatureSelectBlock',
     data () {
@@ -46,6 +47,9 @@
     },
     computed: {
       featuresTitles () {
+        if (Array.isArray(this.featuresList.featuresTitles) && this.featuresList.featuresTitles.length > 0) {
+          Vue.nextTick(this.updateHeight)
+        }
       	return this.featuresList.featuresTitles
       },
       features () {
@@ -54,6 +58,11 @@
     },
 
     methods: {
+      updateHeight () {
+        let elSizes = this.$el.getBoundingClientRect()
+        this.$el.style.maxHeight = (window.innerHeight - elSizes.top - 30) + 'px'
+      },
+
       featureItemClass (featureValue, featureName) {
       	let classes = {
       	  'alpheios-features-select-block__list_values__item': true,
@@ -118,19 +127,10 @@
     list-style: none;
     padding-left: 5px;
     margin: 0;
+    overflow: auto;
   }
 
   .alpheios-features-select-block__list_features li {
-/*
-    display: inline-block;
-    vertical-align: top;
-    width: 45%;
-    margin-right: 2%;
-
-    .lemmas {
-      width: 98%;
-    }
-*/
     font-size: 95%;
     padding-bottom: 2px;
   }

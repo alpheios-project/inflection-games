@@ -24,6 +24,7 @@
     </div>
 </template>
 <script>
+  import Vue from 'vue/dist/vue'
   export default {
     name: 'InflectionGameTable',
     props: {
@@ -46,6 +47,9 @@
     },
     computed: {
       gameTable: function () {
+        if (Array.isArray(this.selectedGame.gameTable.rows) && this.selectedGame.gameTable.rows.length > 0) {
+          Vue.nextTick(this.updateHeight)
+        }
         return this.selectedGame.gameTable
       }
     },
@@ -69,15 +73,18 @@
       }
     },
     methods: {
+      updateHeight () {
+        let elSizes = this.$el.getBoundingClientRect()
+        this.$el.style.maxHeight = (window.innerHeight - elSizes.top - 30) + 'px'
+        this.$el.style.maxWidth = (window.innerWidth - elSizes.left - 40) + 'px'
+      },
+
       cellClasses: function (cell) {
         let classes = cell.classes
         classes['infl-cell--morph-match'] = false
         classes['infl-data-cell'] = cell.isDataCell
         classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
         classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
-        if (cell.fullMatch) {
-          console.info('************************cell.morphemes', cell.morphemes) 
-        }
         return classes
       },
 

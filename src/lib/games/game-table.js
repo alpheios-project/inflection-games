@@ -15,6 +15,10 @@ export default class GameTable {
           gameCell.gameHidden = cell.isDataCell
           gameCell.value = !cell.isDataCell ? cell.value : cell.morphemes.map(morpheme => morpheme.value).join(', ')
           gameCell.morphemes = cell.isDataCell ? cell.morphemes : []
+          gameCell.features = {}
+          if (cell.features && Array.isArray(cell.features)) {
+            cell.features.forEach(feature => { gameCell.features[feature.type] = feature.value })
+          }
           cells.push(gameCell)
         })
         rows.push({ cells: cells })
@@ -37,7 +41,7 @@ export default class GameTable {
   checkFailedFeature (featureName, featureValue) {
     this.rows.forEach(row => {
       row.cells.forEach(cell => {
-        if (cell.isDataCell && !cell.fullMatch && cell.features.some(feature => feature.type === featureName && feature.value !== featureValue)) {
+        if (cell.isDataCell && !cell.fullMatch && (cell.features[featureName] === featureValue)) {
           cell.gameHidden = false
         }
       })
@@ -47,7 +51,7 @@ export default class GameTable {
   checkSuccessFeature (featureName, featureValue) {
     this.rows.forEach(row => {
       row.cells.forEach(cell => {
-        if (cell.isDataCell && !cell.fullMatch && cell.features.some(feature => feature.type === featureName && feature.value !== featureValue)) {
+        if (cell.isDataCell && !cell.fullMatch && (cell.features[featureName] !== featureValue)) {
           cell.gameHidden = false
         }
       })
