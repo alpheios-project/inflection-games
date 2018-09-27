@@ -106,9 +106,6 @@
   @import "../../styles/alpheios";
 
   .alpheios-features-select-block {
-  	display: block;
-    width: 250px;
-    float: left;
     border-right: 1px dashed $alpheios-sidebar-header-border-color;
   }
   .alpheios-features-select-block__title {
@@ -124,6 +121,7 @@
   }
 
   .alpheios-features-select-block__list_features li {
+/*
     display: inline-block;
     vertical-align: top;
     width: 45%;
@@ -132,6 +130,9 @@
     .lemmas {
       width: 98%;
     }
+*/
+    font-size: 95%;
+    padding-bottom: 2px;
   }
 
   .alpheios-features-select-block__list_features_title {
@@ -140,7 +141,7 @@
   }
 
   .alpheios-features-select-block__list_values {
-  	margin: 0 0 10px;
+  	margin: 0 0 5px;
     list-style: none;
     // padding-left: 10px;
     padding-left: 0;

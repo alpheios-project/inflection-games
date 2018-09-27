@@ -27064,6 +27064,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -27117,11 +27118,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     lexemesInHeader () {
+      return this.slimHomonym.lexemes
+      /*
       if (!this.selectedGame) {
         return this.slimHomonym.lexemes
       } else {
         return this.slimHomonym.lexemes.filter(lex => lex.lemma.partOfSpeech === this.selectedGame.partOfSpeech)
       }
+      */
     },
     mainstyles () {
     	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
@@ -27294,6 +27298,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -27345,13 +27353,14 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     showHideVariantsLabel () {
-      return this.showOnlySelected ? 'show all' : 'hide unselected'
+      return this.showOnlySelected ? 'show' : 'hide'
     }
   },
   methods: {
     selectGame (gameVariant) {
       this.selectedId = gameVariant.id
       this.$emit('selectedGameEvent', gameVariant.id, gameVariant.type)
+      this.showOnlySelected = true
     },
     showHideVariants () {
       if (this.selectedGameReady) {
@@ -27438,11 +27447,22 @@ __webpack_require__.r(__webpack_exports__);
     definitionsDataReady: {
     	type: Boolean,
     	required: true
+    },
+    selectedGameReady: {
+      type: Boolean,
+    	required: false
     }
   },
   computed: {
     hiddenLabel () {
       return this.hidden ? 'show' : 'hide'
+    }
+  },
+  watch: {
+    selectedGameReady (value) {
+      if (value) {
+        this.hidden = true
+      }
     }
   },
   methods: {
@@ -28016,7 +28036,8 @@ var render = function() {
             attrs: {
               lexemes: _vm.lexemesInHeader,
               definitionsDataReady: _vm.data.definitionsDataReady,
-              definitions: _vm.definitionsFinal
+              definitions: _vm.definitionsFinal,
+              selectedGameReady: _vm.selectedGameReady
             }
           })
         : _vm._e(),
@@ -28119,84 +28140,119 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "alpheios-inflection-views-games" }, [
-    _c("p", { staticClass: "alpheios-inflection-views-games__title" }, [
-      _vm._v("\n      " + _vm._s(_vm.inflectionViewsGamesTitle) + "\n      "),
+  return _c(
+    "div",
+    {
+      staticClass: "alpheios-inflection-views-games",
+      class: { "alpheios-inflection-views-games__hidden": _vm.showOnlySelected }
+    },
+    [
+      _c("p", { staticClass: "alpheios-inflection-views-games__title" }, [
+        _vm._v("\n      " + _vm._s(_vm.inflectionViewsGamesTitle) + "\n      "),
+        _c(
+          "span",
+          {
+            staticClass: "alpheios-inflection-views-games__show_hide_link",
+            on: { click: _vm.showHideVariants }
+          },
+          [_vm._v(_vm._s(_vm.showHideVariantsLabel) + "\n      ")]
+        ),
+        _vm._v(" "),
+        _vm.selectedGame
+          ? _c(
+              "span",
+              {
+                staticClass: "alpheios-inflection-views-games__selected_label"
+              },
+              [
+                _vm._v(
+                  "\n        " +
+                    _vm._s(_vm.selectedGame.type) +
+                    ": " +
+                    _vm._s(_vm.selectedGame.partOfSpeech) +
+                    " - " +
+                    _vm._s(_vm.selectedGame.name) +
+                    "\n      "
+                )
+              ]
+            )
+          : _vm._e()
+      ]),
+      _vm._v(" "),
       _c(
-        "span",
+        "ul",
         {
-          staticClass: "alpheios-inflection-views-games__show_hide_link",
-          on: { click: _vm.showHideVariants }
-        },
-        [_vm._v(_vm._s(_vm.showHideVariantsLabel) + "\n      ")]
-      )
-    ]),
-    _vm._v(" "),
-    _c(
-      "ul",
-      { staticClass: "alpheios-inflection-views-games__list" },
-      _vm._l(_vm.gamesListKeys, function(gameKey, indexGT) {
-        return _c("li", { key: indexGT }, [
-          _c(
-            "p",
+          directives: [
             {
-              directives: [
-                {
-                  name: "show",
-                  rawName: "v-show",
-                  value:
-                    !_vm.showOnlySelected ||
-                    _vm.checkHasSelectedChildren(gameKey),
-                  expression:
-                    "!showOnlySelected || checkHasSelectedChildren(gameKey)"
-                }
-              ],
-              staticClass: "alpheios-inflection-views-games__game_title"
-            },
-            [_vm._v(_vm._s(gameKey))]
-          ),
-          _vm._v(" "),
-          _c(
-            "ul",
-            _vm._l(_vm.gamesList[gameKey], function(gameItem, indexItem) {
-              return _c(
-                "li",
-                {
-                  directives: [
-                    {
-                      name: "show",
-                      rawName: "v-show",
-                      value:
-                        !_vm.showOnlySelected || _vm.selectedId === gameItem.id,
-                      expression:
-                        "!showOnlySelected || selectedId === gameItem.id"
-                    }
-                  ],
-                  key: indexItem,
-                  staticClass: "alpheios-inflection-views-games__list__item",
-                  class: {
-                    "alpheios-inflection-views-games__list__item__selected":
-                      _vm.selectedId === gameItem.id
-                  },
-                  on: {
-                    click: function($event) {
-                      _vm.selectGame(gameItem)
-                    }
+              name: "show",
+              rawName: "v-show",
+              value: !_vm.showOnlySelected,
+              expression: "!showOnlySelected"
+            }
+          ],
+          staticClass: "alpheios-inflection-views-games__list"
+        },
+        _vm._l(_vm.gamesListKeys, function(gameKey, indexGT) {
+          return _c("li", { key: indexGT }, [
+            _c(
+              "p",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value:
+                      !_vm.showOnlySelected ||
+                      _vm.checkHasSelectedChildren(gameKey),
+                    expression:
+                      "!showOnlySelected || checkHasSelectedChildren(gameKey)"
                   }
-                },
-                [
-                  _c("span", [
-                    _c("b", [_vm._v(_vm._s(gameItem.partOfSpeech))]),
-                    _vm._v(" - " + _vm._s(gameItem.name) + "\n            ")
-                  ])
-                ]
-              )
-            })
-          )
-        ])
-      })
-    )
-  ])
+                ],
+                staticClass: "alpheios-inflection-views-games__game_title"
+              },
+              [_vm._v(_vm._s(gameKey))]
+            ),
+            _vm._v(" "),
+            _c(
+              "ul",
+              _vm._l(_vm.gamesList[gameKey], function(gameItem, indexItem) {
+                return _c(
+                  "li",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: !_vm.showOnlySelected,
+                        expression: "!showOnlySelected"
+                      }
+                    ],
+                    key: indexItem,
+                    staticClass: "alpheios-inflection-views-games__list__item",
+                    class: {
+                      "alpheios-inflection-views-games__list__item__selected":
+                        _vm.selectedId === gameItem.id
+                    },
+                    on: {
+                      click: function($event) {
+                        _vm.selectGame(gameItem)
+                      }
+                    }
+                  },
+                  [
+                    _c("span", [
+                      _c("b", [_vm._v(_vm._s(gameItem.partOfSpeech))]),
+                      _vm._v(" - " + _vm._s(gameItem.name) + "\n            ")
+                    ])
+                  ]
+                )
+              })
+            )
+          ])
+        })
+      )
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -28314,7 +28370,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "alpheios-title-block" }, [
     _c("h1", { staticClass: "alpheios-title-block__title" }, [
-      _vm._v("\n      Inflection games for "),
+      _vm._v("\n      Games for "),
       _c("span", { staticClass: "alpheios-title-block__title__word" }, [
         _vm._v(_vm._s(_vm.word))
       ])
@@ -39966,7 +40022,7 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
     super(view)
     this.view = view
     this.partOfSpeech = view.partOfSpeech
-    // console.info('****************this.view', this.view)
+    this.type = InflectionGame.gameType
   }
 
   static get gameType () {

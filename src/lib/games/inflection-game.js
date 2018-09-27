@@ -7,7 +7,7 @@ export default class InflectionGame extends Game {
     super(view)
     this.view = view
     this.partOfSpeech = view.partOfSpeech
-    // console.info('****************this.view', this.view)
+    this.type = InflectionGame.gameType
   }
 
   static get gameType () {

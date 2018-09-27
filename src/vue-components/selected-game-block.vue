@@ -161,9 +161,15 @@
     content: '';
   }
 
+  .alpheios-features-select-block {
+  	display: block;
+    width: 150px;
+    float: left;
+  }
+
   .alpheios-selected-game-block__game_layout {
     position: relative;
-    margin-left: 260px;
+    margin-left: 160px;
     overflow: auto;
   }
 </style>

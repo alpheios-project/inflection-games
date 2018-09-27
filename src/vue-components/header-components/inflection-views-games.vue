@@ -1,5 +1,5 @@
 <template>
-	<div class = "alpheios-inflection-views-games">
+	<div class = "alpheios-inflection-views-games" :class = "{ 'alpheios-inflection-views-games__hidden': showOnlySelected }">
 
     <p class="alpheios-inflection-views-games__title">
       {{ inflectionViewsGamesTitle }}
@@ -8,10 +8,14 @@
         @click = "showHideVariants"
       >{{ showHideVariantsLabel }}
       </span>
+      <span class = "alpheios-inflection-views-games__selected_label" v-if="selectedGame">
+        {{ selectedGame.type }}: {{ selectedGame.partOfSpeech }} - {{ selectedGame.name }}
+      </span>
     </p>
 
 		<ul 
       class = "alpheios-inflection-views-games__list"
+      v-show = "!showOnlySelected"
     >
       <li 
         v-for="(gameKey, indexGT) in gamesListKeys" 
@@ -30,7 +34,7 @@
             :class="{ 'alpheios-inflection-views-games__list__item__selected': selectedId === gameItem.id }"
 
             @click = "selectGame(gameItem)"
-            v-show = "!showOnlySelected || selectedId === gameItem.id"
+            v-show = "!showOnlySelected"
           >
             <span >
               <b>{{ gameItem.partOfSpeech }}</b> - {{ gameItem.name }}
@@ -94,13 +98,14 @@
       },
 
       showHideVariantsLabel () {
-        return this.showOnlySelected ? 'show all' : 'hide unselected'
+        return this.showOnlySelected ? 'show' : 'hide'
       }
     },
     methods: {
       selectGame (gameVariant) {
         this.selectedId = gameVariant.id
         this.$emit('selectedGameEvent', gameVariant.id, gameVariant.type)
+        this.showOnlySelected = true
       },
       showHideVariants () {
         if (this.selectedGameReady) {
@@ -127,6 +132,13 @@
     margin: 20px 0;
   }
 
+  .alpheios-inflection-views-games__hidden {
+    border: 0;
+    padding: 0;
+    margin: 5px 0 10px;
+    font-size: 90%;
+  }
+
   .alpheios-inflection-views-games__title {
     display: inline-block;
     background: #fff;
@@ -135,18 +147,19 @@
     margin: 0;
   }
 
-  .alpheios-inflection-views-games__hidden {
-    border: 0;
-    padding: 0;
-    margin: 20px 0 0;
-  }
-
   .alpheios-inflection-views-games__show_hide_link {
     font-weight: bold;
     color: $alpheios-link-color;
     display: inline-block;
     padding: 0 5px;
     cursor: pointer;
+  }
+
+  .alpheios-inflection-views-games__selected_label {
+    font-weight: bold;
+    display: inline-block;
+    padding: 0 5px;
+    font-weight: bold;
   }
 
   .alpheios-inflection-views-games__list {
@@ -162,6 +175,7 @@
 
   .alpheios-inflection-views-games__list__item {
     cursor: pointer;
+    margin-bottom: 5px;
   }
 
   .alpheios-inflection-views-games__list__item__selected {

@@ -1,7 +1,7 @@
 <template>
 	<div class="alpheios-title-block">
 		<h1 class="alpheios-title-block__title">
-      Inflection games for <span class="alpheios-title-block__title__word">{{ word }}</span>
+      Games for <span class="alpheios-title-block__title__word">{{ word }}</span>
     </h1>
 	</div>
 </template>

@@ -183,8 +183,9 @@
 /***************** panel settings **********************/
 .alpheios-lexemes-data-block[data-v-4840684f] {
   border: 1px solid #B8B7B5;
-  padding: 0 5px 5px;
+  padding: 0 5px;
   margin: 20px 0 10px;
+  font-size: 90%;
 }
 .alpheios-lexemes-data-block__title[data-v-4840684f] {
   display: inline-block;
@@ -197,7 +198,7 @@
   margin: 0;
 }
 .alpheios-lexemes-data-block__list__item[data-v-4840684f] {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   cursor: pointer;
 }
 .alpheios-lexemes-data-block__list__item__word[data-v-4840684f] {
@@ -209,7 +210,7 @@
 .alpheios-lexemes-data-block__hidden[data-v-4840684f] {
   border: 0;
   padding: 0;
-  margin: 20px 0 0;
+  margin: 20px 0 10px;
 }
 .alpheios-lexemes-data-block__show_link[data-v-4840684f] {
   font-weight: bold;
@@ -225,6 +226,12 @@
   padding: 0 5px 5px;
   margin: 20px 0;
 }
+.alpheios-inflection-views-games__hidden[data-v-44a8a43f] {
+  border: 0;
+  padding: 0;
+  margin: 5px 0 10px;
+  font-size: 90%;
+}
 .alpheios-inflection-views-games__title[data-v-44a8a43f] {
   display: inline-block;
   background: #fff;
@@ -232,17 +239,18 @@
   top: -10px;
   margin: 0;
 }
-.alpheios-inflection-views-games__hidden[data-v-44a8a43f] {
-  border: 0;
-  padding: 0;
-  margin: 20px 0 0;
-}
 .alpheios-inflection-views-games__show_hide_link[data-v-44a8a43f] {
   font-weight: bold;
   color: #3E8D9C;
   display: inline-block;
   padding: 0 5px;
   cursor: pointer;
+}
+.alpheios-inflection-views-games__selected_label[data-v-44a8a43f] {
+  font-weight: bold;
+  display: inline-block;
+  padding: 0 5px;
+  font-weight: bold;
 }
 .alpheios-inflection-views-games__list[data-v-44a8a43f] {
   margin: 0;
@@ -255,6 +263,7 @@
 }
 .alpheios-inflection-views-games__list__item[data-v-44a8a43f] {
   cursor: pointer;
+  margin-bottom: 5px;
 }
 .alpheios-inflection-views-games__list__item__selected[data-v-44a8a43f] {
   color: #E49A0D;
@@ -329,9 +338,6 @@
 
 /***************** panel settings **********************/
 .alpheios-features-select-block[data-v-3c09b2e5] {
-  display: block;
-  width: 250px;
-  float: left;
   border-right: 1px dashed #B8B7B5;
 }
 .alpheios-features-select-block__title[data-v-3c09b2e5] {
@@ -345,20 +351,25 @@
   margin: 0;
 }
 .alpheios-features-select-block__list_features li[data-v-3c09b2e5] {
-  display: inline-block;
-  vertical-align: top;
-  width: 45%;
-  margin-right: 2%;
-}
-.alpheios-features-select-block__list_features li .lemmas[data-v-3c09b2e5] {
-    width: 98%;
+  /*
+    display: inline-block;
+    vertical-align: top;
+    width: 45%;
+    margin-right: 2%;
+
+    .lemmas {
+      width: 98%;
+    }
+*/
+  font-size: 95%;
+  padding-bottom: 2px;
 }
 .alpheios-features-select-block__list_features_title[data-v-3c09b2e5] {
   font-weight: bold;
   margin: 0 0 5px;
 }
 .alpheios-features-select-block__list_values[data-v-3c09b2e5] {
-  margin: 0 0 10px;
+  margin: 0 0 5px;
   list-style: none;
   padding-left: 0;
 }
@@ -453,9 +464,14 @@
   display: table;
   content: '';
 }
+.alpheios-features-select-block {
+  display: block;
+  width: 150px;
+  float: left;
+}
 .alpheios-selected-game-block__game_layout {
   position: relative;
-  margin-left: 260px;
+  margin-left: 160px;
   overflow: auto;
 }
 

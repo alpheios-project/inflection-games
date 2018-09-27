@@ -23,6 +23,7 @@
 			:lexemes = "lexemesInHeader" 
 			:definitionsDataReady = "data.definitionsDataReady"
 			:definitions = "definitionsFinal"
+      :selectedGameReady = "selectedGameReady"
 		></lexemes-data-block>
 
 		<inflection-views-games 
@@ -103,11 +104,14 @@
     },
     computed: {
       lexemesInHeader () {
+        return this.slimHomonym.lexemes
+        /*
         if (!this.selectedGame) {
           return this.slimHomonym.lexemes
         } else {
           return this.slimHomonym.lexemes.filter(lex => lex.lemma.partOfSpeech === this.selectedGame.partOfSpeech)
         }
+        */
       },
       mainstyles () {
       	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null

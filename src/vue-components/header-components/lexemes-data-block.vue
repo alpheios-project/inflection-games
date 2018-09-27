@@ -52,11 +52,22 @@
       definitionsDataReady: {
       	type: Boolean,
       	required: true
+      },
+      selectedGameReady: {
+        type: Boolean,
+      	required: false
       }
     },
     computed: {
       hiddenLabel () {
         return this.hidden ? 'show' : 'hide'
+      }
+    },
+    watch: {
+      selectedGameReady (value) {
+        if (value) {
+          this.hidden = true
+        }
       }
     },
     methods: {
@@ -74,8 +85,9 @@
 
   .alpheios-lexemes-data-block {
     border: 1px solid $alpheios-sidebar-header-border-color;
-    padding: 0 5px 5px;
+    padding: 0 5px;
     margin: 20px 0 10px;
+    font-size: 90%;
   }
 
   .alpheios-lexemes-data-block__title {
@@ -91,7 +103,7 @@
   }
 
   .alpheios-lexemes-data-block__list__item {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     cursor: pointer;
   }
 
@@ -106,7 +118,7 @@
   .alpheios-lexemes-data-block__hidden {
     border: 0;
     padding: 0;
-    margin: 20px 0 0;
+    margin: 20px 0 10px;
   }
 
   .alpheios-lexemes-data-block__show_link {
