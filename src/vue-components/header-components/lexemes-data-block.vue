@@ -107,6 +107,7 @@
   .alpheios-lexemes-data-block__list__item {
     margin-bottom: 5px;
     cursor: pointer;
+    padding-right: 10px;
   }
 
   .alpheios-lexemes-data-block__list__item__word {

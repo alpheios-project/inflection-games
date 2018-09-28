@@ -27097,143 +27097,148 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
-  
-  
 
-  
-  
-  
-  
-  
-  
 
-  
-  
-  
 
-  /* harmony default export */ __webpack_exports__["default"] = ({
-    name: 'GamesPanel',
-    components: {
-      closeIcon: _images_inline_icons_close_svg__WEBPACK_IMPORTED_MODULE_0___default.a,
-      iconButton: _vue_components_common_components_icon_button_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
 
-      titleBlock: _vue_components_header_components_title_block_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-      lexemesDataBlock: _vue_components_header_components_lexemes_data_block_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
-      InflectionViewsGames: _vue_components_header_components_inflection_views_games_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
 
-      selectedGameBlock: _vue_components_selected_game_block_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+
+
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'GamesPanel',
+  components: {
+    closeIcon: _images_inline_icons_close_svg__WEBPACK_IMPORTED_MODULE_0___default.a,
+    iconButton: _vue_components_common_components_icon_button_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+
+    titleBlock: _vue_components_header_components_title_block_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    lexemesDataBlock: _vue_components_header_components_lexemes_data_block_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+    InflectionViewsGames: _vue_components_header_components_inflection_views_games_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+
+    selectedGameBlock: _vue_components_selected_game_block_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+  },
+  data () {
+    return {
+      interactInstance: undefined,
+      selectedGame: false,
+      selectedGameReady: false,
+      changedGame: 0,
+      gamesListChanged: 0,
+      failedGames: 0,
+      successGames: 0
+    }
+  },
+  props: {
+    data: {
+      type: Object,
+      required: true
     },
-    data () {
-      return {
-        interactInstance: undefined,
-        selectedGame: false,
-        selectedGameReady: false,
-        changedGame: 0,
-        gamesListChanged: 0,
-        failedGames: 0,
-        successGames: 0
-      }
+    visible: {
+      type: Boolean,
+      required: true
     },
-    props: {
-      data: {
-        type: Object,
-        required: true
-      },
-      visible: {
-        type: Boolean,
-        required: true
-      },
-      slimHomonym: {
-        type: [Object, Boolean],
-        required: true
-      }
-    },
-    computed: {
-      lexemesInHeader () {
-        return this.slimHomonym.lexemes
-      },
-      mainstyles () {
-      	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
-      },
-      stylesForTooltipCloseIcon () {
-      	return {
-      	  'position': 'absolute',
-      	  'right': '5px',
-      	  'width': '30px'
-      	}
-      },
-      gamesSet () {
-        if (this.showInflectionsPanel) {
-          this.gamesListChanged = this.gamesListChanged + 1
-          return new _lib_games_set_js__WEBPACK_IMPORTED_MODULE_8__["default"](this.data.inflectionsViewSet)
+    slimHomonym: {
+      type: [Object, Boolean],
+      required: true
+    }
+  },
+  computed: {
+    lexemesInHeader () {
+      let uniqueValues = []
+
+      this.slimHomonym.lexemes.forEach(lex => {
+        if (!uniqueValues.some(lexInner => 
+            lexInner.lemma.word === lex.lemma.word && lexInner.lemma.partOfSpeech === lex.lemma.partOfSpeech 
+            || !this.definitionsFinal[lex.lemma.ID]
+          )) {
+          uniqueValues.push(lex)
         }
-      	return null
-      },
-      definitionsFinal () {
-      	return this.data.definitionsDataReady ? this.data.definitions : false
-      },
-      showFeaturesPanel () {
-      	return this.slimHomonym.lexemes && this.slimHomonym.lexemes.length > 0
-      },
-      showInflectionsPanel () {
-      	return this.data.hasMatchingViews && this.data.locale
-      }
+      })
+      return uniqueValues
     },
-    methods: {
-      closePanel () {
-      	this.clearData()
-        this.$emit('close')
-      },
-      selectedGameEvent (gameId, gameType) {
-        let selectedGame = this.gamesSet.matchingGames[gameType][gameId]
-        selectedGame.createGameStuff()
-        this.selectedGame = selectedGame
-      	this.selectedGameReady = true
-        this.changedGame = this.changedGame + 1
-
-        vue_dist_vue__WEBPACK_IMPORTED_MODULE_9___default.a.nextTick(this.updateSizes())
-      },
-      updateSizes () {
-        let elSizes = this.$el.getBoundingClientRect()
-        this.$el.style.maxHeight = (window.innerHeight - elSizes.top - 20) + 'px'
-        this.$el.style.maxWidth = 'none'
-
-        console.info(`*************updateSizes window.innerHeight - ${window.innerHeight}, elSizes.top - ${elSizes.top}, maxHeight - ${this.$el.style.maxHeight}`)
-        console.info(`*************this.$el.querySelector('alpheios-features-select-block')`, this.$el.querySelectorAll('.alpheios-features-select-block'))
-/*
-        if ((elSizes.top + elSizes.height) > window.innerHeight) {
-          console.info('*********************updateSizes out of the viewport')
-
-        } else {
-          console.info('*********************updateSizes in the viewport')
-        }
-*/
-      },
-      clearData () {
-        this.selectedGame = false
-        this.selectedGameReady = false
-      },
-      incrementSuccessGames () {
-        this.successGames = this.successGames + 1
-      },
-      incrementFailedGames () {
-        this.failedGames = this.failedGames + 1
-      }
+    mainstyles () {
+    	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
     },
-    mounted () {
-      if (this.data && this.data.draggable) {
-        this.interactInstance = interactjs__WEBPACK_IMPORTED_MODULE_2___default()(this.$el)
-          .draggable(_lib_window_services_js__WEBPACK_IMPORTED_MODULE_7__["default"].draggableSettings())
-      }
+    stylesForTooltipCloseIcon () {
+    	return {
+    	  'position': 'absolute',
+    	  'right': '5px',
+    	  'width': '30px'
+    	}
     },
-    watch: {
-      visible (flag) {
-        if (flag) { 
-          this.clearData()
-        }
+    gamesSet () {
+      if (this.showInflectionsPanel) {
+        this.gamesListChanged = this.gamesListChanged + 1
+        return new _lib_games_set_js__WEBPACK_IMPORTED_MODULE_8__["default"](this.data.inflectionsViewSet)
+      }
+    	return null
+    },
+    definitionsFinal () {
+    	return this.data.definitionsDataReady ? this.data.definitions : false
+    },
+    showFeaturesPanel () {
+    	return this.slimHomonym.lexemes && this.slimHomonym.lexemes.length > 0
+    },
+    showInflectionsPanel () {
+    	return this.data.hasMatchingViews && this.data.locale
+    }
+  },
+  methods: {
+    closePanel () {
+    	this.clearData()
+      this.$emit('close')
+    },
+    selectedGameEvent (gameId, gameType) {
+      let selectedGame = this.gamesSet.matchingGames[gameType][gameId]
+      selectedGame.createGameStuff()
+      this.selectedGame = selectedGame
+    	this.selectedGameReady = true
+      this.changedGame = this.changedGame + 1
+
+      vue_dist_vue__WEBPACK_IMPORTED_MODULE_9___default.a.nextTick(this.updateSizes())
+    },
+    updateSizes () {
+      let elSizes = this.$el.getBoundingClientRect()
+      this.$el.style.maxHeight = (window.innerHeight - elSizes.top - 20) + 'px'
+    },
+    placeAtTheLeftCorner () {
+      this.$el.style.transform = ''
+      this.$el.setAttribute("data-x", "0"); 
+      this.$el.setAttribute("data-y", "0"); 
+    },
+    clearData () {
+      this.selectedGame = false
+      this.selectedGameReady = false
+    },
+    incrementSuccessGames () {
+      this.successGames = this.successGames + 1
+    },
+    incrementFailedGames () {
+      this.failedGames = this.failedGames + 1
+    }
+  },
+  mounted () {
+    if (this.data && this.data.draggable) {
+      this.interactInstance = interactjs__WEBPACK_IMPORTED_MODULE_2___default()(this.$el)
+        .draggable(_lib_window_services_js__WEBPACK_IMPORTED_MODULE_7__["default"].draggableSettings())
+    }
+  },
+  watch: {
+    visible (flag) {
+      if (flag) { 
+        this.clearData()
+      } else {
+        this.placeAtTheLeftCorner()
       }
     }
-  });	
+  }
+});	
 
 
 /***/ }),

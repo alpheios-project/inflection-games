@@ -105,7 +105,17 @@
     },
     computed: {
       lexemesInHeader () {
-        return this.slimHomonym.lexemes
+        let uniqueValues = []
+
+        this.slimHomonym.lexemes.forEach(lex => {
+          if (!uniqueValues.some(lexInner => 
+              lexInner.lemma.word === lex.lemma.word && lexInner.lemma.partOfSpeech === lex.lemma.partOfSpeech 
+              || !this.definitionsFinal[lex.lemma.ID]
+            )) {
+            uniqueValues.push(lex)
+          }
+        })
+        return uniqueValues
       },
       mainstyles () {
       	return this.data.zIndex ? { 'z-index': this.data.zIndex } : null
@@ -151,18 +161,11 @@
       updateSizes () {
         let elSizes = this.$el.getBoundingClientRect()
         this.$el.style.maxHeight = (window.innerHeight - elSizes.top - 20) + 'px'
-        this.$el.style.maxWidth = 'none'
-
-        console.info(`*************updateSizes window.innerHeight - ${window.innerHeight}, elSizes.top - ${elSizes.top}, maxHeight - ${this.$el.style.maxHeight}`)
-        console.info(`*************this.$el.querySelector('alpheios-features-select-block')`, this.$el.querySelectorAll('.alpheios-features-select-block'))
-/*
-        if ((elSizes.top + elSizes.height) > window.innerHeight) {
-          console.info('*********************updateSizes out of the viewport')
-
-        } else {
-          console.info('*********************updateSizes in the viewport')
-        }
-*/
+      },
+      placeAtTheLeftCorner () {
+        this.$el.style.transform = ''
+        this.$el.setAttribute("data-x", "0"); 
+        this.$el.setAttribute("data-y", "0"); 
       },
       clearData () {
         this.selectedGame = false
@@ -185,6 +188,8 @@
       visible (flag) {
         if (flag) { 
           this.clearData()
+        } else {
+          this.placeAtTheLeftCorner()
         }
       }
     }
