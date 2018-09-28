@@ -196,6 +196,8 @@
 }
 .alpheios-lexemes-data-block__list[data-v-4840684f] {
   margin: 0;
+  max-height: 85px;
+  overflow: auto;
 }
 .alpheios-lexemes-data-block__list__item[data-v-4840684f] {
   margin-bottom: 5px;

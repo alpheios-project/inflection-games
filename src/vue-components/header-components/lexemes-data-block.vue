@@ -100,6 +100,8 @@
 
   .alpheios-lexemes-data-block__list {
     margin: 0;
+    max-height: 85px;
+    overflow: auto;
   }
 
   .alpheios-lexemes-data-block__list__item {
