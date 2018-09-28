@@ -43,6 +43,10 @@
       selectedFeatureChange: {
         type: Number,
         required: true
+      },
+      featuresList: {
+        type: [Object, Boolean],
+        required: true
       }
     },
     computed: {
@@ -105,7 +109,8 @@
       },
 
       checkSuccessFeature: function () {
-        this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value)
+        console.info('****************checkSuccessFeature', this.selectedFeature.name, this.featuresList.features[this.selectedFeature.name], this.featuresList)
+        this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value, this.featuresList.features[this.selectedFeature.name])
       },
 
       checkFailedFeature: function () {

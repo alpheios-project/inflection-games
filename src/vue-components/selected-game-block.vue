@@ -34,6 +34,7 @@
 
           :selectedFeature = "selectedFeature"
           :selectedFeatureChange = "selectedFeatureChange"
+          :featuresList = "featuresList"
         ></inflection-game-table>
 
         <finish-result-block
@@ -67,6 +68,7 @@
         featuresListChanged: 0,
         selectedFeature: false,
         selectedFeatureChange: 0,
+        featureListByName: false,
         gameResult: false
       }
     },

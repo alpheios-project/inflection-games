@@ -41,17 +41,17 @@ export default class GameTable {
   checkFailedFeature (featureName, featureValue) {
     this.rows.forEach(row => {
       row.cells.forEach(cell => {
-        if (cell.isDataCell && !cell.fullMatch && (cell.features[featureName] === featureValue)) {
+        if (cell.isDataCell && (cell.features[featureName] === featureValue)) {
           cell.gameHidden = false
         }
       })
     })
   }
 
-  checkSuccessFeature (featureName, featureValue) {
+  checkSuccessFeature (featureName, featureValue, featureListByName) {
     this.rows.forEach(row => {
       row.cells.forEach(cell => {
-        if (cell.isDataCell && !cell.fullMatch && (cell.features[featureName] !== featureValue)) {
+        if (cell.isDataCell && !featureListByName.find(feat => feat.value === cell.features[featureName]).hasFullMatch && (cell.features[featureName] !== featureValue)) {
           cell.gameHidden = false
         }
       })

@@ -56,7 +56,13 @@
         return this.featuresList.features
       }
     },
-
+    watch: {
+      'finishGameFlag': function (flag) {
+        if (flag) {
+          this.finishGame()
+        }
+      }
+    },
     methods: {
       updateHeight () {
         let elSizes = this.$el.getBoundingClientRect()
@@ -107,6 +113,10 @@
 
           this.checkIfFeatureAllValuesChosen(featureName)
         }
+      },
+
+      finishGame: function () {
+        this.featuresList.showAllFeatures()
       }
     }
   }

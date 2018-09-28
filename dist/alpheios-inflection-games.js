@@ -26713,7 +26713,13 @@ __webpack_require__.r(__webpack_exports__);
       return this.featuresList.features
     }
   },
-
+  watch: {
+    'finishGameFlag': function (flag) {
+      if (flag) {
+        this.finishGame()
+      }
+    }
+  },
   methods: {
     updateHeight () {
       let elSizes = this.$el.getBoundingClientRect()
@@ -26764,6 +26770,10 @@ __webpack_require__.r(__webpack_exports__);
 
         this.checkIfFeatureAllValuesChosen(featureName)
       }
+    },
+
+    finishGame: function () {
+      this.featuresList.showAllFeatures()
     }
   }
 });
@@ -26871,6 +26881,10 @@ __webpack_require__.r(__webpack_exports__);
     selectedFeatureChange: {
       type: Number,
       required: true
+    },
+    featuresList: {
+      type: [Object, Boolean],
+      required: true
     }
   },
   computed: {
@@ -26933,7 +26947,8 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     checkSuccessFeature: function () {
-      this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value)
+      console.info('****************checkSuccessFeature', this.selectedFeature.name, this.featuresList.features[this.selectedFeature.name], this.featuresList)
+      this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value, this.featuresList.features[this.selectedFeature.name])
     },
 
     checkFailedFeature: function () {
@@ -27620,6 +27635,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -27642,6 +27658,7 @@ __webpack_require__.r(__webpack_exports__);
       featuresListChanged: 0,
       selectedFeature: false,
       selectedFeatureChange: 0,
+      featureListByName: false,
       gameResult: false
     }
   },
@@ -28511,7 +28528,8 @@ var render = function() {
                     finishGameFlag: _vm.finishGameFlag,
                     clicks: _vm.clicks,
                     selectedFeature: _vm.selectedFeature,
-                    selectedFeatureChange: _vm.selectedFeatureChange
+                    selectedFeatureChange: _vm.selectedFeatureChange,
+                    featuresList: _vm.featuresList
                   },
                   on: {
                     incrementClicks: _vm.incrementClicks,
@@ -39911,55 +39929,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FeaturesList; });
 class FeaturesList {
   constructor (view) {
-    this.uploadFeatures(view.features, view.morphemes)
+    this.uploadFeatures(view.wideView)
   }
 
-  uploadFeatures (features, morphemes) {
-    let featuresFromMorphemes = this.prepareFeaturesFromMorphemes(morphemes)
-    let featuresFromFeatures = this.prepareFeaturesFromFeatures(features, featuresFromMorphemes)
-    this.features = this.removeUnusefulFeatures(featuresFromFeatures)
-  }
+  uploadFeatures (wideView) {
+    let shownFeatures = {}
+    if (wideView) {
+      wideView.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          if (cell.isDataCell && !cell.hidden) {
+            cell.features.forEach(feature => {
+              if (shownFeatures[feature.type] === undefined) { shownFeatures[feature.type] = [] }
 
-  prepareFeaturesFromMorphemes (morphemes) {
-    let featuresFromMorpheme = {}
-
-    morphemes.forEach(morpheme => {
-      if (morpheme.match.fullMatch) {
-        Object.values(morpheme.features).forEach(morphemeFeature => {
-          if (featuresFromMorpheme[morphemeFeature.type] === undefined) {
-            featuresFromMorpheme[morphemeFeature.type] = []
+              if (!shownFeatures[feature.type].map(feat => feat.value).includes(feature.value)) {
+                shownFeatures[feature.type].push({
+                  value: feature.value,
+                  status: null,
+                  hasFullMatch: cell.morphemes.some(morpheme => morpheme.match.fullMatch)
+                })
+              } else {
+                shownFeatures[feature.type].find(feat => feat.value).hasFullMatch = shownFeatures[feature.type].find(feat => feat.value).hasFullMatch || cell.morphemes.some(morpheme => morpheme.match.fullMatch)
+              }
+            })
           }
-          featuresFromMorpheme[morphemeFeature.type].push(morphemeFeature.value)
         })
-      }
-    })
-    return featuresFromMorpheme
-  }
-
-  prepareFeaturesFromFeatures (features, featuresFromMorphemes) {
-    let featuresFromFeatures = {}
-
-    for (let featureKey in features) {
-      let featureType = features[featureKey].type
-      featuresFromFeatures[featureType] = Array.from(features[featureKey].featureMap.keys()).map(featureValue => ({
-        value: featureValue,
-        status: null,
-        hasFullMatch: featuresFromMorphemes[featureType] && featuresFromMorphemes[featureType].includes(featureValue)
-      }))
-    }
-    return featuresFromFeatures
-  }
-
-  removeUnusefulFeatures (featuresFromFeatures) {
-    let finalFeatures = {}
-
-    for (let featureType in featuresFromFeatures) {
-      if (featuresFromFeatures[featureType].some(featureVal => featureVal.hasFullMatch !== undefined)) {
-        finalFeatures[featureType] = featuresFromFeatures[featureType]
-      }
+      })
     }
 
-    return finalFeatures
+    this.features = shownFeatures
   }
 
   clearValuesStatus () {
@@ -39978,6 +39975,14 @@ class FeaturesList {
 
   getUncheckedFeatureValues (featureName) {
     return this.features[featureName].filter(featureValue => featureValue.status === null)
+  }
+
+  showAllFeatures () {
+    for (let featureKey in this.features) {
+      this.features[featureKey].forEach(feature => {
+        feature.status = feature.hasFullMatch ? 'success' : 'failed'
+      })
+    }
   }
 }
 
@@ -40037,17 +40042,17 @@ class GameTable {
   checkFailedFeature (featureName, featureValue) {
     this.rows.forEach(row => {
       row.cells.forEach(cell => {
-        if (cell.isDataCell && !cell.fullMatch && (cell.features[featureName] === featureValue)) {
+        if (cell.isDataCell && (cell.features[featureName] === featureValue)) {
           cell.gameHidden = false
         }
       })
     })
   }
 
-  checkSuccessFeature (featureName, featureValue) {
+  checkSuccessFeature (featureName, featureValue, featureListByName) {
     this.rows.forEach(row => {
       row.cells.forEach(cell => {
-        if (cell.isDataCell && !cell.fullMatch && (cell.features[featureName] !== featureValue)) {
+        if (cell.isDataCell && !featureListByName.find(feat => feat.value === cell.features[featureName]).hasFullMatch && (cell.features[featureName] !== featureValue)) {
           cell.gameHidden = false
         }
       })
