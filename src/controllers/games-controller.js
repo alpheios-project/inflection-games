@@ -2,7 +2,7 @@ import Vue from 'vue/dist/vue' // Vue in a runtime + compiler configuration
 import GamesPanel from '@/vue-components/games-panel.vue'
 import WindowServices from '@/lib/window-services.js'
 import { ViewSetFactory } from 'alpheios-inflection-tables'
-import { Feature } from 'alpheios-data-models'
+import { Feature, Homonym } from 'alpheios-data-models'
 
 export default class GamesController {
   constructor (draggable) {
@@ -35,7 +35,6 @@ export default class GamesController {
           }
         }))
       }
-
       this.getInflectionViewSetDataFromHomonym(homonym)
     }
   }
@@ -55,8 +54,18 @@ export default class GamesController {
   }
 
   getInflectionViewSetDataFromHomonym (homonym) {
-    this.gamesComponent.gamesData.inflectionsViewSet = ViewSetFactory.create(homonym, this.gamesComponent.gamesData.currentValue)
+    let homonymFiltered = this.checkDisambiguatedLexemes(homonym)
+    this.gamesComponent.gamesData.inflectionsViewSet = ViewSetFactory.create(homonymFiltered, this.gamesComponent.gamesData.currentValue)
     this.gamesComponent.gamesData.hasMatchingViews = this.gamesComponent.gamesData.inflectionsViewSet.hasMatchingViews
+  }
+
+  checkDisambiguatedLexemes (homonym) {
+    let hasDisambiguated = homonym.lexemes.some(lex => lex.disambiguated)
+    if (!hasDisambiguated) {
+      return homonym
+    } else {
+      return new Homonym(homonym.lexemes.filter(lexeme => lexeme.disambiguated), this.targetWord)
+    }
   }
 
   static gamesComponentCreate (draggable) {
