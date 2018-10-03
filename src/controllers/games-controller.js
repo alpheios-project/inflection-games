@@ -55,7 +55,9 @@ export default class GamesController {
 
   getInflectionViewSetDataFromHomonym (homonym) {
     let homonymFiltered = this.checkDisambiguatedLexemes(homonym)
-    this.gamesComponent.gamesData.inflectionsViewSet = ViewSetFactory.create(homonymFiltered, this.gamesComponent.gamesData.currentValue)
+
+    let locale = this.gamesComponent.gamesData.locale ? this.gamesComponent.gamesData.locale.currentValue : 'en-US'
+    this.gamesComponent.gamesData.inflectionsViewSet = ViewSetFactory.create(homonymFiltered, locale)
     this.gamesComponent.gamesData.hasMatchingViews = this.gamesComponent.gamesData.inflectionsViewSet.hasMatchingViews
   }
 

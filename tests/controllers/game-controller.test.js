@@ -1,12 +1,22 @@
 /* eslint-env jest */
 /* eslint-disable no-unused-vars */
+import 'whatwg-fetch'
 import GamesController from '@/controllers/games-controller.js'
 import Vue from 'vue/dist/vue' // Vue in a runtime + compiler configuration
+import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { Feature, Constants } from 'alpheios-data-models'
 
 describe('games-controller.test.js', () => {
   console.error = function () {}
   console.log = function () {}
   console.warn = function () {}
+
+  let maAdapter, testHomonym
+
+  beforeAll(async () => {
+    maAdapter = new AlpheiosTuftsAdapter()
+    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
+  })
 
   beforeEach(() => {
     jest.spyOn(console, 'error')
@@ -83,14 +93,27 @@ describe('games-controller.test.js', () => {
 
   it('8 GamesController - updateHomonym method (panel is not visible) - saves homonym to gamesComponent and executes getInflectionDataFromHomonym', () => {
     let gC = new GamesController()
-    expect(gC.gamesComponent.homonym).toBeFalsy()
+    expect(gC.gamesComponent.lexemes).toBeFalsy()
 
-    gC.getInflectionDataFromHomonym = jest.fn()
+    gC.getInflectionViewSetDataFromHomonym = jest.fn()
 
-    gC.updateHomonym('fooHomonym')
+    let testFeatures = {}
+    testFeatures[Feature.types.part] = new Feature(Feature.types.part, 'noun', Constants.LANG_LATIN)
 
-    expect(gC.gamesComponent.homonym).toEqual('fooHomonym')
-    expect(gC.getInflectionDataFromHomonym).toBeCalled()
+    let testLexeme = {
+      lemma: {
+        ID: 0,
+        word: 'fooword',
+        features: testFeatures
+      }
+    }
+
+    let testHomonymL = { targetWord: 'fooword', lexemes: [testLexeme] }
+
+    gC.updateHomonym(testHomonymL)
+
+    expect(gC.gamesComponent.slimHomonym).toEqual({targetWord: 'fooword', lexemes: [{lemma: {ID: 0, partOfSpeech: 'noun', word: 'fooword'}}]})
+    expect(gC.getInflectionViewSetDataFromHomonym).toBeCalled()
   })
 
   it('9 GamesController - updateHomonym method (panel is visible) - executes nothing', () => {
@@ -125,27 +148,24 @@ describe('games-controller.test.js', () => {
     expect(gC.gamesComponent.gamesData.definitions).toEqual({ l1: ['fooDefinition'] })
   })
 
-  it('11 GamesController - getInflectionDataFromHomonym method - executes getInflectionData from LDFAdapter and saves inflectionData, inflectionDataReady', async () => {
+  it('11 GamesController - getInflectionViewSetDataFromHomonym method - creates ViewSetFactory and checkDisambiguatedLexemes', async () => {
     let gC = new GamesController()
-    gC.LDFAdapter.getInflectionData = jest.fn(() => 'fooInflectionData')
+    gC.checkDisambiguatedLexemes = jest.fn(() => testHomonym)
 
-    expect(gC.gamesComponent.gamesData.inflectionData).toBeNull()
-    expect(gC.gamesComponent.gamesData.inflectionDataReady).toBeFalsy()
+    gC.getInflectionViewSetDataFromHomonym(testHomonym)
 
-    gC.getInflectionDataFromHomonym('fooHomonym')
-    expect(gC.LDFAdapter.getInflectionData).toBeCalled()
-
-    await Vue.nextTick()
-    expect(gC.gamesComponent.gamesData.inflectionData).toEqual('fooInflectionData')
-    expect(gC.gamesComponent.gamesData.inflectionDataReady).toBeTruthy()
+    expect(gC.checkDisambiguatedLexemes).toHaveBeenCalled()
+    expect(gC.gamesComponent.gamesData.inflectionsViewSet).toBeDefined()
+    expect(gC.gamesComponent.gamesData.hasMatchingViews).toBeTruthy()
   })
 
-  it('12 GamesController - getInflectionDataFromHomonym method - catches Error and prints it to console', () => {
+  it('12 GamesController - checkDisambiguatedLexemes method - filters upon disambiguated property', async () => {
     let gC = new GamesController()
-    gC.LDFAdapter.getInflectionData = jest.fn(() => { throw new Error('Foo error') })
 
-    gC.getInflectionDataFromHomonym('fooHomonym')
+    expect(gC.checkDisambiguatedLexemes(testHomonym).lexemes.length).toEqual(2)
 
-    expect(console.error).toBeCalledWith(`LexicalQuery failed: Foo error`)
+    testHomonym.lexemes[0].disambiguated = true
+
+    expect(gC.checkDisambiguatedLexemes(testHomonym).lexemes.length).toEqual(1)
   })
 })

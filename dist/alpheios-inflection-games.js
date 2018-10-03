@@ -39726,7 +39726,9 @@ class GamesController {
 
   getInflectionViewSetDataFromHomonym (homonym) {
     let homonymFiltered = this.checkDisambiguatedLexemes(homonym)
-    this.gamesComponent.gamesData.inflectionsViewSet = alpheios_inflection_tables__WEBPACK_IMPORTED_MODULE_3__["ViewSetFactory"].create(homonymFiltered, this.gamesComponent.gamesData.currentValue)
+
+    let locale = this.gamesComponent.gamesData.locale ? this.gamesComponent.gamesData.locale.currentValue : 'en-US'
+    this.gamesComponent.gamesData.inflectionsViewSet = alpheios_inflection_tables__WEBPACK_IMPORTED_MODULE_3__["ViewSetFactory"].create(homonymFiltered, locale)
     this.gamesComponent.gamesData.hasMatchingViews = this.gamesComponent.gamesData.inflectionsViewSet.hasMatchingViews
   }
 
@@ -39737,34 +39739,6 @@ class GamesController {
     } else {
       return new alpheios_data_models__WEBPACK_IMPORTED_MODULE_4__["Homonym"](homonym.lexemes.filter(lexeme => lexeme.disambiguated), this.targetWord)
     }
-
-    /*
-    let hasDisambiguated = homonym.lexemes.some(lex => lex.disambiguated)
-    if (!hasDisambiguated) {
-      return homonym
-    } else {
-      let lemmasIdForDelete = []
-      let lexIndexForDelete = []
-      let inflectionsIndexForDelete = []
-
-      homonym.lexemes.forEach((lexeme, lexIndex) => {
-        if (!lexeme.disambiguated) {
-          lemmasIdForDelete.push(lexeme.lemma.ID)
-          lexIndexForDelete.push(lexIndex)
-        }
-      })
-
-      lexIndexForDelete.reverse().forEach(lexIndex => homonym.lexemes.splice(lexIndex, 1))
-
-      homonym.inflections.forEach((infl, inflIndex) => {
-        if (lemmasIdForDelete.indexOf(infl.lemma.ID) > -1) {
-          inflectionsIndexForDelete.push(inflIndex)
-        }
-      })
-
-      inflectionsIndexForDelete.reverse().forEach(inflIndex => homonym.lexemes.splice(inflIndex, 1))
-    }
-*/
   }
 
   static gamesComponentCreate (draggable) {
