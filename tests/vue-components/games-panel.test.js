@@ -7,7 +7,7 @@ import { shallowMount, mount } from '@vue/test-utils'
 import GamesPanel from '@/vue-components/games-panel.vue'
 import GamesSet from '@/lib/games-set.js'
 
-import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
+import { ViewSetFactory } from 'alpheios-inflection-tables'
 import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
 import { Constants } from 'alpheios-data-models'
 
@@ -16,13 +16,13 @@ describe('games-panel.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let cmp, maAdapter, testHomonym, testInflectionData, testLocale
+  let cmp, maAdapter, testHomonym, testInflectionsViewSet, testLocale
 
   beforeAll(async () => {
     maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_GREEK, 'συνδέει')
-    testInflectionData = await LDFAdapter.getInflectionData(testHomonym)
+    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
     testLocale = 'en-US'
+    testInflectionsViewSet = ViewSetFactory.create(testHomonym, testLocale)
   })
 
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe('games-panel.test.js', () => {
       propsData: {
         data: {},
         visible: false,
-        homonym: false
+        slimHomonym: false
       },
       sync: false
     })
@@ -56,7 +56,7 @@ describe('games-panel.test.js', () => {
       propsData: {
         data: { draggable: true },
         visible: false,
-        homonym: false
+        slimHomonym: false
       },
       sync: false
     })
@@ -74,14 +74,24 @@ describe('games-panel.test.js', () => {
     expect(cmp.vm.stylesForTooltipCloseIcon).toBeInstanceOf(Object)
   })
 
-  it('4 GamePanel - gamesSet returns gamesSet object if inflectionData and locale are loaded, changes gamesListChanged and executes clearData', () => {
-    expect(cmp.vm.gamesSet).toBeNull()
-    expect(cmp.vm.gamesListChanged).toEqual(0)
+  it('4 GamePanel - lexemesInHeader returns unique lexemes from homonym', () => {
+    cmp.setProps({
+      slimHomonym: testHomonym,
+      data: {
+        inflectionsViewSet: testInflectionsViewSet,
+        hasMatchingViews: true,
+        locale: testLocale
+      }
+    })
 
+    expect(cmp.vm.lexemesInHeader.length).toEqual(cmp.vm.slimHomonym.lexemes.length)
+  })
+
+  it('5 GamePanel - gamesSet returns gamesSet object if showInflectionsPanel are true, changes gamesListChanged and executes clearData', () => {
     cmp.setProps({
       data: {
-        inflectionData: testInflectionData,
-        inflectionDataReady: true,
+        inflectionsViewSet: testInflectionsViewSet,
+        hasMatchingViews: true,
         locale: testLocale
       }
     })
@@ -89,7 +99,7 @@ describe('games-panel.test.js', () => {
     expect(cmp.vm.gamesSet).toBeInstanceOf(GamesSet)
     expect(cmp.vm.gamesListChanged).toEqual(1)
   })
-
+/*
   it('5 GamePanel - definitionsFinal returns definitions if they are loaded or null while they are not loaded', () => {
     expect(cmp.vm.definitionsFinal).toBeFalsy()
 
@@ -209,4 +219,5 @@ describe('games-panel.test.js', () => {
     await Vue.nextTick()
     expect(cmp.vm.clearData).toBeCalled()
   })
+  */
 })
