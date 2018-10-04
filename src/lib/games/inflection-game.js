@@ -31,16 +31,38 @@ export default class InflectionGame extends Game {
     }
   }
 
+  static getFeatures (cell) {
+    let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
+    return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
+  }
+
+  static compareLexemesToCell (homonym, cell) {
+    let cellFeatures = InflectionGame.getFeatures(cell)
+
+    return homonym.lexemes.some(lexeme =>
+      lexeme.inflections.some(inflection =>
+        cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
+      )
+    )
+  }
+
   findFullMatchInView () {
-    return this.view.morphemes.some(morpheme => morpheme.match.fullMatch)
+    if (!this.view.hasPrerenderedTables) {
+      return this.view.morphemes.some(morpheme => morpheme.match.fullMatch)
+    } else if (this.paradigm) {
+      return this.view.wideTable.rows.some(row =>
+        row.cells.some(cell => (cell.role === 'data') && InflectionGame.compareLexemesToCell(this.view.homonym, cell))
+      )
+    }
   }
 
   checkViewFormatCorrect () {
-    return !this.view.hasPrerenderedTables && this.view.isImplemented
+    return this.view.isImplemented
   }
 
   matchViewsCheck () {
-    this.prerender()
+    this.render()
+    console.info('*******************matchViewsCheck', this.view)
     return this.checkViewFormatCorrect() && this.findFullMatchInView()
   }
 }
