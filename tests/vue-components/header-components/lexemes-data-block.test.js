@@ -75,12 +75,7 @@ describe('lexemes-data-block.test.js', () => {
     expect(cmp.vm.getDefinitions('id2')).toBeUndefined()
   })
 
-  it('5 LexemesDataBlock - getPartOfSpeechFromLemma returns partOfSpeach', () => {
-    expect(cmp.vm.getPartOfSpeechFromLemma(testHomonym.lexemes[0].lemma)).toEqual('verb')
-    expect(cmp.vm.getPartOfSpeechFromLemma({})).toEqual('')
-  })
-
-  it('6 LexemesDataBlock - showHideLink changes hidden attribute', () => {
+  it('5 LexemesDataBlock - showHideLink changes hidden attribute', () => {
     expect(cmp.vm.hidden).toBeFalsy()
 
     cmp.vm.showHideLink()

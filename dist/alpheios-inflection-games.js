@@ -40043,7 +40043,7 @@ class GameTable {
     if (this.rows) {
       this.rows.forEach(row => {
         row.cells.forEach(cell => {
-          cell.hidden = cell.isDataCell
+          cell.gameHidden = cell.isDataCell
         })
       })
     }
@@ -40131,10 +40131,6 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
     if (this.featuresList) {
       this.featuresList.clearValuesStatus()
     }
-  }
-
-  get featuresListTitles () {
-    return this.featuresList.featuresListTitles
   }
 
   findFullMatchInView () {

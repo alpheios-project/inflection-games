@@ -23,14 +23,4 @@ describe('game.test.js', () => {
     let game = new Game({ partOfSpeech: 'fooPartOfSpeach', id: 'fooId', name: 'fooName' })
     expect(game.partOfSpeech).toEqual('fooPartOfSpeach')
   })
-
-  it('2 Game - new constructor with view that has partOfSpeech in paradigm property', () => {
-    let game = new Game({ paradigm: { partOfSpeech: 'fooPartOfSpeach' }, id: 'fooId', name: 'fooName' })
-    expect(game.partOfSpeech).toEqual('fooPartOfSpeach')
-  })
-
-  it('3 Game - new constructor no partOfSpeach in paradigm and in direct properties - returns empty partOfSpeach', () => {
-    let game = new Game({ id: 'fooId', name: 'fooName' })
-    expect(game.partOfSpeech).toBeNull()
-  })
 })

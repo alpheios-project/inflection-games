@@ -32,7 +32,7 @@ export default class GameTable {
     if (this.rows) {
       this.rows.forEach(row => {
         row.cells.forEach(cell => {
-          cell.hidden = cell.isDataCell
+          cell.gameHidden = cell.isDataCell
         })
       })
     }

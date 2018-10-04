@@ -31,10 +31,6 @@ export default class InflectionGame extends Game {
     }
   }
 
-  get featuresListTitles () {
-    return this.featuresList.featuresListTitles
-  }
-
   findFullMatchInView () {
     return this.view.morphemes.some(morpheme => morpheme.match.fullMatch)
   }
