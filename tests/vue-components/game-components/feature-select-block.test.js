@@ -4,7 +4,7 @@ import 'whatwg-fetch'
 import { shallowMount, mount } from '@vue/test-utils'
 import FeatureSelectBlock from '@/vue-components/game-components/feature-select-block.vue'
 
-import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
+import { ViewSetFactory } from 'alpheios-inflection-tables'
 import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
 import { Feature, Constants } from 'alpheios-data-models'
 
@@ -16,17 +16,21 @@ describe('feature-select-block.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let cmp, maAdapter, testHomonym, testInflectionData, testLocale, gameSet, testSelectedGame
+  let cmp, maAdapter, testHomonym, testInflectionsViewSet, testLocale, gameSet, testSelectedGame, testFeatureList
   let featureFullMatch, featureNotFullMatch
 
   beforeAll(async () => {
     maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_GREEK, 'συνδέει')
-    testInflectionData = await LDFAdapter.getInflectionData(testHomonym)
+    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
     testLocale = 'en-US'
+    testInflectionsViewSet = ViewSetFactory.create(testHomonym, testLocale)
 
-    featureFullMatch = new Feature('tense', 'present', Constants.LANG_GREEK)
-    featureNotFullMatch = new Feature('number', 'dual', Constants.LANG_GREEK)
+    gameSet = new GamesSet(testInflectionsViewSet, 'en-US')
+    featureFullMatch = new Feature('type', 'regular', Constants.LANG_LATIN)
+    featureFullMatch.hasFullMatch = true
+
+    featureNotFullMatch = new Feature('type', 'irregular', Constants.LANG_LATIN)
+    featureNotFullMatch.hasFullMatch = false
   })
 
   beforeEach(() => {
@@ -34,12 +38,17 @@ describe('feature-select-block.test.js', () => {
     jest.spyOn(console, 'log')
     jest.spyOn(console, 'warn')
 
-    gameSet = new GamesSet(testInflectionData, 'en-US')
-    testSelectedGame = gameSet.gamesList['Guess inflection'][0]
+    let existedGameType = InflectionGame.gameType
+    let existedGameId = Object.keys(gameSet.gamesList[existedGameType])[0]
+
+    testSelectedGame = gameSet.matchingGames[existedGameType][existedGameId]
+    testSelectedGame.createGameStuff()
+
+    testFeatureList = testSelectedGame.featuresList
 
     cmp = mount(FeatureSelectBlock, {
       propsData: {
-        selectedGame: testSelectedGame,
+        featuresList: testFeatureList,
         finishGameFlag: false
       }
     })
@@ -55,54 +64,50 @@ describe('feature-select-block.test.js', () => {
     expect(cmp.isVueInstance()).toBeTruthy()
   })
 
-  it('2 FeatureSelectBlock - featuresList - returns featuresList of the selectedGame and if defined then renders .alpheios-features-select-block ', () => {
-    expect(cmp.vm.featuresList).toEqual(testSelectedGame.featuresList)
-    expect(cmp.findAll('.alpheios-features-select-block').length).toEqual(1)
+  it('2 FeatureSelectBlock - featuresTitles - returns featuresListTitles of the gamesList', () => {
+    expect(cmp.vm.featuresTitles).toEqual(testFeatureList.featuresTitles)
 
     cmp.setProps({
-      selectedGame: {}
+      featuresList: {}
     })
 
-    expect(cmp.vm.featuresList).toBeUndefined()
-    expect(cmp.findAll('.alpheios-features-select-block').length).toEqual(0)
+    expect(cmp.vm.featuresTitles).toBeUndefined()
   })
 
-  it('3 FeatureSelectBlock - featuresKeys - returns featuresListTitles of the selected game', () => {
-    expect(cmp.vm.featuresKeys).toEqual(testSelectedGame.featuresListTitles)
+  it('3 FeatureSelectBlock - features - returns features of the gamesList', () => {
+    expect(cmp.vm.features).toEqual(testFeatureList.features)
 
     cmp.setProps({
-      selectedGame: {}
+      featuresList: {}
     })
 
-    expect(cmp.vm.featuresKeys).toBeUndefined()
+    expect(cmp.vm.features).toBeUndefined()
   })
 
   it('4 FeatureSelectBlock - featureItemClass - returns classes depends on featureValue status', () => {
-    expect(cmp.vm.featureItemClass({ value: 'fooValue', status: null })).toEqual({
+    expect(cmp.vm.featureItemClass({ value: 'fooValue', status: null }, 'fooName')).toEqual({
       'alpheios-features-select-block__list_values__item': true,
       'alpheios-features-select-block__list_values__item__success': false,
-      'alpheios-features-select-block__list_values__item__failed': false
+      'alpheios-features-select-block__list_values__item__failed': false,
+      'fooName': true
     })
 
-    expect(cmp.vm.featureItemClass({ value: 'fooValue', status: 'success' })).toEqual({
+    expect(cmp.vm.featureItemClass({ value: 'fooValue', status: 'success' }, 'fooName')).toEqual({
       'alpheios-features-select-block__list_values__item': true,
       'alpheios-features-select-block__list_values__item__success': true,
-      'alpheios-features-select-block__list_values__item__failed': false
+      'alpheios-features-select-block__list_values__item__failed': false,
+      'fooName': true
     })
 
-    expect(cmp.vm.featureItemClass({ value: 'fooValue', status: 'failed' })).toEqual({
+    expect(cmp.vm.featureItemClass({ value: 'fooValue', status: 'failed' }, 'fooName')).toEqual({
       'alpheios-features-select-block__list_values__item': true,
       'alpheios-features-select-block__list_values__item__success': false,
-      'alpheios-features-select-block__list_values__item__failed': true
+      'alpheios-features-select-block__list_values__item__failed': true,
+      'fooName': true
     })
   })
 
-  it('5 FeatureSelectBlock - checkFeatureHasFullMatch - returns succes and failed depends on match', () => {
-    expect(cmp.vm.checkFeatureHasFullMatch(featureFullMatch.type, featureFullMatch)).toEqual('success')
-    expect(cmp.vm.checkFeatureHasFullMatch(featureNotFullMatch.type, featureNotFullMatch)).toEqual('failed')
-  })
-
-  it('6 FeatureSelectBlock - selectFeature - emits selectFeature, incrementClicks, changes status for featureValue and executes checkIfFeatureAllValuesChosen if game is not finished', () => {
+  it('5 FeatureSelectBlock - selectFeature - emits selectFeature, incrementClicks, changes status for featureValue and executes checkIfFeatureAllValuesChosen if game is not finished', () => {
     cmp.vm.checkIfFeatureAllValuesChosen = jest.fn()
 
     cmp.vm.selectFeature(featureFullMatch.type, featureFullMatch)
@@ -114,7 +119,7 @@ describe('feature-select-block.test.js', () => {
     expect(cmp.vm.checkIfFeatureAllValuesChosen).toBeCalled()
   })
 
-  it('7 FeatureSelectBlock - selectFeature - does nothing if game is finished', () => {
+  it('6 FeatureSelectBlock - selectFeature - does nothing if game is finished', () => {
     cmp.vm.checkIfFeatureAllValuesChosen = jest.fn()
     cmp.setProps({
       finishGameFlag: true
@@ -146,18 +151,17 @@ describe('feature-select-block.test.js', () => {
   })
 
   it('10 FeatureSelectBlock - checkIfOnlyOneFeatureValueLeft - checks if there is only one feature unchecked - and checked it automatically', () => {
-    expect(cmp.vm.checkIfOnlyOneFeatureValueLeft('tense')).toBeFalsy() // for now no features are selected
-
-    cmp.vm.featuresList['tense'].find(feature => feature.value === 'present').status = 'success' // select the first feature - only one is unchecked for now
-    expect(cmp.vm.checkIfOnlyOneFeatureValueLeft('tense')).toBeTruthy()
-    expect(cmp.vm.featuresList['tense'].find(feature => feature.value === 'imperfect').status).toEqual('failed')
+    expect(cmp.vm.checkIfOnlyOneFeatureValueLeft('type')).toBeFalsy() // for now no features are selected
+    cmp.vm.featuresList.features['type'].find(feature => feature.value === 'regular').status = 'success' // select the first feature - only one is unchecked for now
+    expect(cmp.vm.checkIfOnlyOneFeatureValueLeft('type')).toBeTruthy()
+    expect(cmp.vm.featuresList.features['type'].find(feature => feature.value === 'irregular').status).toEqual('failed')
   })
 
   it('11 FeatureSelectBlock - checkIfChosenTheOnlyFeatureWithFullMatch - checks if there are only failed values are unchecked', () => {
-    expect(cmp.vm.checkIfChosenTheOnlyFeatureWithFullMatch('number')).toBeFalsy() // for now no features are selected
+    expect(cmp.vm.checkIfChosenTheOnlyFeatureWithFullMatch('type')).toBeFalsy() // for now no features are selected
 
-    cmp.vm.featuresList['number'].find(feature => feature.value === 'singular').status = 'success' // select the first feature - only one is unchecked for now
-    expect(cmp.vm.checkIfChosenTheOnlyFeatureWithFullMatch('number')).toBeTruthy()
-    expect(cmp.vm.featuresList['number'].filter(feature => feature.value !== 'singular').map(feature => feature.status)).toEqual(['failed', 'failed'])
+    cmp.vm.featuresList.features['type'].find(feature => feature.value === 'regular').status = 'success' // select the first feature - only one is unchecked for now
+    expect(cmp.vm.checkIfChosenTheOnlyFeatureWithFullMatch('type')).toBeTruthy()
+    expect(cmp.vm.featuresList.features['type'].filter(feature => feature.value !== 'irregular').map(feature => feature.status)).toEqual(['success'])
   })
 })

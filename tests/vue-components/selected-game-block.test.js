@@ -5,7 +5,7 @@ import Vue from 'vue/dist/vue'
 import { shallowMount, mount } from '@vue/test-utils'
 import SelectedGameBlock from '@/vue-components/selected-game-block.vue'
 
-import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
+import { ViewSetFactory } from 'alpheios-inflection-tables'
 import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
 import { Feature, Constants } from 'alpheios-data-models'
 
@@ -17,13 +17,13 @@ describe('selected-game-block.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let cmp, maAdapter, testHomonym, testInflectionData, testLocale, gameSet, testSelectedGame
+  let cmp, maAdapter, testHomonym, testInflectionsViewSet, testLocale, gameSet, testSelectedGame
 
   beforeAll(async () => {
     maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_GREEK, 'συνδέει')
-    testInflectionData = await LDFAdapter.getInflectionData(testHomonym)
+    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
     testLocale = 'en-US'
+    testInflectionsViewSet = ViewSetFactory.create(testHomonym, testLocale)
   })
 
   beforeEach(() => {
@@ -31,8 +31,12 @@ describe('selected-game-block.test.js', () => {
     jest.spyOn(console, 'log')
     jest.spyOn(console, 'warn')
 
-    gameSet = new GamesSet(testInflectionData, 'en-US')
-    testSelectedGame = gameSet.gamesList['Guess inflection'][0]
+    gameSet = new GamesSet(testInflectionsViewSet, testLocale)
+    let gameType = InflectionGame.gameType
+    let gameId = Object.values(gameSet.gamesList[gameType])[0].id
+
+    testSelectedGame = gameSet.matchingGames[gameType][gameId]
+    testSelectedGame.createGameStuff()
 
     cmp = mount(SelectedGameBlock, {
       propsData: {

@@ -1,10 +1,10 @@
 /* eslint-env jest */
 /* eslint-disable no-unused-vars */
 import 'whatwg-fetch'
-import { shallowMount, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import InflectionViewsGames from '@/vue-components/header-components/inflection-views-games.vue'
 
-import { LanguageDatasetFactory as LDFAdapter } from 'alpheios-inflection-tables'
+import { ViewSetFactory } from 'alpheios-inflection-tables'
 import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
 import { Constants } from 'alpheios-data-models'
 
@@ -16,15 +16,15 @@ describe('inflection-views-games.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let cmp, maAdapter, testHomonym, testInflectionData, testLocale, gameSet
+  let cmp, maAdapter, testHomonym, testInflectionsViewSet, testLocale, gameSet
 
   beforeAll(async () => {
     maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_GREEK, 'συνδέει')
-    testInflectionData = await LDFAdapter.getInflectionData(testHomonym)
+    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
     testLocale = 'en-US'
+    testInflectionsViewSet = ViewSetFactory.create(testHomonym, testLocale)
 
-    gameSet = new GamesSet(testInflectionData, 'en-US')
+    gameSet = new GamesSet(testInflectionsViewSet, 'en-US')
   })
 
   beforeEach(() => {
@@ -68,10 +68,10 @@ describe('inflection-views-games.test.js', () => {
 
   it('4 InflectionViewsGames - showHideVariantsLabel depends on showOnlySelected', () => {
     expect(cmp.vm.showOnlySelected).toBeFalsy()
-    expect(cmp.vm.showHideVariantsLabel).toEqual('hide unselected')
+    expect(cmp.vm.showHideVariantsLabel).toEqual('hide')
 
     cmp.vm.showOnlySelected = true
-    expect(cmp.vm.showHideVariantsLabel).toEqual('show all')
+    expect(cmp.vm.showHideVariantsLabel).toEqual('show')
   })
 
   it('5 InflectionViewsGames - showHideVariants changes showOnlySelected only when there is at least one selected', () => {
@@ -86,27 +86,35 @@ describe('inflection-views-games.test.js', () => {
   })
 
   it('6 InflectionViewsGames - checkHasSelectedChildren checks if there is any selected game in the type group', () => {
+    let existedGameType = InflectionGame.gameType
+    let existedGameId = Object.keys(gameSet.gamesList[existedGameType])[0]
+
     expect(cmp.vm.checkHasSelectedChildren('fooKey')).toBeFalsy()
-    expect(cmp.vm.checkHasSelectedChildren('Guess inflection')).toBeFalsy()
+    expect(cmp.vm.checkHasSelectedChildren(existedGameType)).toBeFalsy()
 
-    cmp.vm.selectedId = gameSet.gamesList['Guess inflection'][0].id
+    cmp.vm.selectedId = gameSet.gamesList[existedGameType][existedGameId].id
 
-    expect(cmp.vm.checkHasSelectedChildren('Guess inflection')).toBeTruthy()
+    expect(cmp.vm.checkHasSelectedChildren(existedGameType)).toBeTruthy()
   })
 
   it('7 InflectionViewsGames - selectGame updates selectedId and emits selectedGameEvent with selected game', () => {
-    let testSelectedGame = gameSet.gamesList['Guess inflection'][0]
+    let existedGameType = InflectionGame.gameType
+    let existedGameId = Object.keys(gameSet.gamesList[existedGameType])[0]
+    let testSelectedGame = gameSet.matchingGames[existedGameType][existedGameId]
 
     cmp.vm.selectGame(testSelectedGame)
 
     expect(cmp.vm.selectedId).toEqual(testSelectedGame.id)
     expect(cmp.emitted()['selectedGameEvent']).toBeTruthy()
 
-    expect(cmp.emitted()['selectedGameEvent'][0]).toEqual([testSelectedGame])
+    expect(cmp.emitted()['selectedGameEvent'][0]).toEqual([testSelectedGame.id, testSelectedGame.type])
   })
 
-  it('7 InflectionViewsGames - gamesListChanged has watch that returns selectedId and showOnlySelected to initial state', () => {
-    let testSelectedGame = gameSet.gamesList['Guess inflection'][0]
+  it('8 InflectionViewsGames - gamesListChanged has watch that returns selectedId and showOnlySelected to initial state', () => {
+    let existedGameType = InflectionGame.gameType
+    let existedGameId = Object.keys(gameSet.gamesList[existedGameType])[0]
+
+    let testSelectedGame = gameSet.matchingGames[existedGameType][existedGameId]
 
     expect(cmp.vm.selectedId).toBeNull()
     expect(cmp.vm.showOnlySelected).toBeFalsy()
@@ -117,13 +125,11 @@ describe('inflection-views-games.test.js', () => {
     cmp.vm.showHideVariants()
 
     expect(cmp.vm.selectedId).not.toBeNull()
-    expect(cmp.vm.showOnlySelected).toBeTruthy()
 
     cmp.setProps({
       gamesListChanged: 1
     })
 
     expect(cmp.vm.selectedId).toBeNull()
-    expect(cmp.vm.showOnlySelected).toBeFalsy()
   })
 })

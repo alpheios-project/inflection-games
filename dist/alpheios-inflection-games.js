@@ -26889,7 +26889,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     gameTable: function () {
-      if (Array.isArray(this.selectedGame.gameTable.rows) && this.selectedGame.gameTable.rows.length > 0) {
+      if (this.selectedGame.gameTable && Array.isArray(this.selectedGame.gameTable.rows) && this.selectedGame.gameTable.rows.length > 0) {
         vue_dist_vue__WEBPACK_IMPORTED_MODULE_0___default.a.nextTick(this.updateHeight)
       }
       return this.selectedGame.gameTable
@@ -26947,7 +26947,6 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     checkSuccessFeature: function () {
-      console.info('****************checkSuccessFeature', this.selectedFeature.name, this.featuresList.features[this.selectedFeature.name], this.featuresList)
       this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value, this.featuresList.features[this.selectedFeature.name])
     },
 

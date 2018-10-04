@@ -51,7 +51,7 @@
     },
     computed: {
       gameTable: function () {
-        if (Array.isArray(this.selectedGame.gameTable.rows) && this.selectedGame.gameTable.rows.length > 0) {
+        if (this.selectedGame.gameTable && Array.isArray(this.selectedGame.gameTable.rows) && this.selectedGame.gameTable.rows.length > 0) {
           Vue.nextTick(this.updateHeight)
         }
         return this.selectedGame.gameTable
@@ -109,7 +109,6 @@
       },
 
       checkSuccessFeature: function () {
-        console.info('****************checkSuccessFeature', this.selectedFeature.name, this.featuresList.features[this.selectedFeature.name], this.featuresList)
         this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value, this.featuresList.features[this.selectedFeature.name])
       },
 

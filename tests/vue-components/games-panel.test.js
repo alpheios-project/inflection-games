@@ -10,6 +10,7 @@ import GamesSet from '@/lib/games-set.js'
 import { ViewSetFactory } from 'alpheios-inflection-tables'
 import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
 import { Constants } from 'alpheios-data-models'
+import InflectionGame from '../../src/lib/games/inflection-game'
 
 describe('games-panel.test.js', () => {
   console.error = function () {}
@@ -83,8 +84,8 @@ describe('games-panel.test.js', () => {
         locale: testLocale
       }
     })
-
-    expect(cmp.vm.lexemesInHeader.length).toEqual(cmp.vm.slimHomonym.lexemes.length)
+    expect(cmp.vm.slimHomonym.lexemes.length).toEqual(2)
+    expect(cmp.vm.lexemesInHeader.length).toEqual(1) // because there are no definitions here
   })
 
   it('5 GamePanel - gamesSet returns gamesSet object if showInflectionsPanel are true, changes gamesListChanged and executes clearData', () => {
@@ -99,8 +100,8 @@ describe('games-panel.test.js', () => {
     expect(cmp.vm.gamesSet).toBeInstanceOf(GamesSet)
     expect(cmp.vm.gamesListChanged).toEqual(1)
   })
-/*
-  it('5 GamePanel - definitionsFinal returns definitions if they are loaded or null while they are not loaded', () => {
+
+  it('6 GamePanel - definitionsFinal returns definitions if they are loaded or null while they are not loaded', () => {
     expect(cmp.vm.definitionsFinal).toBeFalsy()
 
     cmp.setProps({
@@ -113,23 +114,23 @@ describe('games-panel.test.js', () => {
     expect(cmp.vm.definitionsFinal).toEqual({ 'id1': ['fooDefinition'] })
   })
 
-  it('6 GamePanel - showFeaturesPanel returns true if lexemes are loaded', () => {
+  it('7 GamePanel - showFeaturesPanel returns true if lexemes are loaded', () => {
     expect(cmp.vm.showFeaturesPanel).toBeFalsy()
 
     cmp.setProps({
-      homonym: testHomonym
+      slimHomonym: testHomonym
     })
 
     expect(cmp.vm.showFeaturesPanel).toBeTruthy()
   })
 
-  it('7 GamePanel - showInflectionsPanel returns true if lexemes are loaded', () => {
+  it('8 GamePanel - showInflectionsPanel returns true if lexemes are loaded', () => {
     expect(cmp.vm.showInflectionsPanel).toBeFalsy()
 
     cmp.setProps({
       data: {
-        inflectionData: testInflectionData,
-        inflectionDataReady: true,
+        inflectionsViewSet: testInflectionsViewSet,
+        hasMatchingViews: true,
         locale: testLocale
       }
     })
@@ -137,7 +138,7 @@ describe('games-panel.test.js', () => {
     expect(cmp.vm.showInflectionsPanel).toBeTruthy()
   })
 
-  it('8 GamePanel - closePanel clearsData and emits close event', () => {
+  it('9 GamePanel - closePanel clearsData and emits close event', () => {
     cmp.vm.clearData = jest.fn()
 
     cmp.vm.closePanel()
@@ -146,11 +147,11 @@ describe('games-panel.test.js', () => {
     expect(cmp.emitted()['close']).toBeTruthy()
   })
 
-  it('9 GamePanel - selectedGameEvent changes - selectedGame, selectedGameReady, changedGame', () => {
+  it('10 GamePanel - selectedGameEvent changes - selectedGame, selectedGameReady, changedGame', () => {
     cmp.setProps({
       data: {
-        inflectionData: testInflectionData,
-        inflectionDataReady: true,
+        inflectionsViewSet: testInflectionsViewSet,
+        hasMatchingViews: true,
         locale: testLocale
       }
     })
@@ -159,27 +160,30 @@ describe('games-panel.test.js', () => {
     expect(cmp.vm.selectedGameReady).toBeFalsy()
     expect(cmp.vm.changedGame).toEqual(0)
 
-    let gameToSelect = Object.values(cmp.vm.gamesSet.gamesList)[0]
+    let gameType = InflectionGame.gameType
+    let gameId = Object.values(cmp.vm.gamesSet.gamesList[gameType])[0].id
+    let gameToSelect = cmp.vm.gamesSet.matchingGames[gameType][gameId]
 
-    cmp.vm.selectedGameEvent(gameToSelect)
+    cmp.vm.selectedGameEvent(gameId, gameType)
 
     expect(cmp.vm.selectedGame).toEqual(gameToSelect)
     expect(cmp.vm.selectedGameReady).toBeTruthy()
     expect(cmp.vm.changedGame).toEqual(1)
   })
 
-  it('10 GamePanel - clearData changes - selectedGame, selectedGameReady, changedGame to initial values', () => {
+  it('11 GamePanel - clearData changes - selectedGame, selectedGameReady, changedGame to initial values', () => {
     cmp.setProps({
       data: {
-        inflectionData: testInflectionData,
-        inflectionDataReady: true,
+        inflectionsViewSet: testInflectionsViewSet,
+        hasMatchingViews: true,
         locale: testLocale
       }
     })
 
-    let gameToSelect = Object.values(cmp.vm.gamesSet.gamesList)[0]
+    let gameType = InflectionGame.gameType
+    let gameId = Object.values(cmp.vm.gamesSet.gamesList[gameType])[0].id
 
-    cmp.vm.selectedGameEvent(gameToSelect)
+    cmp.vm.selectedGameEvent(gameId, gameType)
 
     cmp.vm.clearData()
 
@@ -219,5 +223,4 @@ describe('games-panel.test.js', () => {
     await Vue.nextTick()
     expect(cmp.vm.clearData).toBeCalled()
   })
-  */
 })
