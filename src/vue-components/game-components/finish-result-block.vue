@@ -1,5 +1,8 @@
 <template>
-	<div :class = "resultClasses">{{ resultLabel }}</div>
+	<div :class = "resultClasses">
+    <p class="alpheios_result_block--result_label">{{ resultLabel }}</p>
+    <p v-if="failedResult" class="alpheios_result_block--restart_button" @click="restartGame">Restart again?</p>
+  </div>
 </template>
 <script>
   export default {
@@ -16,7 +19,7 @@
       		'alpheios-finish-result-block': true,
 			    'alpheios-finish-result-block__success': this.successResult,
 			    'alpheios-finish-result-block__failed': this.failedResult
-		}
+		    }
       },
       resultLabel: function () {
       	return this.successResult ? 'Success' : (this.failedResult ? 'Failed' : '')
@@ -26,6 +29,11 @@
       },
       failedResult: function () {
       	return this.result === 'failed'
+      }
+    },
+    methods: {
+      restartGame () {
+        this.$emit('restartGame')
       }
     }
   }
@@ -43,8 +51,7 @@
     bottom: 0;
     margin: auto;
     width: 200px;
-    height: 60px;
-    line-height: 60px;
+
 
     opacity: 0.1;
     font-weight: bold;
@@ -85,6 +92,9 @@
     -moz-transition: 2s ease-in-out;
     -o-transition: 2s ease-in-out;
     transition: 2s ease-in-out;
+
+    height: 60px;
+    line-height: 60px;
   }
 
   .alpheios-finish-result-block__failed {
@@ -105,5 +115,22 @@
     -moz-transition: 2s ease-in-out;
     -o-transition: 2s ease-in-out;
     transition: 2s ease-in-out;
+
+    height: 100px;
   }
+
+   .alpheios-finish-result-block .alpheios_result_block--result_label {
+    margin: 0 0 10px;
+  }
+  
+   .alpheios-finish-result-block .alpheios_result_block--restart_button {
+    font-size: 24px;
+    margin: 0;
+    color: #fff;
+    background: #881c07;
+    border-radius: 10px;
+    padding: 5px;
+    cursor: pointer;
+  }
+
 </style>

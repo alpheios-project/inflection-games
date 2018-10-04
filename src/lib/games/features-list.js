@@ -16,10 +16,10 @@ export default class FeaturesList {
                 shownFeatures[feature.type].push({
                   value: feature.value,
                   status: null,
-                  hasFullMatch: cell.morphemes.some(morpheme => morpheme.match.fullMatch)
+                  hasFullMatch: this.checkFeatureMatchFromMorphemes(cell)
                 })
               } else {
-                shownFeatures[feature.type].find(feat => feat.value).hasFullMatch = shownFeatures[feature.type].find(feat => feat.value).hasFullMatch || cell.morphemes.some(morpheme => morpheme.match.fullMatch)
+                shownFeatures[feature.type].find(feat => feat.value === feature.value).hasFullMatch = shownFeatures[feature.type].find(feat => feat.value === feature.value).hasFullMatch || this.checkFeatureMatchFromMorphemes(cell)
               }
             })
           }
@@ -27,7 +27,17 @@ export default class FeaturesList {
       })
     }
 
-    this.features = shownFeatures
+    this.features = {}
+
+    for (let featureType in shownFeatures) {
+      if (shownFeatures[featureType].some(feat => feat.hasFullMatch) && shownFeatures[featureType].some(feat => !feat.hasFullMatch)) {
+        this.features[featureType] = shownFeatures[featureType]
+      }
+    }
+  }
+
+  checkFeatureMatchFromMorphemes (cell) {
+    return cell.morphemes.some(morpheme => morpheme.match.fullMatch)
   }
 
   clearValuesStatus () {

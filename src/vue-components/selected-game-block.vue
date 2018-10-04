@@ -39,6 +39,7 @@
 
         <finish-result-block
           :result = "gameResult"
+          @restartGame = "restartGame"
         ></finish-result-block>
 
       </div>
@@ -119,6 +120,9 @@
         this.$emit('incrementFailedGames')
         this.gameResult = 'failed'
         this.finishGame()
+      },
+      restartGame () {
+        this.$emit('restartGame')
       },
       selectFeature: function (featureName, featureStatus, featureValue) {
         this.selectedFeature = {

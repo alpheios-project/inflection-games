@@ -47,6 +47,7 @@
 
       @incrementSuccessGames = "incrementSuccessGames"
       @incrementFailedGames = "incrementFailedGames"
+      @restartGame = "restartGame"
 		></selected-game-block>
 
 	</div>
@@ -176,6 +177,11 @@
       },
       incrementFailedGames () {
         this.failedGames = this.failedGames + 1
+      },
+      restartGame () {
+        this.selectedGame.clearGameStuff()
+        this.selectedGameReady = true
+        this.changedGame = this.changedGame + 1
       }
     },
     mounted () {

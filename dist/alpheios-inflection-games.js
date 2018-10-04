@@ -26793,6 +26793,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
   /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'FinishResultBlock',
@@ -26808,7 +26811,7 @@ __webpack_require__.r(__webpack_exports__);
       		'alpheios-finish-result-block': true,
 			    'alpheios-finish-result-block__success': this.successResult,
 			    'alpheios-finish-result-block__failed': this.failedResult
-		}
+		    }
       },
       resultLabel: function () {
       	return this.successResult ? 'Success' : (this.failedResult ? 'Failed' : '')
@@ -26818,6 +26821,11 @@ __webpack_require__.r(__webpack_exports__);
       },
       failedResult: function () {
       	return this.result === 'failed'
+      }
+    },
+    methods: {
+      restartGame () {
+        this.$emit('restartGame')
       }
     }
   });
@@ -27110,6 +27118,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -27235,6 +27244,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     incrementFailedGames () {
       this.failedGames = this.failedGames + 1
+    },
+    restartGame () {
+      this.selectedGame.clearGameStuff()
+      this.selectedGameReady = true
+      this.changedGame = this.changedGame + 1
     }
   },
   mounted () {
@@ -27635,6 +27649,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -27708,6 +27723,9 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('incrementFailedGames')
       this.gameResult = 'failed'
       this.finishGame()
+    },
+    restartGame () {
+      this.$emit('restartGame')
     },
     selectFeature: function (featureName, featureStatus, featureValue) {
       this.selectedFeature = {
@@ -27905,7 +27923,20 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { class: _vm.resultClasses }, [
-    _vm._v(_vm._s(_vm.resultLabel))
+    _c("p", { staticClass: "alpheios_result_block--result_label" }, [
+      _vm._v(_vm._s(_vm.resultLabel))
+    ]),
+    _vm._v(" "),
+    _vm.failedResult
+      ? _c(
+          "p",
+          {
+            staticClass: "alpheios_result_block--restart_button",
+            on: { click: _vm.restartGame }
+          },
+          [_vm._v("Restart again?")]
+        )
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -28148,7 +28179,8 @@ var render = function() {
         },
         on: {
           incrementSuccessGames: _vm.incrementSuccessGames,
-          incrementFailedGames: _vm.incrementFailedGames
+          incrementFailedGames: _vm.incrementFailedGames,
+          restartGame: _vm.restartGame
         }
       })
     ],
@@ -28537,7 +28569,10 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
-                _c("finish-result-block", { attrs: { result: _vm.gameResult } })
+                _c("finish-result-block", {
+                  attrs: { result: _vm.gameResult },
+                  on: { restartGame: _vm.restartGame }
+                })
               ],
               1
             )
@@ -39955,10 +39990,10 @@ class FeaturesList {
                 shownFeatures[feature.type].push({
                   value: feature.value,
                   status: null,
-                  hasFullMatch: cell.morphemes.some(morpheme => morpheme.match.fullMatch)
+                  hasFullMatch: this.checkFeatureMatchFromMorphemes(cell)
                 })
               } else {
-                shownFeatures[feature.type].find(feat => feat.value).hasFullMatch = shownFeatures[feature.type].find(feat => feat.value).hasFullMatch || cell.morphemes.some(morpheme => morpheme.match.fullMatch)
+                shownFeatures[feature.type].find(feat => feat.value === feature.value).hasFullMatch = shownFeatures[feature.type].find(feat => feat.value === feature.value).hasFullMatch || this.checkFeatureMatchFromMorphemes(cell)
               }
             })
           }
@@ -39966,7 +40001,17 @@ class FeaturesList {
       })
     }
 
-    this.features = shownFeatures
+    this.features = {}
+
+    for (let featureType in shownFeatures) {
+      if (shownFeatures[featureType].some(feat => feat.hasFullMatch) && shownFeatures[featureType].some(feat => !feat.hasFullMatch)) {
+        this.features[featureType] = shownFeatures[featureType]
+      }
+    }
+  }
+
+  checkFeatureMatchFromMorphemes (cell) {
+    return cell.morphemes.some(morpheme => morpheme.match.fullMatch)
   }
 
   clearValuesStatus () {
