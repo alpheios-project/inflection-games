@@ -25970,6 +25970,17 @@ win.init = init;
 
 /***/ }),
 
+/***/ "../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader/index.js?!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/game-components/inflection-game-cell.vue?vue&type=style&index=0&lang=scss&":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader??ref--5-1!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js??ref--5-2!../node_modules/vue-loader/lib??vue-loader-options!./vue-components/game-components/inflection-game-cell.vue?vue&type=style&index=0&lang=scss& ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader/index.js?!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/game-components/inflection-game-table.vue?vue&type=style&index=0&id=9d332d3e&lang=scss&scoped=true&":
 /*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader??ref--5-1!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js??ref--5-2!../node_modules/vue-loader/lib??vue-loader-options!./vue-components/game-components/inflection-game-table.vue?vue&type=style&index=0&id=9d332d3e&lang=scss&scoped=true& ***!
@@ -26833,6 +26844,74 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "../node_modules/vue-loader/lib/index.js?!../node_modules/source-map-loader/index.js!./vue-components/game-components/inflection-game-cell.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ../node_modules/vue-loader/lib??vue-loader-options!../node_modules/source-map-loader!./vue-components/game-components/inflection-game-cell.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'InflectionGameCell',
+    props: {
+      cell: {
+        type: Object,
+        required: true
+      }
+    },
+    methods: {
+      cellClasses: function (cell) {
+        let classes = cell.classes
+        classes['infl-cell--morph-match'] = false
+        classes['infl-data-cell'] = cell.isDataCell
+        classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
+        classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
+        return classes
+      },
+      checkCell: function (cell) {
+        if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
+          this.$emit('incrementClicks')
+          cell.gameHidden = false
+          let classes = this.cellClasses(cell)
+          if (cell.fullMatch) {
+            this.$emit('incrementSuccessGames')
+            this.$emit('finishGame')
+          }
+        }
+      }
+    }
+});
+
+
+/***/ }),
+
 /***/ "../node_modules/vue-loader/lib/index.js?!../node_modules/source-map-loader/index.js!./vue-components/game-components/inflection-game-table.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************************************************************!*\
   !*** ../node_modules/vue-loader/lib??vue-loader-options!../node_modules/source-map-loader!./vue-components/game-components/inflection-game-table.vue?vue&type=script&lang=js& ***!
@@ -26844,6 +26923,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_dist_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue/dist/vue */ "../node_modules/vue/dist/vue.js");
 /* harmony import */ var vue_dist_vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_dist_vue__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _vue_components_game_components_inflection_game_cell_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/vue-components/game-components/inflection-game-cell.vue */ "./vue-components/game-components/inflection-game-cell.vue");
 //
 //
 //
@@ -26869,10 +26949,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'InflectionGameTable',
+  components: {
+    inflectionGameCell: _vue_components_game_components_inflection_game_cell_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   props: {
     selectedGame: {
       type: Object,
@@ -26929,44 +27015,31 @@ __webpack_require__.r(__webpack_exports__);
       this.$el.style.maxWidth = (window.innerWidth - elSizes.left - 40) + 'px'
     },
 
-    cellClasses: function (cell) {
-      let classes = cell.classes
-      classes['infl-cell--morph-match'] = false
-      classes['infl-data-cell'] = cell.isDataCell
-      classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
-      classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
-      return classes
-    },
-
-    finishGame: function () {
+    finishGame () {
       this.gameTable.showAllCells()
     },
 
-    checkCell: function (cell) {
-      if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
-        this.$emit('incrementClicks')
-        cell.gameHidden = false
-        let classes = this.cellClasses(cell)
-        if (cell.fullMatch) {
-          this.$emit('incrementSuccessGames')
-          this.finishGame()
-        }
-      }
-    },
-
-    checkSuccessFeature: function () {
+    checkSuccessFeature () {
       this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value, this.featuresList.features[this.selectedFeature.name])
     },
 
-    checkFailedFeature: function () {
+    checkFailedFeature () {
       this.gameTable.checkFailedFeature(this.selectedFeature.name, this.selectedFeature.value)
     },
 
-    checkIfLastUnCovered: function () {
+    checkIfLastUnCovered () {
       if (this.gameTable.isOnlyFullMatchUncovered) {
         this.$emit('incrementSuccessGames')
         this.finishGame()
       }
+    },
+
+    incrementClicks () {
+      this.$emit('incrementClicks')
+    },
+
+    incrementSuccessGames () {
+      this.$emit('incrementSuccessGames')
     }
   }
 });
@@ -27946,6 +28019,105 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "../node_modules/vue-loader/lib/loaders/templateLoader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/game-components/inflection-game-cell.vue?vue&type=template&id=6af004c2&":
+/*!********************************************************************************************************************************************************************************************************************************!*\
+  !*** ../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../node_modules/vue-loader/lib??vue-loader-options!./vue-components/game-components/inflection-game-cell.vue?vue&type=template&id=6af004c2& ***!
+  \********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      class: _vm.cellClasses(_vm.cell),
+      on: {
+        click: function($event) {
+          _vm.checkCell(_vm.cell)
+        }
+      }
+    },
+    [
+      _vm.cell.isDataCell
+        ? _c(
+            "span",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: !_vm.cell.gameHidden,
+                  expression: "!cell.gameHidden"
+                }
+              ]
+            },
+            [
+              _vm._l(_vm.cell.morphemes, function(morpheme, index) {
+                return _vm.cell.morphemes
+                  ? [
+                      _c(
+                        "span",
+                        {
+                          class: {
+                            "infl-suff--full-match": morpheme.match.fullMatch,
+                            "ira-test1": true
+                          }
+                        },
+                        [
+                          morpheme.value
+                            ? [_vm._v(_vm._s(morpheme.value))]
+                            : [_vm._v("-")]
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      index < _vm.cell.morphemes.length - 1
+                        ? [_vm._v(", ")]
+                        : _vm._e()
+                    ]
+                  : [
+                      _c(
+                        "span",
+                        {
+                          class: {
+                            "infl-suff--full-match": _vm.cell.fullMatch,
+                            "ira-test2": true
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(_vm.cell.value) +
+                              "\n            "
+                          )
+                        ]
+                      )
+                    ]
+              })
+            ],
+            2
+          )
+        : _c("span", {
+            staticClass: "ira-test3",
+            domProps: { innerHTML: _vm._s(_vm.cell.value) }
+          })
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "../node_modules/vue-loader/lib/loaders/templateLoader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/game-components/inflection-game-table.vue?vue&type=template&id=9d332d3e&scoped=true&":
 /*!*********************************************************************************************************************************************************************************************************************************************!*\
   !*** ../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../node_modules/vue-loader/lib??vue-loader-options!./vue-components/game-components/inflection-game-table.vue?vue&type=template&id=9d332d3e&scoped=true& ***!
@@ -27966,70 +28138,40 @@ var render = function() {
         _c(
           "div",
           {
-            staticClass: "infl-table infl-table--wide",
+            class: _vm.gameTable.tableClasses,
             style: _vm.selectedGame.view.wideView.style
           },
           [
             _vm._l(_vm.gameTable.rows, function(row) {
-              return _vm._l(row.cells, function(cell) {
-                return _c(
-                  "div",
-                  {
-                    key: cell._index,
-                    class: _vm.cellClasses(cell),
-                    on: {
-                      click: function($event) {
-                        _vm.checkCell(cell)
-                      }
-                    }
-                  },
-                  [
-                    cell.isDataCell
-                      ? _c(
-                          "span",
-                          {
-                            directives: [
-                              {
-                                name: "show",
-                                rawName: "v-show",
-                                value: !cell.gameHidden,
-                                expression: "!cell.gameHidden"
-                              }
-                            ]
-                          },
-                          [
-                            _vm._l(cell.morphemes, function(morpheme, index) {
-                              return [
-                                _c(
-                                  "span",
-                                  {
-                                    class: {
-                                      "infl-suff--full-match":
-                                        morpheme.match.fullMatch
-                                    }
-                                  },
-                                  [
-                                    morpheme.value
-                                      ? [_vm._v(_vm._s(morpheme.value))]
-                                      : [_vm._v("-")]
-                                  ],
-                                  2
-                                ),
-                                _vm._v(" "),
-                                index < cell.morphemes.length - 1
-                                  ? [_vm._v(", ")]
-                                  : _vm._e()
-                              ]
-                            })
-                          ],
-                          2
-                        )
-                      : _c("span", {
-                          domProps: { innerHTML: _vm._s(cell.value) }
+              return [
+                row.classes
+                  ? _c(
+                      "div",
+                      { class: row.classes },
+                      _vm._l(row.cells, function(cell, index) {
+                        return _c("inflection-game-cell", {
+                          key: index,
+                          attrs: { cell: cell },
+                          on: {
+                            finishGame: _vm.finishGame,
+                            incrementClicks: _vm.incrementClicks,
+                            incrementSuccessGames: _vm.incrementSuccessGames
+                          }
                         })
-                  ]
-                )
-              })
+                      })
+                    )
+                  : _vm._l(row.cells, function(cell) {
+                      return _c("inflection-game-cell", {
+                        key: cell._index,
+                        attrs: { cell: cell },
+                        on: {
+                          finishGame: _vm.finishGame,
+                          incrementClicks: _vm.incrementClicks,
+                          incrementSuccessGames: _vm.incrementSuccessGames
+                        }
+                      })
+                    })
+              ]
             })
           ],
           2
@@ -39974,13 +40116,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FeaturesList; });
 class FeaturesList {
   constructor (view) {
-    this.uploadFeatures(view.wideView)
+    this.uploadFeatures(view)
   }
 
-  uploadFeatures (wideView) {
+  uploadFeatures (view) {
+    if (!view.hasPrerenderedTables) {
+      return this.uploadFeaturesFromWideView(view)
+    } else {
+      return this.uploadFeaturesFromWideTable(view)
+    }
+  }
+
+  uploadFeaturesFromWideTable (view) {
     let shownFeatures = {}
-    if (wideView) {
-      wideView.rows.forEach(row => {
+    if (view.wideTable) {
+      view.wideTable.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          if (cell.role === 'data') {
+            Object.keys(cell).filter(key => ['role', 'value', 'fullMatch'].indexOf(key) === -1).forEach(featureType => {
+              if (shownFeatures[featureType] === undefined) { shownFeatures[featureType] = [] }
+
+              if (!shownFeatures[featureType].map(feat => feat.value).includes(cell[featureType].value)) {
+                shownFeatures[featureType].push({
+                  value: cell[featureType].value,
+                  status: null,
+                  hasFullMatch: cell.fullMatch
+                })
+              } else {
+                shownFeatures[featureType].find(feat => feat.value === cell[featureType].value).hasFullMatch = shownFeatures[featureType].find(feat => feat.value === cell[featureType].value).hasFullMatch || cell.fullMatch
+              }
+            })
+          }
+        })
+      })
+
+      this.features = {}
+
+      for (let featureType in shownFeatures) {
+        if (shownFeatures[featureType].some(feat => feat.hasFullMatch) && shownFeatures[featureType].some(feat => !feat.hasFullMatch)) {
+          this.features[featureType] = shownFeatures[featureType]
+        }
+      }
+    }
+  }
+
+  uploadFeaturesFromWideView (view) {
+    let shownFeatures = {}
+    if (view.wideView) {
+      view.wideView.rows.forEach(row => {
         row.cells.forEach(cell => {
           if (cell.isDataCell && !cell.hidden) {
             cell.features.forEach(feature => {
@@ -40060,6 +40243,42 @@ class GameTable {
   }
 
   uploadTable (view) {
+    if (!view.hasPrerenderedTables) {
+      return this.uploadTableFromWideView(view)
+    } else {
+      return this.uploadTableFromWideTable(view)
+    }
+  }
+
+  uploadTableFromWideTable (view) {
+    let rows = []
+    if (view.wideTable) {
+      view.wideTable.rows.forEach(row => {
+        let cells = []
+        row.cells.forEach(cell => {
+          let gameCell = Object.assign({}, cell)
+          gameCell.isDataCell = cell.role === 'data'
+          gameCell.fullMatch = gameCell.isDataCell ? cell.fullMatch : false
+          gameCell.gameHidden = gameCell.isDataCell
+          gameCell.value = cell.value
+          gameCell.features = {}
+          gameCell.classes = this.getClassesForCell(cell)
+
+          Object.keys(cell).filter(key => ['role', 'value', 'fullMatch'].indexOf(key) === -1).forEach(key => {
+            gameCell.features[key] = cell[key]
+          })
+
+          cells.push(gameCell)
+        })
+        rows.push({ cells: cells, classes: 'infl-prdgm-tbl__row' })
+      })
+    }
+    this.tableClasses = 'infl-prdgm-tbl'
+    this.rows = rows
+    console.info('******************uploadTableFromWideTable', rows)
+  }
+
+  uploadTableFromWideView (view) {
     let rows = []
     if (view.wideView) {
       view.wideView.rows.forEach(row => {
@@ -40080,8 +40299,23 @@ class GameTable {
         rows.push({ cells: cells })
       })
     }
-
+    this.tableClasses = 'infl-table infl-table--wide'
     this.rows = rows
+    console.info('******************uploadTableFromWideView', rows)
+  }
+
+  getClassesForCell (cell) {
+    let classes = {'infl-prdgm-tbl__cell': true}
+
+    if (cell.role === 'label') {
+      classes['infl-prdgm-tbl-cell--label'] = true
+    }
+
+    if (cell.role === 'data') {
+      classes['infl-prdgm-tbl-cell--data'] = true
+    }
+
+    return classes
   }
 
   clearValuesStatus () {
@@ -40183,23 +40417,44 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
     return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
   }
 
-  static compareLexemesToCell (homonym, cell) {
-    let cellFeatures = InflectionGame.getFeatures(cell)
-
-    return homonym.lexemes.some(lexeme =>
-      lexeme.inflections.some(inflection =>
-        cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
-      )
-    )
+  findFullMatchInWideView () {
+    return this.view.morphemes.some(morpheme => morpheme.match.fullMatch)
   }
 
-  findFullMatchInView () {
+  findFullMatchInWideTable () {
+    let hasFullMatch = false
+
+    if (this.view.homonym && this.view.homonym.inflections) {
+      for (let row of this.view.wideTable.rows) {
+        for (let cell of row.cells) {
+          if (cell.role === 'data') {
+            let comparativeFeatures = Object.keys(cell).filter(key => key !== 'role' && key !== 'value')
+            cell.fullMatch = false
+
+            for (const inflection of this.view.homonym.inflections) {
+              let fullMatch = true
+              for (const feature of comparativeFeatures) {
+                fullMatch = fullMatch && inflection.hasOwnProperty(feature) && cell[feature].hasValues(inflection[feature].values)
+
+                if (!fullMatch) { break } // If at least one feature does not match, there is no reason to check others
+              }
+              if (fullMatch) {
+                hasFullMatch = hasFullMatch || fullMatch
+                cell.fullMatch = true
+              }
+            }
+          }
+        }
+      }
+    }
+    return hasFullMatch
+  }
+
+  checkHasFullMatchByViewType () {
     if (!this.view.hasPrerenderedTables) {
-      return this.view.morphemes.some(morpheme => morpheme.match.fullMatch)
-    } else if (this.paradigm) {
-      return this.view.wideTable.rows.some(row =>
-        row.cells.some(cell => (cell.role === 'data') && InflectionGame.compareLexemesToCell(this.view.homonym, cell))
-      )
+      return this.findFullMatchInWideView()
+    } else {
+      return this.findFullMatchInWideTable()
     }
   }
 
@@ -40210,7 +40465,7 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
   matchViewsCheck () {
     this.render()
     console.info('*******************matchViewsCheck', this.view)
-    return this.checkViewFormatCorrect() && this.findFullMatchInView()
+    return this.checkViewFormatCorrect() && this.checkHasFullMatchByViewType()
   }
 }
 
@@ -40645,6 +40900,93 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_finish_result_block_vue_vue_type_template_id_39ac99d5___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_finish_result_block_vue_vue_type_template_id_39ac99d5___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./vue-components/game-components/inflection-game-cell.vue":
+/*!*****************************************************************!*\
+  !*** ./vue-components/game-components/inflection-game-cell.vue ***!
+  \*****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _inflection_game_cell_vue_vue_type_template_id_6af004c2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./inflection-game-cell.vue?vue&type=template&id=6af004c2& */ "./vue-components/game-components/inflection-game-cell.vue?vue&type=template&id=6af004c2&");
+/* harmony import */ var _inflection_game_cell_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./inflection-game-cell.vue?vue&type=script&lang=js& */ "./vue-components/game-components/inflection-game-cell.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _inflection_game_cell_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inflection-game-cell.vue?vue&type=style&index=0&lang=scss& */ "./vue-components/game-components/inflection-game-cell.vue?vue&type=style&index=0&lang=scss&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "../node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _inflection_game_cell_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _inflection_game_cell_vue_vue_type_template_id_6af004c2___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _inflection_game_cell_vue_vue_type_template_id_6af004c2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "vue-components/game-components/inflection-game-cell.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./vue-components/game-components/inflection-game-cell.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************!*\
+  !*** ./vue-components/game-components/inflection-game-cell.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_index_js_vue_loader_options_node_modules_source_map_loader_index_js_inflection_game_cell_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib??vue-loader-options!../../../node_modules/source-map-loader!./inflection-game-cell.vue?vue&type=script&lang=js& */ "../node_modules/vue-loader/lib/index.js?!../node_modules/source-map-loader/index.js!./vue-components/game-components/inflection-game-cell.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_vue_loader_lib_index_js_vue_loader_options_node_modules_source_map_loader_index_js_inflection_game_cell_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./vue-components/game-components/inflection-game-cell.vue?vue&type=style&index=0&lang=scss&":
+/*!***************************************************************************************************!*\
+  !*** ./vue-components/game-components/inflection-game-cell.vue?vue&type=style&index=0&lang=scss& ***!
+  \***************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/mini-css-extract-plugin/dist/loader.js!../../../node_modules/css-loader??ref--5-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/sass-loader/lib/loader.js??ref--5-2!../../../node_modules/vue-loader/lib??vue-loader-options!./inflection-game-cell.vue?vue&type=style&index=0&lang=scss& */ "../node_modules/mini-css-extract-plugin/dist/loader.js!../node_modules/css-loader/index.js?!../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../node_modules/sass-loader/lib/loader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/game-components/inflection-game-cell.vue?vue&type=style&index=0&lang=scss&");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./vue-components/game-components/inflection-game-cell.vue?vue&type=template&id=6af004c2&":
+/*!************************************************************************************************!*\
+  !*** ./vue-components/game-components/inflection-game-cell.vue?vue&type=template&id=6af004c2& ***!
+  \************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_template_id_6af004c2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./inflection-game-cell.vue?vue&type=template&id=6af004c2& */ "../node_modules/vue-loader/lib/loaders/templateLoader.js?!../node_modules/vue-loader/lib/index.js?!./vue-components/game-components/inflection-game-cell.vue?vue&type=template&id=6af004c2&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_template_id_6af004c2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_inflection_game_cell_vue_vue_type_template_id_6af004c2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

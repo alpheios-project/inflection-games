@@ -36,23 +36,44 @@ export default class InflectionGame extends Game {
     return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
   }
 
-  static compareLexemesToCell (homonym, cell) {
-    let cellFeatures = InflectionGame.getFeatures(cell)
-
-    return homonym.lexemes.some(lexeme =>
-      lexeme.inflections.some(inflection =>
-        cellFeatures.every(feature => inflection.hasOwnProperty(feature) && inflection[feature].value === cell[feature])
-      )
-    )
+  findFullMatchInWideView () {
+    return this.view.morphemes.some(morpheme => morpheme.match.fullMatch)
   }
 
-  findFullMatchInView () {
+  findFullMatchInWideTable () {
+    let hasFullMatch = false
+
+    if (this.view.homonym && this.view.homonym.inflections) {
+      for (let row of this.view.wideTable.rows) {
+        for (let cell of row.cells) {
+          if (cell.role === 'data') {
+            let comparativeFeatures = Object.keys(cell).filter(key => key !== 'role' && key !== 'value')
+            cell.fullMatch = false
+
+            for (const inflection of this.view.homonym.inflections) {
+              let fullMatch = true
+              for (const feature of comparativeFeatures) {
+                fullMatch = fullMatch && inflection.hasOwnProperty(feature) && cell[feature].hasValues(inflection[feature].values)
+
+                if (!fullMatch) { break } // If at least one feature does not match, there is no reason to check others
+              }
+              if (fullMatch) {
+                hasFullMatch = hasFullMatch || fullMatch
+                cell.fullMatch = true
+              }
+            }
+          }
+        }
+      }
+    }
+    return hasFullMatch
+  }
+
+  checkHasFullMatchByViewType () {
     if (!this.view.hasPrerenderedTables) {
-      return this.view.morphemes.some(morpheme => morpheme.match.fullMatch)
-    } else if (this.paradigm) {
-      return this.view.wideTable.rows.some(row =>
-        row.cells.some(cell => (cell.role === 'data') && InflectionGame.compareLexemesToCell(this.view.homonym, cell))
-      )
+      return this.findFullMatchInWideView()
+    } else {
+      return this.findFullMatchInWideTable()
     }
   }
 
@@ -63,6 +84,6 @@ export default class InflectionGame extends Game {
   matchViewsCheck () {
     this.render()
     console.info('*******************matchViewsCheck', this.view)
-    return this.checkViewFormatCorrect() && this.findFullMatchInView()
+    return this.checkViewFormatCorrect() && this.checkHasFullMatchByViewType()
   }
 }

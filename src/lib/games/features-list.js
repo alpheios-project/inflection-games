@@ -1,12 +1,53 @@
 export default class FeaturesList {
   constructor (view) {
-    this.uploadFeatures(view.wideView)
+    this.uploadFeatures(view)
   }
 
-  uploadFeatures (wideView) {
+  uploadFeatures (view) {
+    if (!view.hasPrerenderedTables) {
+      return this.uploadFeaturesFromWideView(view)
+    } else {
+      return this.uploadFeaturesFromWideTable(view)
+    }
+  }
+
+  uploadFeaturesFromWideTable (view) {
     let shownFeatures = {}
-    if (wideView) {
-      wideView.rows.forEach(row => {
+    if (view.wideTable) {
+      view.wideTable.rows.forEach(row => {
+        row.cells.forEach(cell => {
+          if (cell.role === 'data') {
+            Object.keys(cell).filter(key => ['role', 'value', 'fullMatch'].indexOf(key) === -1).forEach(featureType => {
+              if (shownFeatures[featureType] === undefined) { shownFeatures[featureType] = [] }
+
+              if (!shownFeatures[featureType].map(feat => feat.value).includes(cell[featureType].value)) {
+                shownFeatures[featureType].push({
+                  value: cell[featureType].value,
+                  status: null,
+                  hasFullMatch: cell.fullMatch
+                })
+              } else {
+                shownFeatures[featureType].find(feat => feat.value === cell[featureType].value).hasFullMatch = shownFeatures[featureType].find(feat => feat.value === cell[featureType].value).hasFullMatch || cell.fullMatch
+              }
+            })
+          }
+        })
+      })
+
+      this.features = {}
+
+      for (let featureType in shownFeatures) {
+        if (shownFeatures[featureType].some(feat => feat.hasFullMatch) && shownFeatures[featureType].some(feat => !feat.hasFullMatch)) {
+          this.features[featureType] = shownFeatures[featureType]
+        }
+      }
+    }
+  }
+
+  uploadFeaturesFromWideView (view) {
+    let shownFeatures = {}
+    if (view.wideView) {
+      view.wideView.rows.forEach(row => {
         row.cells.forEach(cell => {
           if (cell.isDataCell && !cell.hidden) {
             cell.features.forEach(feature => {

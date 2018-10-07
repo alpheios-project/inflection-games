@@ -4,6 +4,42 @@ export default class GameTable {
   }
 
   uploadTable (view) {
+    if (!view.hasPrerenderedTables) {
+      return this.uploadTableFromWideView(view)
+    } else {
+      return this.uploadTableFromWideTable(view)
+    }
+  }
+
+  uploadTableFromWideTable (view) {
+    let rows = []
+    if (view.wideTable) {
+      view.wideTable.rows.forEach(row => {
+        let cells = []
+        row.cells.forEach(cell => {
+          let gameCell = Object.assign({}, cell)
+          gameCell.isDataCell = cell.role === 'data'
+          gameCell.fullMatch = gameCell.isDataCell ? cell.fullMatch : false
+          gameCell.gameHidden = gameCell.isDataCell
+          gameCell.value = cell.value
+          gameCell.features = {}
+          gameCell.classes = this.getClassesForCell(cell)
+
+          Object.keys(cell).filter(key => ['role', 'value', 'fullMatch'].indexOf(key) === -1).forEach(key => {
+            gameCell.features[key] = cell[key]
+          })
+
+          cells.push(gameCell)
+        })
+        rows.push({ cells: cells, classes: 'infl-prdgm-tbl__row' })
+      })
+    }
+    this.tableClasses = 'infl-prdgm-tbl'
+    this.rows = rows
+    console.info('******************uploadTableFromWideTable', rows)
+  }
+
+  uploadTableFromWideView (view) {
     let rows = []
     if (view.wideView) {
       view.wideView.rows.forEach(row => {
@@ -24,8 +60,23 @@ export default class GameTable {
         rows.push({ cells: cells })
       })
     }
-
+    this.tableClasses = 'infl-table infl-table--wide'
     this.rows = rows
+    console.info('******************uploadTableFromWideView', rows)
+  }
+
+  getClassesForCell (cell) {
+    let classes = {'infl-prdgm-tbl__cell': true}
+
+    if (cell.role === 'label') {
+      classes['infl-prdgm-tbl-cell--label'] = true
+    }
+
+    if (cell.role === 'data') {
+      classes['infl-prdgm-tbl-cell--data'] = true
+    }
+
+    return classes
   }
 
   clearValuesStatus () {

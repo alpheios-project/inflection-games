@@ -1,32 +1,38 @@
 <template>
     <div class="alpheios-inflection-game-table" v-if="gameTable">
-        <div class="infl-table infl-table--wide" :style="selectedGame.view.wideView.style">
+        <div :style="selectedGame.view.wideView.style" :class="gameTable.tableClasses">
             <template v-for="row in gameTable.rows">
-                <div 
-                  :class = "cellClasses(cell)" 
-                  v-for = "cell in row.cells" :key="cell._index"
-                  @click = "checkCell(cell)">
-                  <span v-if="cell.isDataCell" v-show="!cell.gameHidden">                  
-
-                    <template v-for="(morpheme, index) in cell.morphemes">
-                      <span :class="{ 'infl-suff--full-match': morpheme.match.fullMatch }">
-                          <template v-if="morpheme.value">{{morpheme.value}}</template>
-                          <template v-else>-</template>
-                      </span>
-                      <template  v-if="index < cell.morphemes.length-1">, </template>
-                    </template>
-
-                  </span>
-                  <span v-else v-html="cell.value"></span>
-                </div>
+              <div v-if="row.classes" :class="row.classes">
+                <inflection-game-cell 
+                  v-for = "(cell, index) in row.cells" 
+                  :key="index"
+                  :cell="cell"
+                  @finishGame = "finishGame"
+                  @incrementClicks = "incrementClicks"
+                  @incrementSuccessGames = "incrementSuccessGames"
+                  ></inflection-game-cell>
+              </div>
+              <inflection-game-cell v-else 
+                v-for = "cell in row.cells" 
+                :key="cell._index"
+                :cell="cell"
+                @finishGame = "finishGame"
+                @incrementClicks = "incrementClicks"
+                @incrementSuccessGames = "incrementSuccessGames"
+              ></inflection-game-cell>
             </template>
         </div>
     </div>
 </template>
 <script>
   import Vue from 'vue/dist/vue'
+  import InflectionGameCell from '@/vue-components/game-components/inflection-game-cell.vue'
+
   export default {
     name: 'InflectionGameTable',
+    components: {
+      inflectionGameCell: InflectionGameCell
+    },
     props: {
       selectedGame: {
         type: Object,
@@ -83,80 +89,35 @@
         this.$el.style.maxWidth = (window.innerWidth - elSizes.left - 40) + 'px'
       },
 
-      cellClasses: function (cell) {
-        let classes = cell.classes
-        classes['infl-cell--morph-match'] = false
-        classes['infl-data-cell'] = cell.isDataCell
-        classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
-        classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
-        return classes
-      },
-
-      finishGame: function () {
+      finishGame () {
         this.gameTable.showAllCells()
       },
 
-      checkCell: function (cell) {
-        if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
-          this.$emit('incrementClicks')
-          cell.gameHidden = false
-          let classes = this.cellClasses(cell)
-          if (cell.fullMatch) {
-            this.$emit('incrementSuccessGames')
-            this.finishGame()
-          }
-        }
-      },
-
-      checkSuccessFeature: function () {
+      checkSuccessFeature () {
         this.gameTable.checkSuccessFeature(this.selectedFeature.name, this.selectedFeature.value, this.featuresList.features[this.selectedFeature.name])
       },
 
-      checkFailedFeature: function () {
+      checkFailedFeature () {
         this.gameTable.checkFailedFeature(this.selectedFeature.name, this.selectedFeature.value)
       },
 
-      checkIfLastUnCovered: function () {
+      checkIfLastUnCovered () {
         if (this.gameTable.isOnlyFullMatchUncovered) {
           this.$emit('incrementSuccessGames')
           this.finishGame()
         }
+      },
+
+      incrementClicks () {
+        this.$emit('incrementClicks')
+      },
+
+      incrementSuccessGames () {
+        this.$emit('incrementSuccessGames')
       }
     }
   }
 </script>
 <style lang="scss" scoped>
-    @import "../../styles/alpheios";
-
-    .alpheios-inflection-game-table .infl-cell {
-        font-size: 14px;
-        padding: 2px 5px;
-    }
-
-    .alpheios-inflection-game-table .infl-data-cell {
-      cursor: pointer;
-    }
-    
-    .alpheios-inflection-game-table div.infl-tbl-cell--data {
-      background-color: #fceae6;
-      background-image: url(../../images/cross-icon.png);
-      background-position: 5% 50%;
-      background-size: 12px 12px;
-      background-repeat: no-repeat;
-      padding: 2px 5px 2px 20px;
-      color: #881c07;
-    }
-    .alpheios-inflection-game-table div.infl-tbl-cell--full-match {
-        background-color: #e6fcea;
-        background-image: url(../../images/check-icon.png);
-        font-weight: 700;
-        color: #881c07;
-        .infl-suff--full-match {
-          color: #fff;
-          background-color: #099f20;
-          padding: 0 2px;
-          font-weight: normal;
-        }
-    }
 
 </style>
