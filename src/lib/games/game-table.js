@@ -20,7 +20,7 @@ export default class GameTable {
           gameCell.gameHidden = gameCell.isDataCell
           gameCell.value = cell.value
           gameCell.features = {}
-          gameCell.classes = this.getClassesForCell(cell)
+          gameCell.classes = this.getClassesForCellWideTable(cell)
 
           Object.keys(cell).filter(key => ['role', 'value', 'fullMatch'].indexOf(key) === -1).forEach(key => {
             gameCell.features[key] = cell[key]
@@ -40,7 +40,7 @@ export default class GameTable {
     if (view.wideView) {
       view.wideView.rows.forEach(row => {
         let cells = []
-        row.cells.filter(cell => !cell.classes['infl-cell--sp0'] && !cell.classes['hidden']).forEach(cell => {
+        row.cells.filter(cell => cell.hidden === undefined || cell.hidden === false).forEach(cell => {
           let gameCell = Object.assign({}, cell)
           gameCell.tableType = 'wideView'
           gameCell.isDataCell = cell.isDataCell ? cell.isDataCell : false
@@ -49,6 +49,7 @@ export default class GameTable {
           gameCell.value = !cell.isDataCell ? cell.value : cell.morphemes.map(morpheme => morpheme.value).join(', ')
           gameCell.morphemes = cell.isDataCell ? cell.morphemes : []
           gameCell.features = {}
+          gameCell.classes = this.getClassesForCellWideView(cell)
           if (cell.features && Array.isArray(cell.features)) {
             cell.features.forEach(feature => { gameCell.features[feature.type] = feature.value })
           }
@@ -61,7 +62,7 @@ export default class GameTable {
     this.rows = rows
   }
 
-  getClassesForCell (cell) {
+  getClassesForCellWideTable (cell) {
     let classes = {'infl-prdgm-tbl__cell': true}
 
     if (cell.role === 'label') {
@@ -70,6 +71,27 @@ export default class GameTable {
 
     if (cell.role === 'data') {
       classes['infl-prdgm-tbl-cell--data'] = true
+    }
+
+    return classes
+  }
+
+  getClassesForCellWideView (cell) {
+    let classes = {'infl-cell': true}
+
+    if (cell.constructor.name === 'HeaderCell') {
+      classes['infl-cell--hdr'] = true
+      classes[`infl-cell--sp${cell.span}`] = true
+    }
+
+    if (cell.constructor.name === 'RowTitleCell') {
+      classes['row-title-cell'] = true
+      classes['infl-cell--hdr'] = cell.formsColumn
+      if (cell.fullWidth) {
+        classes['infl-cell--fw'] = true
+      } else {
+        classes[`infl-cell--sp${cell.span}`] = true
+      }
     }
 
     return classes
