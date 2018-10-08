@@ -59,6 +59,7 @@ export default class GameTable {
       })
     }
     this.tableClasses = 'infl-table infl-table--wide'
+    this.tableStyles = { gridTemplateColumns: `repeat(${view.wideView.visibleColumnQty + view.wideView.titleColumnQty}, 1fr)` }
     this.rows = rows
   }
 

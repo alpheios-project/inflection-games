@@ -28047,7 +28047,7 @@ var render = function() {
           "div",
           {
             class: _vm.gameTable.tableClasses,
-            style: _vm.selectedGame.view.wideView.style
+            style: _vm.gameTable.tableStyles
           },
           [
             _vm._l(_vm.gameTable.rows, function(row) {
@@ -40177,7 +40177,6 @@ class GameTable {
     let rows = []
     if (view.wideView) {
       view.wideView.rows.forEach(row => {
-        console.info('*********************uploadTableFromWideView', row.cells)
         let cells = []
         row.cells.filter(cell => cell.hidden === undefined || cell.hidden === false).forEach(cell => {
           let gameCell = Object.assign({}, cell)
@@ -40198,6 +40197,7 @@ class GameTable {
       })
     }
     this.tableClasses = 'infl-table infl-table--wide'
+    this.tableStyles = { gridTemplateColumns: `repeat(${view.wideView.visibleColumnQty + view.wideView.titleColumnQty}, 1fr)` }
     this.rows = rows
   }
 

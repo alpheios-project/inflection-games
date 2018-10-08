@@ -1,6 +1,6 @@
 <template>
     <div class="alpheios-inflection-game-table" v-if="gameTable">
-        <div :style="selectedGame.view.wideView.style" :class="gameTable.tableClasses">
+        <div :style="gameTable.tableStyles" :class="gameTable.tableClasses">
             <template v-for="row in gameTable.rows">
               <div v-if="row.classes" :class="row.classes">
                 <inflection-game-cell 
