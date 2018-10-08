@@ -112,4 +112,76 @@ describe('inflection-game.test.js', () => {
     expect(game.gameTable).toBeUndefined()
     expect(game.featuresList).toBeUndefined()
   })
+
+  it('5 InflectionGame - matchViewsCheck executes render, checkViewFormatCorrect, checkHasFullMatchByViewType', () => {
+    let game = new InflectionGame(gameView)
+
+    game.render = jest.fn()
+    game.checkViewFormatCorrect = jest.fn(() => true)
+    game.checkHasFullMatchByViewType = jest.fn(() => true)
+
+    game.matchViewsCheck()
+
+    expect(game.render).toHaveBeenCalled()
+    expect(game.checkViewFormatCorrect).toHaveBeenCalled()
+    expect(game.checkHasFullMatchByViewType).toHaveBeenCalled()
+  })
+
+  it('6 InflectionGame - checkViewFormatCorrect checks if view is implemented', () => {
+    let game = new InflectionGame(gameView)
+    expect(game.checkViewFormatCorrect()).toBeTruthy()
+
+    gameView.isImplemented = false
+    expect(game.checkViewFormatCorrect()).toBeFalsy()
+
+    gameView.isImplemented = true
+  })
+
+  it('7 InflectionGame - checkHasFullMatchByViewType executes findFullMatchInWideView if the view.hasPrerenderedTables = false', () => {
+    let game = new InflectionGame(gameView)
+    game.findFullMatchInWideView = jest.fn()
+    game.checkHasFullMatchByViewType()
+
+    expect(gameView.hasPrerenderedTables).toBeFalsy()
+    expect(game.findFullMatchInWideView).toHaveBeenCalled()
+  })
+
+  it('8 InflectionGame - checkHasFullMatchByViewType executes findFullMatchInWideTable if the view.hasPrerenderedTables = true', () => {
+    let game = new InflectionGame(gameView)
+    game.findFullMatchInWideTable = jest.fn()
+
+    gameView.hasPrerenderedTables = true
+    game.checkHasFullMatchByViewType()
+
+    expect(game.findFullMatchInWideTable).toHaveBeenCalled()
+
+    gameView.hasPrerenderedTables = false
+  })
+
+  it('9 InflectionGame - findFullMatchInWideView returns true if even one morpheme has full match', () => {
+    let game = new InflectionGame(gameView)
+
+    expect(gameView.morphemes.some(morpheme => morpheme.match.fullMatch)).toBeTruthy()
+    expect(game.findFullMatchInWideView()).toBeTruthy()
+  })
+
+  it('10 InflectionGame - findFullMatchInWideTable returns true if even one cell has full match (paradigm)', async () => {
+    let testHomonymVerb = await maAdapter.getHomonym(Constants.LANG_GREEK, 'ἔννεπε')
+    let testInflectionsViewSetVerb = ViewSetFactory.create(testHomonymVerb, testLocale)
+
+    let gameViewParadigm = testInflectionsViewSetVerb.getViews('verb')[0]
+    let game = new InflectionGame(gameViewParadigm)
+    expect(game.findFullMatchInWideTable()).toBeTruthy()
+  })
+
+  it('10 InflectionGame - findFullMatchInWideTable returns false if view hasn\'t homonym or inflections', async () => {
+    let testHomonymVerb = await maAdapter.getHomonym(Constants.LANG_GREEK, 'ἔννεπε')
+    let testInflectionsViewSetVerb = ViewSetFactory.create(testHomonymVerb, testLocale)
+
+    let gameViewParadigm = testInflectionsViewSetVerb.getViews('verb')[0]
+    gameViewParadigm.homonym = undefined
+
+    let game = new InflectionGame(gameViewParadigm)
+    expect(game.findFullMatchInWideTable()).toBeFalsy()
+  })
 })

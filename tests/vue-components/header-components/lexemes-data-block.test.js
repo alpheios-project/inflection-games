@@ -82,4 +82,24 @@ describe('lexemes-data-block.test.js', () => {
 
     expect(cmp.vm.hidden).toBeTruthy()
   })
+
+  it('6 LexemesDataBlock - when selectedGameReady becomes true, hidden changes to true ', () => {
+    expect(cmp.vm.hidden).toBeFalsy()
+    cmp.setProps({
+      selectedGameReady: true
+    })
+    expect(cmp.vm.hidden).toBeTruthy()
+  })
+
+  it('7 LexemesDataBlock - when selectedGameReady becomes false, hidden doesn\'t change', () => {
+    cmp.setProps({
+      selectedGameReady: true
+    })
+    cmp.vm.hidden = false
+
+    cmp.setProps({
+      selectedGameReady: false
+    })
+    expect(cmp.vm.hidden).toBeFalsy()
+  })
 })

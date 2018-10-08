@@ -32,20 +32,20 @@ export default {
       }
     },
     methods: {
-      cellClasses: function (cell) {
-        let classes = cell.classes
+      cellClasses: function () {
+        let classes = this.cell.classes
         classes['infl-cell--morph-match'] = false
-        classes['infl-data-cell'] = cell.isDataCell
-        classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
-        classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
+        classes['infl-data-cell'] = this.cell.isDataCell
+        classes['infl-tbl-cell--data' ] = this.cell.isDataCell && !this.cell.gameHidden && !this.cell.fullMatch
+        classes['infl-tbl-cell--full-match'] = this.cell.isDataCell && !this.cell.gameHidden && this.cell.fullMatch
         return classes
       },
-      checkCell: function (cell) {
-        if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
+      checkCell: function () {
+        if (this.cell.isDataCell && this.cell.gameHidden && !this.finishGameFlag) {
           this.$emit('incrementClicks')
-          cell.gameHidden = false
-          let classes = this.cellClasses(cell)
-          if (cell.fullMatch) {
+          this.cell.gameHidden = false
+          let classes = this.cellClasses(this.cell)
+          if (this.cell.fullMatch) {
             this.$emit('incrementSuccessGames')
             this.$emit('finishGame')
           }

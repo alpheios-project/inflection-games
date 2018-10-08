@@ -1,8 +1,4 @@
 export default class GameTable {
-  constructor (view) {
-    this.uploadTable(view)
-  }
-
   uploadTable (view) {
     if (!view.hasPrerenderedTables) {
       return this.uploadTableFromWideView(view)

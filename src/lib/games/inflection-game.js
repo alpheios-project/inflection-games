@@ -17,9 +17,11 @@ export default class InflectionGame extends Game {
   createGameStuff () {
     this.render()
 
-    this.gameTable = new GameTable(this.view)
+    this.gameTable = new GameTable()
+    this.gameTable.uploadTable(this.view)
 
-    this.featuresList = new FeaturesList(this.view)
+    this.featuresList = new FeaturesList()
+    this.featuresList.uploadFeatures(this.view)
   }
 
   clearGameStuff () {
@@ -29,11 +31,6 @@ export default class InflectionGame extends Game {
     if (this.featuresList) {
       this.featuresList.clearValuesStatus()
     }
-  }
-
-  static getFeatures (cell) {
-    let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
-    return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
   }
 
   findFullMatchInWideView () {

@@ -1,8 +1,4 @@
 export default class FeaturesList {
-  constructor (view) {
-    this.uploadFeatures(view)
-  }
-
   uploadFeatures (view) {
     if (!view.hasPrerenderedTables) {
       return this.uploadFeaturesFromWideView(view)
@@ -35,7 +31,6 @@ export default class FeaturesList {
       })
 
       this.features = {}
-
       for (let featureType in shownFeatures) {
         if (shownFeatures[featureType].some(feat => feat.hasFullMatch) && shownFeatures[featureType].some(feat => !feat.hasFullMatch)) {
           this.features[featureType] = shownFeatures[featureType]
@@ -89,10 +84,6 @@ export default class FeaturesList {
 
   get featuresTitles () {
     return Object.keys(this.features).filter(key => this.features[key].length > 1)
-  }
-
-  get featureHasOnlyOneValueUnchecked () {
-    return null
   }
 
   getUncheckedFeatureValues (featureName) {

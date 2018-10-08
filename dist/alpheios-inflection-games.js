@@ -26887,20 +26887,20 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     methods: {
-      cellClasses: function (cell) {
-        let classes = cell.classes
+      cellClasses: function () {
+        let classes = this.cell.classes
         classes['infl-cell--morph-match'] = false
-        classes['infl-data-cell'] = cell.isDataCell
-        classes['infl-tbl-cell--data' ] = cell.isDataCell && !cell.gameHidden && !cell.fullMatch
-        classes['infl-tbl-cell--full-match'] = cell.isDataCell && !cell.gameHidden && cell.fullMatch
+        classes['infl-data-cell'] = this.cell.isDataCell
+        classes['infl-tbl-cell--data' ] = this.cell.isDataCell && !this.cell.gameHidden && !this.cell.fullMatch
+        classes['infl-tbl-cell--full-match'] = this.cell.isDataCell && !this.cell.gameHidden && this.cell.fullMatch
         return classes
       },
-      checkCell: function (cell) {
-        if (cell.isDataCell && cell.gameHidden && !this.finishGameFlag) {
+      checkCell: function () {
+        if (this.cell.isDataCell && this.cell.gameHidden && !this.finishGameFlag) {
           this.$emit('incrementClicks')
-          cell.gameHidden = false
-          let classes = this.cellClasses(cell)
-          if (cell.fullMatch) {
+          this.cell.gameHidden = false
+          let classes = this.cellClasses(this.cell)
+          if (this.cell.fullMatch) {
             this.$emit('incrementSuccessGames')
             this.$emit('finishGame')
           }
@@ -40116,10 +40116,6 @@ class GamesSet {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FeaturesList; });
 class FeaturesList {
-  constructor (view) {
-    this.uploadFeatures(view)
-  }
-
   uploadFeatures (view) {
     if (!view.hasPrerenderedTables) {
       return this.uploadFeaturesFromWideView(view)
@@ -40152,7 +40148,6 @@ class FeaturesList {
       })
 
       this.features = {}
-
       for (let featureType in shownFeatures) {
         if (shownFeatures[featureType].some(feat => feat.hasFullMatch) && shownFeatures[featureType].some(feat => !feat.hasFullMatch)) {
           this.features[featureType] = shownFeatures[featureType]
@@ -40209,6 +40204,7 @@ class FeaturesList {
   }
 
   get featureHasOnlyOneValueUnchecked () {
+    console.info('*******************featureHasOnlyOneValueUnchecked')
     return null
   }
 
@@ -40239,10 +40235,6 @@ class FeaturesList {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return GameTable; });
 class GameTable {
-  constructor (view) {
-    this.uploadTable(view)
-  }
-
   uploadTable (view) {
     if (!view.hasPrerenderedTables) {
       return this.uploadTableFromWideView(view)
@@ -40399,9 +40391,11 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
   createGameStuff () {
     this.render()
 
-    this.gameTable = new _lib_games_game_table__WEBPACK_IMPORTED_MODULE_2__["default"](this.view)
+    this.gameTable = new _lib_games_game_table__WEBPACK_IMPORTED_MODULE_2__["default"]()
+    this.gameTable.uploadTable(this.view)
 
-    this.featuresList = new _lib_games_features_list__WEBPACK_IMPORTED_MODULE_1__["default"](this.view)
+    this.featuresList = new _lib_games_features_list__WEBPACK_IMPORTED_MODULE_1__["default"]()
+    this.featuresList.uploadFeatures(this.view)
   }
 
   clearGameStuff () {
@@ -40411,11 +40405,6 @@ class InflectionGame extends _lib_game__WEBPACK_IMPORTED_MODULE_0__["default"] {
     if (this.featuresList) {
       this.featuresList.clearValuesStatus()
     }
-  }
-
-  static getFeatures (cell) {
-    let ignoreCellProps = ['role', 'value', 'fullMatch', 'hidden']
-    return Object.keys(cell).filter(prop => ignoreCellProps.indexOf(prop) === -1)
   }
 
   findFullMatchInWideView () {
