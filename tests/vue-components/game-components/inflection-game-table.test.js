@@ -70,7 +70,7 @@ describe('inflection-game-table.test.js', () => {
     expect(cmp.vm.gameTable).toBeUndefined()
     expect(cmp.findAll('.alpheios-inflection-game-table').length).toEqual(0)
   })
-
+  /*
   it('3 InflectionGameTable - cellClassesData returns value depends on cells properties', () => {
     expect(cmp.vm.cellClasses({ isDataCell: true, gameHidden: true, fullMatch: false, classes: {} })).toEqual({
       'infl-cell--morph-match': false,
@@ -96,7 +96,7 @@ describe('inflection-game-table.test.js', () => {
       'infl-tbl-cell--full-match': true
     })
   })
-
+*/
   it('4 InflectionGameTable - showAllCells made all cells not hidden', () => {
     let allHiddenDataCells = cmp.vm.gameTable.rows.every(row => row.cells.filter(cell => cell.isDataCell).every(cell => cell.gameHidden))
 
@@ -115,7 +115,7 @@ describe('inflection-game-table.test.js', () => {
     cmp.vm.finishGame()
     expect(cmp.vm.gameTable.showAllCells).toBeCalled()
   })
-
+  /*
   it('6 InflectionGameTable - checkCell - executes only if cell is data and cell is hidden and game is not yet finished', () => {
     cmp.vm.checkCell({ isDataCell: false })
     expect(cmp.emitted()['incrementClicks']).toBeFalsy()
@@ -147,7 +147,7 @@ describe('inflection-game-table.test.js', () => {
     expect(cmp.emitted()['incrementSuccessGames']).toBeTruthy()
     expect(cmp.vm.finishGame).toBeCalled()
   })
-
+*/
   it('9 InflectionGameTable - checkSuccessFeature - executes gameTable checkSuccessFeature', () => {
     cmp.vm.selectedFeature = { name: 'tense', value: 'present', status: 'success' }
 
