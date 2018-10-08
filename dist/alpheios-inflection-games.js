@@ -27291,6 +27291,13 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('close')
     },
     selectedGameEvent (gameId, gameType) {
+      if (!this.selectedGame || this.selectedGame.id !== gameId) {
+        this.startNewGame(gameId, gameType)
+      } else {
+        this.restartGame()
+      }        
+    },
+    startNewGame (gameId, gameType) {
       let selectedGame = this.gamesSet.matchingGames[gameType][gameId]
       selectedGame.createGameStuff()
       this.selectedGame = selectedGame
@@ -40201,11 +40208,6 @@ class FeaturesList {
 
   get featuresTitles () {
     return Object.keys(this.features).filter(key => this.features[key].length > 1)
-  }
-
-  get featureHasOnlyOneValueUnchecked () {
-    console.info('*******************featureHasOnlyOneValueUnchecked')
-    return null
   }
 
   getUncheckedFeatureValues (featureName) {

@@ -151,6 +151,13 @@
         this.$emit('close')
       },
       selectedGameEvent (gameId, gameType) {
+        if (!this.selectedGame || this.selectedGame.id !== gameId) {
+          this.startNewGame(gameId, gameType)
+        } else {
+          this.restartGame()
+        }        
+      },
+      startNewGame (gameId, gameType) {
         let selectedGame = this.gamesSet.matchingGames[gameType][gameId]
         selectedGame.createGameStuff()
         this.selectedGame = selectedGame
