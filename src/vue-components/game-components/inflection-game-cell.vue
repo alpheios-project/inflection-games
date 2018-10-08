@@ -4,7 +4,7 @@
         @click = "checkCell(cell)">
         <span v-if="cell.isDataCell" v-show="!cell.gameHidden">                  
 
-            <template v-for="(morpheme, index) in cell.morphemes" v-if="cell.morphemes">
+            <template v-for="(morpheme, index) in cell.morphemes" v-if="cell.tableType === 'wideView'">
                 <span :class="{ 'infl-suff--full-match': morpheme.match.fullMatch, 'ira-test1': true }">
                     <template v-if="morpheme.value">{{morpheme.value}}</template>
                     <template v-else>-</template>
@@ -12,14 +12,14 @@
                 <template  v-if="index < cell.morphemes.length-1">, </template>
             </template>
 
-            <template v-else>
+            <template v-if="cell.tableType === 'wideTable'">
                 <span  :class="{ 'infl-suff--full-match': cell.fullMatch, 'ira-test2': true }">
                 {{ cell.value }}
                 </span>
             </template>
 
         </span>
-        <span v-else v-html="cell.value" class="ira-test3"></span>
+        <span v-else v-html="cell.value"></span>
     </div>
 </template>
 <script>

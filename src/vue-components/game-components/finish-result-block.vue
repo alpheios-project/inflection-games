@@ -77,11 +77,11 @@
   .alpheios-finish-result-block__success {
   	color: $alpheios-stat-block-success;
 
-  	-webkit-transform: translateY(-150px);
-    -moz-transform: translateY(-150px);
-    -o-transform: translateY(-150px);
-    -ms-transform: translateY(-150px);
-    transform: translateY(-150px);
+  	-webkit-transform: translateY(-100%);
+    -moz-transform: translateY(-100%);
+    -o-transform: translateY(-100%);
+    -ms-transform: translateY(-100%);
+    transform: translateY(-100%);
 
     font-size: 36px;
 
@@ -100,11 +100,11 @@
   .alpheios-finish-result-block__failed {
   	color: $alpheios-stat-block-failed;
 
-  	-webkit-transform: translateY(-150px);
-    -moz-transform: translateY(-150px);
-    -o-transform: translateY(-150px);
-    -ms-transform: translateY(-150px);
-    transform: translateY(-150px);
+  	-webkit-transform: translateY(-100%);
+    -moz-transform: translateY(-100%);
+    -o-transform: translateY(-100%);
+    -ms-transform: translateY(-100%);
+    transform: translateY(-100%);
 
     visibility: visible;
 

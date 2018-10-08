@@ -18,6 +18,7 @@ export default class GameTable {
         let cells = []
         row.cells.forEach(cell => {
           let gameCell = Object.assign({}, cell)
+          gameCell.tableType = 'wideTable'
           gameCell.isDataCell = cell.role === 'data'
           gameCell.fullMatch = gameCell.isDataCell ? cell.fullMatch : false
           gameCell.gameHidden = gameCell.isDataCell
@@ -36,7 +37,6 @@ export default class GameTable {
     }
     this.tableClasses = 'infl-prdgm-tbl'
     this.rows = rows
-    console.info('******************uploadTableFromWideTable', rows)
   }
 
   uploadTableFromWideView (view) {
@@ -46,6 +46,7 @@ export default class GameTable {
         let cells = []
         row.cells.filter(cell => !cell.classes['infl-cell--sp0'] && !cell.classes['hidden']).forEach(cell => {
           let gameCell = Object.assign({}, cell)
+          gameCell.tableType = 'wideView'
           gameCell.isDataCell = cell.isDataCell ? cell.isDataCell : false
           gameCell.fullMatch = cell.isDataCell && cell.morphemes.some(morpheme => morpheme.match.fullMatch)
           gameCell.gameHidden = cell.isDataCell
@@ -62,7 +63,6 @@ export default class GameTable {
     }
     this.tableClasses = 'infl-table infl-table--wide'
     this.rows = rows
-    console.info('******************uploadTableFromWideView', rows)
   }
 
   getClassesForCell (cell) {

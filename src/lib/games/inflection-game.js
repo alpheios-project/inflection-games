@@ -47,7 +47,7 @@ export default class InflectionGame extends Game {
       for (let row of this.view.wideTable.rows) {
         for (let cell of row.cells) {
           if (cell.role === 'data') {
-            let comparativeFeatures = Object.keys(cell).filter(key => key !== 'role' && key !== 'value')
+            let comparativeFeatures = Object.keys(cell).filter(key => ['role', 'value', 'fullMatch'].indexOf(key) === -1)
             cell.fullMatch = false
 
             for (const inflection of this.view.homonym.inflections) {
@@ -83,7 +83,6 @@ export default class InflectionGame extends Game {
 
   matchViewsCheck () {
     this.render()
-    console.info('*******************matchViewsCheck', this.view)
     return this.checkViewFormatCorrect() && this.checkHasFullMatchByViewType()
   }
 }
