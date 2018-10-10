@@ -4,7 +4,7 @@
 	  :tooltipDirection = "tooltipDirection"
 	  :additionalStyles = "additionalStyles"
 	>
-		<span class="alpheios-icon-button" @click="emitEvent">
+		<span class="alpheios-icon-button alpheios-popup__close-btn" @click="emitEvent">
 	        <slot></slot>
 	    </span>
 	</tooltip-wrap>

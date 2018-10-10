@@ -125,7 +125,11 @@
       	return {
       	  'position': 'absolute',
       	  'right': '5px',
-      	  'width': '30px'
+          'width': '30px',
+          'left' : 'auto',
+          'top' : '0',
+          'background-color' : 'transparent !important',
+          'border' : '0 !important'
       	}
       },
       gamesSet () {

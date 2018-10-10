@@ -27165,7 +27165,11 @@ __webpack_require__.r(__webpack_exports__);
     	return {
     	  'position': 'absolute',
     	  'right': '5px',
-    	  'width': '30px'
+        'width': '30px',
+        'left' : 'auto',
+        'top' : '0',
+        'background-color' : 'transparent !important',
+        'border' : '0 !important'
     	}
     },
     gamesSet () {
@@ -27761,7 +27765,10 @@ var render = function() {
     [
       _c(
         "span",
-        { staticClass: "alpheios-icon-button", on: { click: _vm.emitEvent } },
+        {
+          staticClass: "alpheios-icon-button alpheios-popup__close-btn",
+          on: { click: _vm.emitEvent }
+        },
         [_vm._t("default")],
         2
       )
@@ -40436,7 +40443,6 @@ class WindowServices {
       inertia: true,
       autoScroll: false,
       restrict: {
-        restriction: document.body,
         elementRect: { top: 0.5, left: 0.5, bottom: 0.5, right: 0.5 }
       },
       ignoreFrom: 'input, textarea, a[href], select, option',
