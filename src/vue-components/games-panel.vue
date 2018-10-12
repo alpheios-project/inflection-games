@@ -3,7 +3,9 @@
 		id = "alpheios-games-panel"
 		class = "auk"
 		v-show = "visible" 
-		:style = "mainstyles">
+		:style = "mainstyles"
+    v-on-clickaway="attachTrackingClick"
+    >
 
     <icon-button 
      	@iconClickEvent = 'closePanel'
@@ -67,6 +69,8 @@
   import GamesSet from '@/lib/games-set.js'
   import Vue from 'vue/dist/vue'
 
+  import { directive as onClickaway } from '@/directives/clickaway.js'
+
   export default {
     name: 'GamesPanel',
     components: {
@@ -78,6 +82,9 @@
       InflectionViewsGames: InflectionViewsGames,
 
       selectedGameBlock: SelectedGameBlock
+    },
+    directives: {
+      onClickaway: onClickaway,
     },
     data () {
       return {
@@ -153,6 +160,9 @@
       closePanel () {
       	this.clearData()
         this.$emit('close')
+      },
+      attachTrackingClick () {
+        this.closePanel()
       },
       selectedGameEvent (gameId, gameType) {
         if (!this.selectedGame || this.selectedGame.id !== gameId) {
