@@ -57,7 +57,7 @@ describe('inflection-views-games.test.js', () => {
   })
 
   it('3 InflectionViewsGames - inflectionViewsGamesTitle returns overal title', () => {
-    expect(cmp.vm.inflectionViewsGamesTitle).toEqual('Games variants')
+    expect(cmp.vm.inflectionViewsGamesTitle).toEqual('Select a game from the list:')
 
     cmp.setProps({
       gamesList: {}
