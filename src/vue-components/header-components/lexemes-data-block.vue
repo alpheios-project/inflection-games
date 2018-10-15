@@ -86,7 +86,7 @@
   .alpheios-lexemes-data-block {
     border: 1px solid $alpheios-sidebar-header-border-color;
     padding: 0 5px;
-    margin: 20px 0 10px;
+    margin: 20px 0 20px;
     font-size: 90%;
   }
 

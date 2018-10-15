@@ -19,6 +19,8 @@
 		<title-block
 			v-if = "slimHomonym.targetWord"
 			:word = "slimHomonym.targetWord"
+      :hardMode = "hardMode"
+      @changeHardMode = "changeHardMode"
 		></title-block>
 		<lexemes-data-block 
 			v-if = "showFeaturesPanel"
@@ -46,10 +48,13 @@
 
       :failedGames = "failedGames"
       :successGames = "successGames"
+      :hardMode = "hardMode"
 
       @incrementSuccessGames = "incrementSuccessGames"
       @incrementFailedGames = "incrementFailedGames"
       @restartGame = "restartGame"
+      @restartScoreGame = "restartScoreGame"
+      @setHardMode = "setHardMode"
 		></selected-game-block>
 
 	</div>
@@ -94,7 +99,8 @@
         changedGame: 0,
         gamesListChanged: 0,
         failedGames: 0,
-        successGames: 0
+        successGames: 0,
+        hardMode: false
       }
     },
     props: {
@@ -203,6 +209,20 @@
         this.selectedGame.clearGameStuff()
         this.selectedGameReady = true
         this.changedGame = this.changedGame + 1
+      },
+      restartScoreGame () {
+        this.failedGames = 0
+        this.successGames = 0
+        this.restartGame()
+      },
+      setHardMode (newHardMode) {
+        if (newHardMode !== this.hardMode) {
+          this.hardMode = newHardMode
+          this.restartScoreGame()
+        }
+      },
+      changeHardMode () {
+        this.setHardMode(!this.hardMode)
       }
     },
     mounted () {
