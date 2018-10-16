@@ -6,6 +6,7 @@
       <span 
         class = "alpheios-inflection-views-games__show_hide_link"
         @click = "showHideVariants"
+        v-show = "selectedGame"
       >{{ showHideVariantsLabel }}
       </span>
       <span class = "alpheios-inflection-views-games__selected_label" v-if="selectedGame">
@@ -94,7 +95,7 @@
       },
 
       inflectionViewsGamesTitle () {
-        return this.gamesList && Object.values(this.gamesList).length > 0 ? 'Games variants' : 'There are no game variants for selected homonym'
+        return this.gamesList && Object.values(this.gamesList).length > 0 ? 'Select a game from the list:' : 'There are no game variants for selected homonym'
       },
 
       showHideVariantsLabel () {
@@ -135,7 +136,7 @@
   .alpheios-inflection-views-games__hidden {
     border: 0;
     padding: 0;
-    margin: 5px 0 10px;
+    margin: 10px 0 10px;
     font-size: 90%;
   }
 

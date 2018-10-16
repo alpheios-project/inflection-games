@@ -5,7 +5,7 @@
 			class = "alpheios-selected-game-block__game_wrap"
 		>
       <feature-select-block 
-        v-if = "featuresList"
+        v-if = "hasFeaturedBlock"
 
         :featuresList = "featuresList"
         :finishGameFlag = "finishGameFlag"
@@ -14,12 +14,13 @@
         @incrementClicks = "incrementClicks"
       ></feature-select-block>
 
-      <div :class = "{ 'alpheios-selected-game-block__game_layout': true, 'alpheios-selected-game-block__has_featureblock': featuresList }" >
+      <div :class = "{ 'alpheios-selected-game-block__game_layout': true, 'alpheios-selected-game-block__has_featureblock': hasFeaturedBlock }" >
         <stat-block 
           :clicks = "clicks"
           :maxClicks = "maxClicks"
           :failedGames = "failedGames"
           :successGames = "successGames"
+          @restartScoreGame = "restartScoreGame"
         ></stat-block>
 
    			<inflection-game-table
@@ -93,30 +94,38 @@
       successGames: {
         type: Number,
         required: true
+      },
+      hardMode: {
+        type: Boolean,
+        required: false,
+        dafault: false
       }
     },
     computed: {
-      featuresList: function () {
+      featuresList () {
         this.featuresListChanged = this.featuresListChanged + 1
         return this.selectedGame && this.selectedGame.featuresList ? this.selectedGame.featuresList : null
+      },
+      hasFeaturedBlock () {
+        return !this.hardMode && this.featuresList
       }
     },
     methods: {
-      incrementClicks: function () {
+      incrementClicks () {
         this.clicks = this.clicks + 1
-        if (this.clicks > this.maxClicks) {
+        if (this.clicks >= this.maxClicks) {
           this.incrementFailedGames()
         }
       },
-      finishGame: function () {
+      finishGame () {
         this.finishGameFlag = true
       },
-      incrementSuccessGames: function () {
+      incrementSuccessGames () {
         this.$emit('incrementSuccessGames')
         this.gameResult = 'success'
         this.finishGame()
       },
-      incrementFailedGames: function () {
+      incrementFailedGames () {
         this.$emit('incrementFailedGames')
         this.gameResult = 'failed'
         this.finishGame()
@@ -124,7 +133,10 @@
       restartGame () {
         this.$emit('restartGame')
       },
-      selectFeature: function (featureName, featureStatus, featureValue) {
+      restartScoreGame () {
+        this.$emit('restartScoreGame')
+      },
+      selectFeature (featureName, featureStatus, featureValue) {
         this.selectedFeature = {
           name: featureName,
           status: featureStatus,
@@ -134,7 +146,7 @@
       }
     },
     watch: {
-      changedGame: function () {
+      changedGame () {
         this.clicks = 0
         this.finishGameFlag = false
         this.selectedFeatureChange = 0,
@@ -177,7 +189,10 @@
 
   .alpheios-selected-game-block__game_layout {
     position: relative;
-    margin-left: 160px;
     overflow: auto;
+  }
+
+  .alpheios-selected-game-block__has_featureblock.alpheios-selected-game-block__game_layout {
+    margin-left: 160px;
   }
 </style>

@@ -26973,6 +26973,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'StatBlock',
@@ -26995,20 +26997,25 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   computed: {
-    clicksClass: function () {
+    clicksClass () {
       return {
         'alpheios-stat-block__smallColor': (this.clicks / this.maxClicks) <= 0.33,
         'alpheios-stat-block__mediumColor': (this.clicks / this.maxClicks) > 0.33 && (this.clicks / this.maxClicks) <= 0.66,
         'alpheios-stat-block__bigColor': (this.clicks / this.maxClicks) > 0.66
       }
     },
-    statItems: function () {
+    statItems () {
       return [
         { title: 'Made clicks', value: this.clicks, class: "alpheios-stat-block__list__item__clicks", classValue: this.clicksClass },
         { title: 'Max clicks', value: this.maxClicks, class: "alpheios-stat-block__list__item__max_clicks" },
         { title: 'Failed', value: this.failedGames, class: "alpheios-stat-block__list__item__failed" },
         { title: 'Success', value: this.successGames, class: "alpheios-stat-block__list__item__success" }
       ]
+    }
+  },
+  methods:  {
+    restartScoreGame () {
+      this.$emit('restartScoreGame')
     }
   }
 });
@@ -27039,6 +27046,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_dist_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue/dist/vue */ "../node_modules/vue/dist/vue.js");
 /* harmony import */ var vue_dist_vue__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(vue_dist_vue__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _directives_clickaway_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @/directives/clickaway.js */ "./directives/clickaway.js");
+//
+//
+//
+//
+//
 //
 //
 //
@@ -27135,7 +27147,8 @@ __webpack_require__.r(__webpack_exports__);
       changedGame: 0,
       gamesListChanged: 0,
       failedGames: 0,
-      successGames: 0
+      successGames: 0,
+      hardMode: false
     }
   },
   props: {
@@ -27244,6 +27257,20 @@ __webpack_require__.r(__webpack_exports__);
       this.selectedGame.clearGameStuff()
       this.selectedGameReady = true
       this.changedGame = this.changedGame + 1
+    },
+    restartScoreGame () {
+      this.failedGames = 0
+      this.successGames = 0
+      this.restartGame()
+    },
+    setHardMode (newHardMode) {
+      if (newHardMode !== this.hardMode) {
+        this.hardMode = newHardMode
+        this.restartScoreGame()
+      }
+    },
+    changeHardMode () {
+      this.setHardMode(!this.hardMode)
     }
   },
   mounted () {
@@ -27373,6 +27400,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -27420,7 +27448,7 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     inflectionViewsGamesTitle () {
-      return this.gamesList && Object.values(this.gamesList).length > 0 ? 'Games variants' : 'There are no game variants for selected homonym'
+      return this.gamesList && Object.values(this.gamesList).length > 0 ? 'Select a game from the list:' : 'There are no game variants for selected homonym'
     },
 
     showHideVariantsLabel () {
@@ -27565,6 +27593,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'TitleBlock',
@@ -27576,6 +27610,16 @@ __webpack_require__.r(__webpack_exports__);
     word: {
       type: String,
       required: true
+    },
+    hardMode: {
+      type: Boolean,
+      required: false,
+      dafault: false
+    }
+  },
+  methods: {
+    changeHardMode () {
+      this.$emit('changeHardMode')
     }
   }
 });
@@ -27596,6 +27640,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _vue_components_game_components_stat_block_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/vue-components/game-components/stat-block.vue */ "./vue-components/game-components/stat-block.vue");
 /* harmony import */ var _vue_components_game_components_feature_select_block_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/vue-components/game-components/feature-select-block.vue */ "./vue-components/game-components/feature-select-block.vue");
 /* harmony import */ var _vue_components_game_components_finish_result_block_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/vue-components/game-components/finish-result-block.vue */ "./vue-components/game-components/finish-result-block.vue");
+//
 //
 //
 //
@@ -27691,30 +27736,38 @@ __webpack_require__.r(__webpack_exports__);
     successGames: {
       type: Number,
       required: true
+    },
+    hardMode: {
+      type: Boolean,
+      required: false,
+      dafault: false
     }
   },
   computed: {
-    featuresList: function () {
+    featuresList () {
       this.featuresListChanged = this.featuresListChanged + 1
       return this.selectedGame && this.selectedGame.featuresList ? this.selectedGame.featuresList : null
+    },
+    hasFeaturedBlock () {
+      return !this.hardMode && this.featuresList
     }
   },
   methods: {
-    incrementClicks: function () {
+    incrementClicks () {
       this.clicks = this.clicks + 1
-      if (this.clicks > this.maxClicks) {
+      if (this.clicks >= this.maxClicks) {
         this.incrementFailedGames()
       }
     },
-    finishGame: function () {
+    finishGame () {
       this.finishGameFlag = true
     },
-    incrementSuccessGames: function () {
+    incrementSuccessGames () {
       this.$emit('incrementSuccessGames')
       this.gameResult = 'success'
       this.finishGame()
     },
-    incrementFailedGames: function () {
+    incrementFailedGames () {
       this.$emit('incrementFailedGames')
       this.gameResult = 'failed'
       this.finishGame()
@@ -27722,7 +27775,10 @@ __webpack_require__.r(__webpack_exports__);
     restartGame () {
       this.$emit('restartGame')
     },
-    selectFeature: function (featureName, featureStatus, featureValue) {
+    restartScoreGame () {
+      this.$emit('restartScoreGame')
+    },
+    selectFeature (featureName, featureStatus, featureValue) {
       this.selectedFeature = {
         name: featureName,
         status: featureStatus,
@@ -27732,7 +27788,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   watch: {
-    changedGame: function () {
+    changedGame () {
       this.clicks = 0
       this.finishGameFlag = false
       this.selectedFeatureChange = 0,
@@ -28131,30 +28187,46 @@ var render = function() {
     _c(
       "ul",
       { staticClass: "alpheios-stat-block__list" },
-      _vm._l(_vm.statItems, function(item, index) {
-        return _c(
-          "li",
-          {
-            key: index,
-            staticClass: "alpheios-stat-block__list__item",
-            class: item.class
-          },
-          [
-            _c("p", { staticClass: "alpheios-stat-block__list__item__title" }, [
-              _vm._v(_vm._s(item.title))
-            ]),
-            _vm._v(" "),
-            _c(
-              "p",
-              {
-                staticClass: "alpheios-stat-block__list__item__value",
-                class: item.classValue
-              },
-              [_vm._v(_vm._s(item.value))]
-            )
-          ]
-        )
-      })
+      [
+        _vm._l(_vm.statItems, function(item, index) {
+          return _c(
+            "li",
+            {
+              key: index,
+              staticClass: "alpheios-stat-block__list__item",
+              class: item.class
+            },
+            [
+              _c(
+                "p",
+                { staticClass: "alpheios-stat-block__list__item__title" },
+                [_vm._v(_vm._s(item.title))]
+              ),
+              _vm._v(" "),
+              _c(
+                "p",
+                {
+                  staticClass: "alpheios-stat-block__list__item__value",
+                  class: item.classValue
+                },
+                [_vm._v(_vm._s(item.value))]
+              )
+            ]
+          )
+        }),
+        _vm._v(" "),
+        _c("li", { staticClass: "alpheios-stat-block__list__item" }, [
+          _c(
+            "p",
+            {
+              staticClass: "alpheios-stat-block__list__restart_button",
+              on: { click: _vm.restartScoreGame }
+            },
+            [_vm._v("Restart score?")]
+          )
+        ])
+      ],
+      2
     )
   ])
 }
@@ -28217,7 +28289,10 @@ var render = function() {
       ),
       _vm._v(" "),
       _vm.slimHomonym.targetWord
-        ? _c("title-block", { attrs: { word: _vm.slimHomonym.targetWord } })
+        ? _c("title-block", {
+            attrs: { word: _vm.slimHomonym.targetWord, hardMode: _vm.hardMode },
+            on: { changeHardMode: _vm.changeHardMode }
+          })
         : _vm._e(),
       _vm._v(" "),
       _vm.showFeaturesPanel
@@ -28249,12 +28324,15 @@ var render = function() {
           selectedGame: _vm.selectedGame,
           changedGame: _vm.changedGame,
           failedGames: _vm.failedGames,
-          successGames: _vm.successGames
+          successGames: _vm.successGames,
+          hardMode: _vm.hardMode
         },
         on: {
           incrementSuccessGames: _vm.incrementSuccessGames,
           incrementFailedGames: _vm.incrementFailedGames,
-          restartGame: _vm.restartGame
+          restartGame: _vm.restartGame,
+          restartScoreGame: _vm.restartScoreGame,
+          setHardMode: _vm.setHardMode
         }
       })
     ],
@@ -28342,6 +28420,14 @@ var render = function() {
         _c(
           "span",
           {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.selectedGame,
+                expression: "selectedGame"
+              }
+            ],
             staticClass: "alpheios-inflection-views-games__show_hide_link",
             on: { click: _vm.showHideVariants }
           },
@@ -28563,7 +28649,17 @@ var render = function() {
       _vm._v("\n      Games for "),
       _c("span", { staticClass: "alpheios-title-block__title__word" }, [
         _vm._v(_vm._s(_vm.word))
-      ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "span",
+        {
+          staticClass: "alpheios-title-block__hardMode",
+          class: { "alpheios-title-block__hardMode-is": _vm.hardMode },
+          on: { click: _vm.changeHardMode }
+        },
+        [_vm._v("\n         (hard mode)\n      ")]
+      )
     ])
   ])
 }
@@ -28595,7 +28691,7 @@ var render = function() {
           "div",
           { staticClass: "alpheios-selected-game-block__game_wrap" },
           [
-            _vm.featuresList
+            _vm.hasFeaturedBlock
               ? _c("feature-select-block", {
                   attrs: {
                     featuresList: _vm.featuresList,
@@ -28614,7 +28710,7 @@ var render = function() {
                 class: {
                   "alpheios-selected-game-block__game_layout": true,
                   "alpheios-selected-game-block__has_featureblock":
-                    _vm.featuresList
+                    _vm.hasFeaturedBlock
                 }
               },
               [
@@ -28624,7 +28720,8 @@ var render = function() {
                     maxClicks: _vm.maxClicks,
                     failedGames: _vm.failedGames,
                     successGames: _vm.successGames
-                  }
+                  },
+                  on: { restartScoreGame: _vm.restartScoreGame }
                 }),
                 _vm._v(" "),
                 _c("inflection-game-table", {
