@@ -27,11 +27,11 @@ export default class GamesController {
     if (!this.gamesComponent.visible) {
       this.gamesComponent.slimHomonym = {
         targetWord: homonym.targetWord,
-        lexemes: homonym.lexemes.map(lex => ({
+        lexemes: homonym.lexemes.filter(lex => lex.lemma).map(lex => ({
           lemma: {
             ID: lex.lemma.ID,
             word: lex.lemma.word,
-            partOfSpeech: lex.lemma.features[Feature.types.part].value
+            partOfSpeech: lex.lemma.features ? lex.lemma.features[Feature.types.part].value : null
           }
         }))
       }

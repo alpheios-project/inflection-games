@@ -39903,11 +39903,11 @@ class GamesController {
     if (!this.gamesComponent.visible) {
       this.gamesComponent.slimHomonym = {
         targetWord: homonym.targetWord,
-        lexemes: homonym.lexemes.map(lex => ({
+        lexemes: homonym.lexemes.filter(lex => lex.lemma).map(lex => ({
           lemma: {
             ID: lex.lemma.ID,
             word: lex.lemma.word,
-            partOfSpeech: lex.lemma.features[alpheios_data_models__WEBPACK_IMPORTED_MODULE_4__["Feature"].types.part].value
+            partOfSpeech: lex.lemma.features ? lex.lemma.features[alpheios_data_models__WEBPACK_IMPORTED_MODULE_4__["Feature"].types.part].value : null
           }
         }))
       }
