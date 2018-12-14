@@ -2,10 +2,9 @@
 /* eslint-disable no-unused-vars */
 import 'whatwg-fetch'
 import { ViewSetFactory } from 'alpheios-inflection-tables'
-import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
-import { Feature, Constants } from 'alpheios-data-models'
+import { ClientAdapters } from 'alpheios-client-adapters'
+import { Constants } from 'alpheios-data-models'
 
-import GamesSet from '@/lib/games-set.js'
 import FeaturesList from '@/lib/games/features-list.js'
 import InflectionGame from '../../../src/lib/games/inflection-game'
 
@@ -14,21 +13,36 @@ describe('features-list.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let maAdapter, testLocale
+  let testLocale
   let testHomonym1, testInflectionsViewSet1, gameView1, game1
   let testHomonym2, testInflectionsViewSet2, gameView2, game2
 
   beforeAll(async () => {
-    maAdapter = new AlpheiosTuftsAdapter()
     testLocale = 'en-US'
 
-    testHomonym1 = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
+    let resTestHomonym1 = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_LATIN,
+        word: 'caeli'
+      }
+    })
+    testHomonym1 = resTestHomonym1.result
+
     testInflectionsViewSet1 = ViewSetFactory.create(testHomonym1, testLocale)
     gameView1 = testInflectionsViewSet1.getViews('noun')[0]
     game1 = new InflectionGame(gameView1)
     game1.matchViewsCheck()
 
-    testHomonym2 = await maAdapter.getHomonym(Constants.LANG_GREEK, 'ἔννεπε')
+    let resTestHomonym2 = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_GREEK,
+        word: 'ἔννεπε'
+      }
+    })
+    testHomonym2 = resTestHomonym2.result
+
     testInflectionsViewSet2 = ViewSetFactory.create(testHomonym2, testLocale)
     gameView2 = testInflectionsViewSet2.getViews('verb')[0]
     game2 = new InflectionGame(gameView2)

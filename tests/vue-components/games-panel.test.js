@@ -3,12 +3,12 @@
 import 'whatwg-fetch'
 import Vue from 'vue/dist/vue'
 
-import { shallowMount, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import GamesPanel from '@/vue-components/games-panel.vue'
 import GamesSet from '@/lib/games-set.js'
 
 import { ViewSetFactory } from 'alpheios-inflection-tables'
-import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { ClientAdapters } from 'alpheios-client-adapters'
 import { Constants } from 'alpheios-data-models'
 import InflectionGame from '../../src/lib/games/inflection-game'
 
@@ -20,8 +20,14 @@ describe('games-panel.test.js', () => {
   let cmp, maAdapter, testHomonym, testInflectionsViewSet, testLocale
 
   beforeAll(async () => {
-    maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
+    let resTestHomonym = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_LATIN,
+        word: 'caeli'
+      }
+    })
+    testHomonym = resTestHomonym.result
     testLocale = 'en-US'
     testInflectionsViewSet = ViewSetFactory.create(testHomonym, testLocale)
   })

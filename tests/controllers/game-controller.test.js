@@ -3,7 +3,7 @@
 import 'whatwg-fetch'
 import GamesController from '@/controllers/games-controller.js'
 import Vue from 'vue/dist/vue' // Vue in a runtime + compiler configuration
-import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { ClientAdapters } from 'alpheios-client-adapters'
 import { Feature, Constants } from 'alpheios-data-models'
 
 describe('games-controller.test.js', () => {
@@ -11,11 +11,17 @@ describe('games-controller.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let maAdapter, testHomonym
+  let testHomonym
 
   beforeAll(async () => {
-    maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
+    let resTestHomonym = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_LATIN,
+        word: 'caeli'
+      }
+    })
+    testHomonym = resTestHomonym.result
   })
 
   beforeEach(() => {

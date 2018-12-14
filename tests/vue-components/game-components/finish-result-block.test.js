@@ -1,6 +1,6 @@
 /* eslint-env jest */
 /* eslint-disable no-unused-vars */
-import { shallowMount, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import FinishResultBlock from '@/vue-components/game-components/finish-result-block.vue'
 
 describe('finish-result-block.test.js', () => {

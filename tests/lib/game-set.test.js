@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import 'whatwg-fetch'
 import { ViewSetFactory } from 'alpheios-inflection-tables'
-import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { ClientAdapters } from 'alpheios-client-adapters'
 import { Constants } from 'alpheios-data-models'
 
 import GamesSet from '@/lib/games-set.js'
@@ -13,11 +13,17 @@ describe('games-set.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let maAdapter, testHomonym, inflectionsViewSet
+  let testHomonym, inflectionsViewSet
 
   beforeAll(async () => {
-    maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
+    let resTestHomonym = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_LATIN,
+        word: 'caeli'
+      }
+    })
+    testHomonym = resTestHomonym.result
     inflectionsViewSet = ViewSetFactory.create(testHomonym, 'en-US')
   })
   beforeEach(() => {

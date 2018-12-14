@@ -5,7 +5,7 @@ import { shallowMount, mount } from '@vue/test-utils'
 import LexemesDataBlock from '@/vue-components/header-components/lexemes-data-block.vue'
 import DefinitionsBlock from '@/vue-components/header-components/definitions-block.vue'
 
-import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { ClientAdapters } from 'alpheios-client-adapters'
 import { Constants } from 'alpheios-data-models'
 
 describe('lexemes-data-block.test.js', () => {
@@ -13,11 +13,17 @@ describe('lexemes-data-block.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let cmp, maAdapter, testHomonym, testInflectionData, testLocale
+  let cmp, testHomonym
 
   beforeAll(async () => {
-    maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_GREEK, 'συνδέει')
+    let resTestHomonym = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_GREEK,
+        word: 'συνδέει'
+      }
+    })
+    testHomonym = resTestHomonym.result
   })
 
   beforeEach(() => {

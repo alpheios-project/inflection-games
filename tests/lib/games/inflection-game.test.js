@@ -2,10 +2,9 @@
 /* eslint-disable no-unused-vars */
 import 'whatwg-fetch'
 import { ViewSetFactory } from 'alpheios-inflection-tables'
-import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { ClientAdapters } from 'alpheios-client-adapters'
 import { Feature, Constants } from 'alpheios-data-models'
 
-import GamesSet from '@/lib/games-set.js'
 import InflectionGame from '@/lib/games/inflection-game.js'
 
 describe('inflection-game.test.js', () => {
@@ -15,11 +14,17 @@ describe('inflection-game.test.js', () => {
 
   let featureFullMatch, featureNotFullMatch, featuresListForFeaturePanel
 
-  let maAdapter, testHomonym, testInflectionsViewSet, testLocale, gameView
+  let testHomonym, testInflectionsViewSet, testLocale, gameView
 
   beforeAll(async () => {
-    maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
+    let resTestHomonym = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_LATIN,
+        word: 'caeli'
+      }
+    })
+    testHomonym = resTestHomonym.result
     testLocale = 'en-US'
     testInflectionsViewSet = ViewSetFactory.create(testHomonym, testLocale)
 
@@ -166,7 +171,15 @@ describe('inflection-game.test.js', () => {
   })
 
   it('10 InflectionGame - findFullMatchInWideTable returns true if even one cell has full match (paradigm)', async () => {
-    let testHomonymVerb = await maAdapter.getHomonym(Constants.LANG_GREEK, 'ἔννεπε')
+    let resTestHomonym2 = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_GREEK,
+        word: 'ἔννεπε'
+      }
+    })
+    let testHomonymVerb = resTestHomonym2.result
+
     let testInflectionsViewSetVerb = ViewSetFactory.create(testHomonymVerb, testLocale)
 
     let gameViewParadigm = testInflectionsViewSetVerb.getViews('verb')[0]
@@ -175,7 +188,14 @@ describe('inflection-game.test.js', () => {
   })
 
   it('10 InflectionGame - findFullMatchInWideTable returns false if view hasn\'t homonym or inflections', async () => {
-    let testHomonymVerb = await maAdapter.getHomonym(Constants.LANG_GREEK, 'ἔννεπε')
+    let resTestHomonym2 = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_GREEK,
+        word: 'ἔννεπε'
+      }
+    })
+    let testHomonymVerb = resTestHomonym2.result
     let testInflectionsViewSetVerb = ViewSetFactory.create(testHomonymVerb, testLocale)
 
     let gameViewParadigm = testInflectionsViewSetVerb.getViews('verb')[0]

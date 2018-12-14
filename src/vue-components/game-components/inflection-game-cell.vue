@@ -64,15 +64,16 @@ export default {
 
     .alpheios-inflection-game-table .infl-data-cell {
       cursor: pointer;
+      background-position: 5% 50%;
+      background-size: 12px 12px;
+      background-repeat: no-repeat;
+      padding: 2px 5px 2px 20px;
     }
     
     .alpheios-inflection-game-table div.infl-tbl-cell--data {
       background-color: #fceae6;
       background-image: url(../../images/cross-icon.png);
-      background-position: 5% 50%;
-      background-size: 12px 12px;
-      background-repeat: no-repeat;
-      padding: 2px 5px 2px 20px;
+      
       color: #881c07;
     }
     .alpheios-inflection-game-table div.infl-tbl-cell--full-match {

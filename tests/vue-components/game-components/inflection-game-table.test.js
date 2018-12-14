@@ -6,8 +6,8 @@ import { mount } from '@vue/test-utils'
 import InflectionGameTable from '@/vue-components/game-components/inflection-game-table.vue'
 
 import { ViewSetFactory } from 'alpheios-inflection-tables'
-import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
-import { Feature, Constants } from 'alpheios-data-models'
+import { ClientAdapters } from 'alpheios-client-adapters'
+import { Constants } from 'alpheios-data-models'
 
 import GamesSet from '@/lib/games-set.js'
 import InflectionGame from '@/lib/games/inflection-game.js'
@@ -20,8 +20,14 @@ describe('inflection-game-table.test.js', () => {
   let cmp, maAdapter, testHomonym, testInflectionsViewSet, testLocale, gameSet, testSelectedGame
 
   beforeAll(async () => {
-    maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
+    let resTestHomonym = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_LATIN,
+        word: 'caeli'
+      }
+    })
+    testHomonym = resTestHomonym.result
     testLocale = 'en-US'
     testInflectionsViewSet = ViewSetFactory.create(testHomonym, testLocale)
   })

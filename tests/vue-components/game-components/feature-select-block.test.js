@@ -5,7 +5,7 @@ import { shallowMount, mount } from '@vue/test-utils'
 import FeatureSelectBlock from '@/vue-components/game-components/feature-select-block.vue'
 
 import { ViewSetFactory } from 'alpheios-inflection-tables'
-import { AlpheiosTuftsAdapter } from 'alpheios-morph-client'
+import { ClientAdapters } from 'alpheios-client-adapters'
 import { Feature, Constants } from 'alpheios-data-models'
 
 import GamesSet from '@/lib/games-set.js'
@@ -16,12 +16,19 @@ describe('feature-select-block.test.js', () => {
   console.log = function () {}
   console.warn = function () {}
 
-  let cmp, maAdapter, testHomonym, testInflectionsViewSet, testLocale, gameSet, testSelectedGame, testFeatureList
+  let cmp, testHomonym, testInflectionsViewSet, testLocale, gameSet, testSelectedGame, testFeatureList
   let featureFullMatch, featureNotFullMatch
 
   beforeAll(async () => {
-    maAdapter = new AlpheiosTuftsAdapter()
-    testHomonym = await maAdapter.getHomonym(Constants.LANG_LATIN, 'caeli')
+    let resTestHomonym = await ClientAdapters.morphology.tufts({
+      method: 'getHomonym',
+      params: {
+        languageID: Constants.LANG_LATIN,
+        word: 'caeli'
+      }
+    })
+    testHomonym = resTestHomonym.result
+
     testLocale = 'en-US'
     testInflectionsViewSet = ViewSetFactory.create(testHomonym, testLocale)
 
